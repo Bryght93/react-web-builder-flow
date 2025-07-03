@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const existingMagnets = [
+const initialMagnets = [
   {
     id: 1,
     title: "Ultimate Fitness Challenge Guide",
@@ -107,11 +107,14 @@ function getTypeIcon(type: string) {
 
 export default function LeadMagnets() {
   const [showBuilder, setShowBuilder] = useState(false);
+  const [showFunnelBuilder, setShowFunnelBuilder] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [magnets, setMagnets] = useState(initialMagnets);
+  const [editingMagnet, setEditingMagnet] = useState<any>(null);
   const { toast } = useToast();
 
   const handleGenerate = async () => {
@@ -128,14 +131,181 @@ export default function LeadMagnets() {
     
     // Simulate AI generation
     setTimeout(() => {
+      const newMagnet = {
+        id: Date.now(),
+        title: `${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} for ${selectedIndustry}`,
+        type: selectedType.charAt(0).toUpperCase() + selectedType.slice(1),
+        industry: selectedIndustry,
+        leads: 0,
+        conversion: 0,
+        status: "draft",
+        created: "Just now"
+      };
+      
+      setMagnets(prev => [newMagnet, ...prev]);
       setIsGenerating(false);
+      
       toast({
         title: "Lead Magnet Generated! 🎉",
-        description: "Your AI-powered lead magnet is ready. Building landing page...",
+        description: "Your AI-powered lead magnet has been created and added to your collection.",
       });
+      
+      // Reset form
+      setSelectedType("");
+      setSelectedIndustry("");
+      setBusinessDescription("");
+      setTargetAudience("");
       setShowBuilder(false);
     }, 3000);
   };
+
+  const handleEdit = (magnet: any) => {
+    setEditingMagnet(magnet);
+    setShowFunnelBuilder(true);
+  };
+
+  const handleDelete = (magnetId: number) => {
+    setMagnets(prev => prev.filter(m => m.id !== magnetId));
+    toast({
+      title: "Lead Magnet Deleted",
+      description: "The lead magnet has been removed from your collection.",
+    });
+  };
+
+  const handleDuplicate = (magnet: any) => {
+    const duplicatedMagnet = {
+      ...magnet,
+      id: Date.now(),
+      title: `${magnet.title} (Copy)`,
+      status: "draft",
+      created: "Just now",
+      leads: 0
+    };
+    setMagnets(prev => [duplicatedMagnet, ...prev]);
+    toast({
+      title: "Lead Magnet Duplicated",
+      description: "A copy has been created in your collection.",
+    });
+  };
+
+  if (showFunnelBuilder) {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Funnel Builder</h1>
+              <p className="text-muted-foreground">
+                Editing: {editingMagnet?.title || "New Funnel"}
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => setShowFunnelBuilder(false)}>
+              ← Back to Magnets
+            </Button>
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
+            {/* Toolbox */}
+            <Card className="border-0 shadow-soft">
+              <CardHeader>
+                <CardTitle className="text-lg">Components</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="space-y-2">
+                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center">
+                      <FileText className="w-4 h-4 mr-2" />
+                      <span className="text-sm">Headline</span>
+                    </div>
+                  </div>
+                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center">
+                      <Target className="w-4 h-4 mr-2" />
+                      <span className="text-sm">Button</span>
+                    </div>
+                  </div>
+                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center">
+                      <BarChart3 className="w-4 h-4 mr-2" />
+                      <span className="text-sm">Form</span>
+                    </div>
+                  </div>
+                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center">
+                      <Eye className="w-4 h-4 mr-2" />
+                      <span className="text-sm">Image</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Canvas */}
+            <div className="lg:col-span-2">
+              <Card className="border-0 shadow-soft h-full">
+                <CardHeader>
+                  <CardTitle className="text-lg">Landing Page Canvas</CardTitle>
+                </CardHeader>
+                <CardContent className="h-full">
+                  <div className="border-2 border-dashed border-border rounded-lg h-full min-h-[500px] p-4 bg-background relative">
+                    <div className="text-center text-muted-foreground mt-20">
+                      <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">Drag components here</p>
+                      <p className="text-sm">Build your landing page by dragging components from the toolbox</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Properties */}
+            <Card className="border-0 shadow-soft">
+              <CardHeader>
+                <CardTitle className="text-lg">Properties</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Text</Label>
+                    <Input placeholder="Enter text..." />
+                  </div>
+                  <div>
+                    <Label>Color</Label>
+                    <Input type="color" />
+                  </div>
+                  <div>
+                    <Label>Size</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">Small</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="large">Large</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button className="w-full">
+                    Apply Changes
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-6 flex justify-end space-x-4">
+            <Button variant="outline">
+              Preview
+            </Button>
+            <Button variant="gradient">
+              Save & Publish
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (showBuilder) {
     return (
@@ -311,7 +481,7 @@ export default function LeadMagnets() {
 
         {/* Lead Magnets Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {existingMagnets.map((magnet) => {
+          {magnets.map((magnet) => {
             const IconComponent = getTypeIcon(magnet.type);
             return (
               <Card key={magnet.id} className="border-0 shadow-soft hover:shadow-strong transition-all duration-200">
@@ -348,16 +518,34 @@ export default function LeadMagnets() {
                     <div className="flex items-center justify-between pt-4 border-t border-border">
                       <span className="text-xs text-muted-foreground">Created {magnet.created}</span>
                       <div className="flex items-center space-x-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" title="Preview">
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8" 
+                          onClick={() => handleEdit(magnet)}
+                          title="Edit Funnel"
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => handleDuplicate(magnet)}
+                          title="Duplicate"
+                        >
                           <Copy className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => handleDelete(magnet.id)}
+                          title="Delete"
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
