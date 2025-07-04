@@ -23,6 +23,7 @@ import {
   Target
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import FunnelBuilder from "@/components/FunnelBuilder";
 
 const initialMagnets = [
   {
@@ -190,120 +191,10 @@ export default function LeadMagnets() {
 
   if (showFunnelBuilder) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Funnel Builder</h1>
-              <p className="text-muted-foreground">
-                Editing: {editingMagnet?.title || "New Funnel"}
-              </p>
-            </div>
-            <Button variant="outline" onClick={() => setShowFunnelBuilder(false)}>
-              ← Back to Magnets
-            </Button>
-          </div>
-
-          <div className="grid lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
-            {/* Toolbox */}
-            <Card className="border-0 shadow-soft">
-              <CardHeader>
-                <CardTitle className="text-lg">Components</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-2">
-                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
-                    <div className="flex items-center">
-                      <FileText className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Headline</span>
-                    </div>
-                  </div>
-                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
-                    <div className="flex items-center">
-                      <Target className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Button</span>
-                    </div>
-                  </div>
-                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
-                    <div className="flex items-center">
-                      <BarChart3 className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Form</span>
-                    </div>
-                  </div>
-                  <div className="p-3 border border-dashed border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors">
-                    <div className="flex items-center">
-                      <Eye className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Image</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Canvas */}
-            <div className="lg:col-span-2">
-              <Card className="border-0 shadow-soft h-full">
-                <CardHeader>
-                  <CardTitle className="text-lg">Landing Page Canvas</CardTitle>
-                </CardHeader>
-                <CardContent className="h-full">
-                  <div className="border-2 border-dashed border-border rounded-lg h-full min-h-[500px] p-4 bg-background relative">
-                    <div className="text-center text-muted-foreground mt-20">
-                      <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p className="text-lg font-medium">Drag components here</p>
-                      <p className="text-sm">Build your landing page by dragging components from the toolbox</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Properties */}
-            <Card className="border-0 shadow-soft">
-              <CardHeader>
-                <CardTitle className="text-lg">Properties</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <Label>Text</Label>
-                    <Input placeholder="Enter text..." />
-                  </div>
-                  <div>
-                    <Label>Color</Label>
-                    <Input type="color" />
-                  </div>
-                  <div>
-                    <Label>Size</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select size" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="small">Small</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="large">Large</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button className="w-full">
-                    Apply Changes
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="mt-6 flex justify-end space-x-4">
-            <Button variant="outline">
-              Preview
-            </Button>
-            <Button variant="gradient">
-              Save & Publish
-            </Button>
-          </div>
-        </div>
-      </div>
+      <FunnelBuilder 
+        magnet={editingMagnet} 
+        onBack={() => setShowFunnelBuilder(false)} 
+      />
     );
   }
 
