@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap, BarChart3, Users, Settings } from "lucide-react";
+import { Menu, X, Zap, BarChart3, Users, Settings, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
   { name: "Lead Magnets", href: "/lead-magnets", icon: Zap },
+  { name: "Funnels", href: "/funnels", icon: Target },
   { name: "Leads", href: "/leads", icon: Users },
   { name: "Settings", href: "/settings", icon: Settings },
 ];

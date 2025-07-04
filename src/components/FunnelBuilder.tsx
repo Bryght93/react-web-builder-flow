@@ -157,11 +157,13 @@ function ComponentDragItem({ component }: { component: { type: string; icon: any
 }
 
 interface FunnelBuilderProps {
-  magnet: any;
+  magnet?: any;
+  funnel?: any;
   onBack: () => void;
+  onSave?: (funnelData: any) => void;
 }
 
-export default function FunnelBuilder({ magnet, onBack }: FunnelBuilderProps) {
+export default function FunnelBuilder({ magnet, funnel, onBack, onSave }: FunnelBuilderProps) {
   const [steps, setSteps] = useState<FunnelStep[]>([]);
   const [selectedStep, setSelectedStep] = useState<FunnelStep | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -430,7 +432,7 @@ export default function FunnelBuilder({ magnet, onBack }: FunnelBuilderProps) {
           <div>
             <h1 className="text-3xl font-bold text-foreground">Funnel Builder</h1>
             <p className="text-muted-foreground">
-              Building funnel for: {magnet?.title || "New Funnel"}
+              Building funnel for: {funnel?.name || magnet?.title || "New Funnel"}
             </p>
           </div>
           <Button variant="outline" onClick={onBack}>

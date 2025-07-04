@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import FunnelBuilder from "@/components/FunnelBuilder";
+import InstantFunnelWizard from "@/components/InstantFunnelWizard";
 
 const initialMagnets = [
   {
@@ -109,6 +110,7 @@ function getTypeIcon(type: string) {
 export default function LeadMagnets() {
   const [showBuilder, setShowBuilder] = useState(false);
   const [showFunnelBuilder, setShowFunnelBuilder] = useState(false);
+  const [showInstantFunnel, setShowInstantFunnel] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
@@ -165,6 +167,23 @@ export default function LeadMagnets() {
     setShowFunnelBuilder(true);
   };
 
+  const handleCreateInstantFunnel = () => {
+    setShowInstantFunnel(true);
+  };
+
+  const handleInstantFunnelComplete = (funnelData: any) => {
+    // Save funnel data to localStorage or send to backend
+    const existingFunnels = JSON.parse(localStorage.getItem('ai-funnels') || '[]');
+    const updatedFunnels = [funnelData, ...existingFunnels];
+    localStorage.setItem('ai-funnels', JSON.stringify(updatedFunnels));
+    
+    setShowInstantFunnel(false);
+    toast({
+      title: "Success! 🎉",
+      description: "Your instant funnel has been created and saved to your Funnels section.",
+    });
+  };
+
   const handleDelete = (magnetId: number) => {
     setMagnets(prev => prev.filter(m => m.id !== magnetId));
     toast({
@@ -188,6 +207,15 @@ export default function LeadMagnets() {
       description: "A copy has been created in your collection.",
     });
   };
+
+  if (showInstantFunnel) {
+    return (
+      <InstantFunnelWizard 
+        onComplete={handleInstantFunnelComplete}
+        onBack={() => setShowInstantFunnel(false)} 
+      />
+    );
+  }
 
   if (showFunnelBuilder) {
     return (
@@ -348,10 +376,16 @@ export default function LeadMagnets() {
             <h1 className="text-3xl font-bold text-foreground">Lead Magnets</h1>
             <p className="text-muted-foreground">Create and manage your AI-powered lead magnets</p>
           </div>
-          <Button variant="gradient" onClick={() => setShowBuilder(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Lead Magnet
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="ai" onClick={handleCreateInstantFunnel}>
+              <Zap className="w-4 h-4 mr-2" />
+              Instant Funnel
+            </Button>
+            <Button variant="gradient" onClick={() => setShowBuilder(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Lead Magnet
+            </Button>
+          </div>
         </div>
 
         {/* Search and Filters */}

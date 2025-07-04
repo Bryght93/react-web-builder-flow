@@ -7,6 +7,7 @@ import { Navbar } from "./components/Navbar";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import LeadMagnets from "./pages/LeadMagnets";
+import Funnels from "./pages/Funnels";
 import Leads from "./pages/Leads";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/lead-magnets" element={<LeadMagnets />} />
+          <Route path="/funnels" element={<Funnels />} />
           <Route path="/leads" element={<Leads />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
