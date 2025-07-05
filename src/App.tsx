@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import Landing from "./pages/Landing";
+import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import LeadMagnets from "./pages/LeadMagnets";
 import Funnels from "./pages/Funnels";
@@ -14,6 +14,10 @@ import PageBuilder from "./components/PageBuilder";
 import AILeadMagnetBuilder from "./components/AILeadMagnetBuilder";
 import CRMDashboard from "./components/CRMDashboard";
 import MultiChannelSync from "./components/MultiChannelSync";
+import CallBookingCloser from "./components/CallBookingCloser";
+import AdLaunchTracker from "./components/AdLaunchTracker";
+import AISalesCoach from "./components/AISalesCoach";
+import IntegrationsHub from "./components/IntegrationsHub";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +29,7 @@ const App = () => (
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/lead-magnets" element={<LeadMagnets />} />
           <Route path="/funnels" element={<Funnels />} />
@@ -34,6 +38,10 @@ const App = () => (
           <Route path="/channels" element={<MultiChannelSync />} />
           <Route path="/page-builder" element={<PageBuilder />} />
           <Route path="/ai-builder" element={<AILeadMagnetBuilder />} />
+          <Route path="/call-booking" element={<CallBookingCloser />} />
+          <Route path="/ads" element={<AdLaunchTracker />} />
+          <Route path="/ai-coach" element={<AISalesCoach />} />
+          <Route path="/integrations" element={<IntegrationsHub />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

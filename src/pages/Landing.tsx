@@ -105,13 +105,13 @@ export default function Landing() {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Button variant="hero" size="lg" className="text-lg px-8 py-4" asChild>
-                <Link to="/signup">
+                <Link to="/dashboard">
                   Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-4" asChild>
-                <Link to="/demo">
-                  Watch Demo <Zap className="ml-2 w-5 h-5" />
+                <Link to="/dashboard">
+                  Login <Zap className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
             </div>
@@ -282,13 +282,13 @@ export default function Landing() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <Button variant="hero" size="lg" className="text-lg px-8 py-4" asChild>
-              <Link to="/signup">
+              <Link to="/dashboard">
                 Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="text-lg px-8 py-4" asChild>
-              <Link to="/contact">
-                Schedule Demo
+              <Link to="/dashboard">
+                Login to Dashboard
               </Link>
             </Button>
           </div>
