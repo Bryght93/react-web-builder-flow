@@ -10,6 +10,10 @@ import LeadMagnets from "./pages/LeadMagnets";
 import Funnels from "./pages/Funnels";
 import Leads from "./pages/Leads";
 import NotFound from "./pages/NotFound";
+import PageBuilder from "./components/PageBuilder";
+import AILeadMagnetBuilder from "./components/AILeadMagnetBuilder";
+import CRMDashboard from "./components/CRMDashboard";
+import MultiChannelSync from "./components/MultiChannelSync";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +30,10 @@ const App = () => (
           <Route path="/lead-magnets" element={<LeadMagnets />} />
           <Route path="/funnels" element={<Funnels />} />
           <Route path="/leads" element={<Leads />} />
+          <Route path="/crm" element={<CRMDashboard />} />
+          <Route path="/channels" element={<MultiChannelSync />} />
+          <Route path="/page-builder" element={<PageBuilder />} />
+          <Route path="/ai-builder" element={<AILeadMagnetBuilder />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

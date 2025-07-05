@@ -8,8 +8,8 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
   { name: "Lead Magnets", href: "/lead-magnets", icon: Zap },
   { name: "Funnels", href: "/funnels", icon: Target },
-  { name: "Leads", href: "/leads", icon: Users },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "CRM", href: "/crm", icon: Users },
+  { name: "Channels", href: "/channels", icon: Settings },
 ];
 
 export function Navbar() {
