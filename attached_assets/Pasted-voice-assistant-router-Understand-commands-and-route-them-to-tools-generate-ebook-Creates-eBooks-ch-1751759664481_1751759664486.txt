@@ -1,0 +1,183 @@
+voice_assistant_router	Understand commands and route them to tools
+generate_ebook	Creates eBooks, checklists, lead magnets
+generate_funnel	Creates funnel sequence + landing pages
+create_email_list	Stores a new email list in your database
+generate_form_embed	Creates shareable lead forms tied to a list
+add_subscriber	Adds a contact to a list
+generate_email_campaign	Writes and drafts campaign email
+send_email_campaign	Sends the email via built-in or external service
+connect_mailchimp	Authorizes Mailchimp API
+sync_to_mailchimp	Sends leads to Mailchimp
+read_out_loud	Speaks content via ElevenLabs or browser TTS
+
+🧠 PROMPTS FOR EACH LOVABLE TOOL
+🔹 voice_assistant_router
+Type: Routing / Classification Tool
+Prompt:
+
+text
+Copy
+Edit
+You are a voice AI router. The user will speak commands like:
+
+- "Create ebook on email marketing"
+- "Add John to my lead list"
+- "Send welcome message to all leads"
+- "Schedule email to my coaching clients tomorrow"
+
+Your job is to:
+1. Identify the action
+2. Extract needed data
+3. Route it to the correct tool
+
+Return JSON like:
+
+{
+  "tool": "generate_ebook",
+  "topic": "email marketing"
+}
+
+or
+
+{
+  "tool": "send_email_campaign",
+  "recipient_list": "coaching clients",
+  "message": "Welcome to the program!"
+}
+🔹 generate_ebook
+Type: Text Generator
+Prompt:
+
+text
+Copy
+Edit
+You are a marketing content creator. Create a short 5-page lead magnet ebook on the topic: {{topic}}.
+
+Format it as:
+
+- Title
+- Introduction
+- Chapter 1: ...
+- Chapter 2: ...
+- Chapter 3: ...
+- Conclusion
+
+Make it easy to read, valuable, and actionable.
+🔹 generate_funnel
+Prompt:
+
+text
+Copy
+Edit
+You are an expert funnel strategist. Create a sales funnel based on this product:
+
+{{product_description}}
+
+User’s goal: {{goal}} (e.g., “Get more leads”, “Sell a course”)
+
+Return:
+
+- Funnel stages (opt-in → thank you → sales page)
+- Headline + body copy for each stage
+- Email follow-up suggestions
+🔹 create_email_list
+Prompt:
+
+text
+Copy
+Edit
+Create a new email list in the app database. List name: {{list_name}}. Owner: {{user_id}}.
+This tool should run a backend call (POST) to your API that saves it in the database.
+
+🔹 generate_form_embed
+Prompt:
+
+text
+Copy
+Edit
+Generate an embeddable form that collects:
+- Name
+- Email
+
+Save submissions to list: {{list_name}}.
+
+Return:
+1. A sharable link
+2. An HTML embed code
+🔹 add_subscriber
+Prompt:
+
+text
+Copy
+Edit
+Add a new contact to list {{list_name}}.
+
+Details:
+- Name: {{name}}
+- Email: {{email}}
+- Source: {{source}} (e.g., voice, form)
+🔹 generate_email_campaign
+Prompt:
+
+text
+Copy
+Edit
+Write a marketing email for this campaign:
+
+List: {{list_name}}
+Purpose: {{goal}} (e.g., welcome, promote, announce)
+
+Return:
+- Subject line
+- Email body (HTML or Markdown)
+- Call-to-action
+
+Tone: friendly, professional, helpful.
+🔹 send_email_campaign
+Prompt:
+
+text
+Copy
+Edit
+Send this campaign email to list: {{list_name}}.
+
+Content:
+Subject: {{subject}}
+Body: {{email_body}}
+
+Send using: {{delivery_method}} (e.g., "in-app", "Mailchimp")
+Route the sending via:
+
+SendGrid API if “in-app”
+
+Mailchimp API if external
+
+🔹 connect_mailchimp
+Prompt:
+
+text
+Copy
+Edit
+Authorize the user’s Mailchimp account via OAuth or API key. Store it securely to allow syncing contacts.
+🔹 sync_to_mailchimp
+Prompt:
+
+text
+Copy
+Edit
+Push subscriber:
+Name: {{name}}
+Email: {{email}}
+
+To Mailchimp list: {{mailchimp_list_id}} using saved credentials.
+🔹 read_out_loud
+Prompt:
+
+text
+Copy
+Edit
+Convert this text to voice using ElevenLabs or browser TTS:
+
+Text: {{text}}
+
+Return: auto-playable audio

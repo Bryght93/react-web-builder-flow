@@ -120,6 +120,14 @@ LeadGenius AI is a comprehensive, AI-powered lead generation platform built as a
 ```
 Changelog:
 - July 05, 2025. Initial setup
+- July 05, 2025. Migration from Lovable to Replit completed:
+  * Installed missing packages (react-router-dom, sonner, @dnd-kit packages)
+  * Migrated from Supabase to Neon PostgreSQL database
+  * Removed Supabase integration files and configuration
+  * Set up proper query client for API communication
+  * Added VoiceFunnels AI floating assistant with voice command routing
+  * Reorganized navigation layout with main/advanced sections
+  * Successfully pushed database schema to PostgreSQL
 ```
 
 ## User Preferences

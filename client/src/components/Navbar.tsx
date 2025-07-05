@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap, BarChart3, Users, Settings, Target } from "lucide-react";
+import { Menu, X, Zap, BarChart3, Users, Settings, Target, Magnet, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navigation = [
+// Main navigation - core features only
+const mainNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-  { name: "Lead Magnets", href: "/lead-magnets", icon: Zap },
+  { name: "Lead Magnets", href: "/lead-magnets", icon: Magnet },
   { name: "Funnels", href: "/funnels", icon: Target },
+  { name: "Leads", href: "/leads", icon: Users },
+];
+
+// Secondary navigation - advanced features
+const advancedNavigation = [
   { name: "CRM", href: "/crm", icon: Users },
-  { name: "Channels", href: "/channels", icon: Settings },
-  { name: "Call Booking", href: "/call-booking", icon: Users },
-  { name: "Ad Manager", href: "/ads", icon: Target },
-  { name: "AI Coach", href: "/ai-coach", icon: Users },
+  { name: "Channels", href: "/channels", icon: MessageSquare },
   { name: "Integrations", href: "/integrations", icon: Settings },
 ];
 
@@ -40,22 +43,44 @@ export function Navbar() {
 
           {/* Desktop Navigation - Only show on dashboard pages */}
           {!isHomepage && (
-            <div className="hidden md:flex items-center space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    isActive(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.name}</span>
-                </Link>
-              ))}
+            <div className="hidden md:flex items-center space-x-1">
+              {/* Main Navigation */}
+              <div className="flex items-center space-x-1 border-r border-border pr-4 mr-4">
+                {mainNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      isActive(item.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </div>
+              
+              {/* Advanced Navigation */}
+              <div className="flex items-center space-x-1">
+                {advancedNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      isActive(item.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
@@ -88,22 +113,47 @@ export function Navbar() {
         {isOpen && !isHomepage && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors",
-                    isActive(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.name}</span>
-                </Link>
-              ))}
+              {/* Main Navigation */}
+              <div className="mb-4">
+                <div className="text-xs font-semibold text-muted-foreground px-3 py-2">Main</div>
+                {mainNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors",
+                      isActive(item.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </div>
+              
+              {/* Advanced Navigation */}
+              <div>
+                <div className="text-xs font-semibold text-muted-foreground px-3 py-2">Advanced</div>
+                {advancedNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors",
+                      isActive(item.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}
