@@ -1,0 +1,129 @@
+# LeadGenius AI - Full-Stack Lead Generation Platform
+
+## Overview
+
+LeadGenius AI is a comprehensive, AI-powered lead generation platform built as a modern full-stack web application. The system combines automated lead magnet creation, intelligent funnel building, multi-channel marketing automation, and advanced CRM capabilities to help businesses capture, nurture, and convert leads effectively.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **UI Library**: Radix UI primitives with shadcn/ui components
+- **Styling**: Tailwind CSS with custom design system
+- **State Management**: TanStack React Query for server state
+- **Routing**: React Router for client-side navigation
+- **Form Handling**: React Hook Form with Zod validation
+
+### Backend Architecture
+- **Runtime**: Node.js with Express.js REST API
+- **Language**: TypeScript with ES modules
+- **Database**: PostgreSQL with Drizzle ORM
+- **Database Provider**: Neon serverless PostgreSQL
+- **Session Management**: PostgreSQL session store
+- **Development**: Hot reload with Vite middleware integration
+
+### Development Tools
+- **Package Manager**: npm
+- **TypeScript**: Strict mode with path mapping
+- **Linting**: ESLint configuration
+- **Database Migrations**: Drizzle Kit for schema management
+
+## Key Components
+
+### 1. AI Lead Magnet Builder
+- **Purpose**: Automated creation of lead magnets (eBooks, quizzes, checklists)
+- **Features**: Industry-specific templates, AI content generation, automatic landing page creation
+- **Technologies**: React components with drag-and-drop functionality, dynamic form generation
+
+### 2. Funnel Builder System
+- **Purpose**: Visual funnel creation with drag-and-drop interface
+- **Features**: Multi-step funnel creation, component library, responsive preview
+- **Implementation**: DnD Kit for drag-and-drop, sortable components, real-time preview
+
+### 3. Multi-Channel Sync Platform
+- **Purpose**: Unified communication across WhatsApp, Instagram, Facebook, Email
+- **Features**: Message automation, lead routing, response tracking
+- **Architecture**: Channel abstraction layer, webhook handlers, message queuing
+
+### 4. CRM Dashboard
+- **Purpose**: Lead management and sales pipeline tracking
+- **Features**: Lead scoring, activity tracking, sales analytics, contact management
+- **Data Flow**: Real-time updates, status tracking, automated follow-ups
+
+### 5. Page Builder
+- **Purpose**: Visual website and landing page creation
+- **Features**: Component-based editing, responsive design, real-time preview
+- **Implementation**: Element-based architecture, style management, device preview modes
+
+### 6. AI Sales Coach
+- **Purpose**: Intelligent conversation assistance and sales optimization
+- **Features**: Message suggestions, objection handling, performance analytics
+- **Capabilities**: Real-time coaching, conversation analysis, improvement recommendations
+
+## Data Flow
+
+### Lead Capture Flow
+1. **Lead Generation**: Landing pages, forms, and lead magnets capture visitor information
+2. **Data Processing**: Lead data is validated, scored, and categorized automatically
+3. **CRM Integration**: Leads are immediately added to the CRM with source tracking
+4. **Automation Trigger**: Email sequences and follow-up workflows are initiated
+5. **Multi-Channel Sync**: Lead information is synchronized across all communication channels
+
+### User Journey Management
+1. **Initial Contact**: Lead enters system through various touchpoints
+2. **Qualification**: AI-powered scoring and categorization
+3. **Nurturing**: Automated email sequences and personalized content delivery
+4. **Engagement**: Multi-channel communication and interaction tracking
+5. **Conversion**: Meeting booking, sales calls, and deal progression
+
+## External Dependencies
+
+### Core Infrastructure
+- **Neon Database**: Serverless PostgreSQL hosting with connection pooling
+- **Replit Platform**: Development environment and deployment platform
+
+### UI and Styling
+- **Radix UI**: Accessible, unstyled component primitives
+- **Tailwind CSS**: Utility-first CSS framework
+- **Lucide React**: Icon library for consistent iconography
+
+### Development Tools
+- **Vite**: Fast build tool with hot module replacement
+- **TypeScript**: Type safety and improved developer experience
+- **Drizzle ORM**: Type-safe database operations and migrations
+
+### Runtime Dependencies
+- **React Ecosystem**: React Router, React Query, React Hook Form
+- **Validation**: Zod for runtime type checking and validation
+- **Date Handling**: date-fns for date manipulation and formatting
+
+## Deployment Strategy
+
+### Development Environment
+- **Local Development**: Vite dev server with Express API integration
+- **Hot Reload**: Automatic refresh for both frontend and backend changes
+- **Database**: Development database with automatic migrations
+
+### Production Build
+- **Frontend**: Vite build with code splitting and optimization
+- **Backend**: esbuild compilation with external package bundling
+- **Assets**: Static file serving with proper caching headers
+
+### Environment Configuration
+- **Database**: Environment-based connection string configuration
+- **Sessions**: PostgreSQL-backed session storage for scalability
+- **Development Tools**: Conditional loading of development-only plugins
+
+## Changelog
+
+```
+Changelog:
+- July 05, 2025. Initial setup
+```
+
+## User Preferences
+
+```
+Preferred communication style: Simple, everyday language.
+```
