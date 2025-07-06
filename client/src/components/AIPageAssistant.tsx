@@ -30,6 +30,13 @@ export default function AIPageAssistant({ onContentUpdate, currentContent, pageT
   const { toast } = useToast();
 
   const aiSuggestions = {
+    'funnel-setup': [
+      "Generate complete funnel description",
+      "Suggest target audience",
+      "Recommend price point",
+      "Create compelling funnel name",
+      "Add industry-specific goals"
+    ],
     landing: [
       "Make the headline more compelling",
       "Add social proof elements",
@@ -62,18 +69,43 @@ export default function AIPageAssistant({ onContentUpdate, currentContent, pageT
       
       let updatedContent = { ...currentContent };
       
-      // Simple AI logic based on prompt keywords
-      if (userPrompt.toLowerCase().includes('headline')) {
-        updatedContent.headline = generateHeadline(userPrompt, pageType);
-      } else if (userPrompt.toLowerCase().includes('button') || userPrompt.toLowerCase().includes('cta')) {
-        updatedContent.ctaText = generateCTA(userPrompt, pageType);
-      } else if (userPrompt.toLowerCase().includes('color') || userPrompt.toLowerCase().includes('design')) {
-        updatedContent.colors = generateColorScheme(userPrompt);
-      } else if (userPrompt.toLowerCase().includes('copy') || userPrompt.toLowerCase().includes('text')) {
-        updatedContent.bodyText = generateBodyText(userPrompt, pageType);
+      // Handle funnel setup AI
+      if (pageType === 'funnel-setup') {
+        if (userPrompt.toLowerCase().includes('complete') || userPrompt.toLowerCase().includes('generate')) {
+          updatedContent = {
+            funnelData: generateCompleteFunnelSetup(userPrompt)
+          };
+        } else if (userPrompt.toLowerCase().includes('name')) {
+          updatedContent = {
+            funnelData: { name: generateFunnelName(userPrompt) }
+          };
+        } else if (userPrompt.toLowerCase().includes('audience')) {
+          updatedContent = {
+            funnelData: { targetAudience: generateTargetAudience(userPrompt) }
+          };
+        } else if (userPrompt.toLowerCase().includes('price')) {
+          updatedContent = {
+            funnelData: { pricePoint: generatePricePoint(userPrompt) }
+          };
+        } else {
+          updatedContent = {
+            funnelData: generateCompleteFunnelSetup(userPrompt)
+          };
+        }
       } else {
-        // General improvement
-        updatedContent = improveGeneralContent(userPrompt, currentContent, pageType);
+        // Simple AI logic based on prompt keywords for other page types
+        if (userPrompt.toLowerCase().includes('headline')) {
+          updatedContent.headline = generateHeadline(userPrompt, pageType);
+        } else if (userPrompt.toLowerCase().includes('button') || userPrompt.toLowerCase().includes('cta')) {
+          updatedContent.ctaText = generateCTA(userPrompt, pageType);
+        } else if (userPrompt.toLowerCase().includes('color') || userPrompt.toLowerCase().includes('design')) {
+          updatedContent.colors = generateColorScheme(userPrompt);
+        } else if (userPrompt.toLowerCase().includes('copy') || userPrompt.toLowerCase().includes('text')) {
+          updatedContent.bodyText = generateBodyText(userPrompt, pageType);
+        } else {
+          // General improvement
+          updatedContent = improveGeneralContent(userPrompt, currentContent, pageType);
+        }
       }
       
       onContentUpdate(updatedContent);
@@ -157,6 +189,71 @@ export default function AIPageAssistant({ onContentUpdate, currentContent, pageT
       bodyText: generateBodyText(prompt, type),
       ctaText: generateCTA(prompt, type)
     };
+  };
+
+  const generateCompleteFunnelSetup = (prompt: string) => {
+    const industries = ['fitness', 'business', 'marketing', 'ecommerce'];
+    const randomIndustry = industries[Math.floor(Math.random() * industries.length)];
+    
+    const templates = {
+      fitness: {
+        name: '30-Day Transformation Challenge',
+        productName: 'Ultimate Fitness Program',
+        targetAudience: 'Busy professionals aged 25-45 who want to lose weight and build muscle but struggle with time constraints and motivation',
+        mainGoal: 'Help people achieve their fitness goals through structured workouts and nutrition plans',
+        pricePoint: '$297'
+      },
+      business: {
+        name: 'Business Growth Accelerator',
+        productName: 'Entrepreneur Success System',
+        targetAudience: 'Small business owners and entrepreneurs looking to scale their business and increase revenue',
+        mainGoal: 'Provide actionable strategies for business growth and sustainable success',
+        pricePoint: '$997'
+      },
+      marketing: {
+        name: 'Digital Marketing Mastery',
+        productName: 'Complete Marketing Blueprint',
+        targetAudience: 'Marketing professionals and business owners who want to master digital marketing strategies',
+        mainGoal: 'Teach effective digital marketing techniques that drive traffic and conversions',
+        pricePoint: '$497'
+      },
+      ecommerce: {
+        name: 'E-commerce Empire Builder',
+        productName: 'Dropshipping Success Formula',
+        targetAudience: 'Aspiring e-commerce entrepreneurs who want to build profitable online stores',
+        mainGoal: 'Guide students through building and scaling successful e-commerce businesses',
+        pricePoint: '$697'
+      }
+    };
+    
+    return templates[randomIndustry];
+  };
+
+  const generateFunnelName = (prompt: string) => {
+    const names = [
+      'Ultimate Success Blueprint',
+      'Transform Your Life Today',
+      'Master Class Academy',
+      'Elite Performance System',
+      'Revolutionary Method',
+      'Complete Success Formula'
+    ];
+    return names[Math.floor(Math.random() * names.length)];
+  };
+
+  const generateTargetAudience = (prompt: string) => {
+    const audiences = [
+      'Professionals aged 25-45 who want to improve their skills and advance their careers',
+      'Entrepreneurs and business owners looking to scale their ventures',
+      'Individuals seeking personal transformation and growth',
+      'Students and lifelong learners wanting to master new skills'
+    ];
+    return audiences[Math.floor(Math.random() * audiences.length)];
+  };
+
+  const generatePricePoint = (prompt: string) => {
+    const prices = ['$197', '$297', '$497', '$697', '$997'];
+    return prices[Math.floor(Math.random() * prices.length)];
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

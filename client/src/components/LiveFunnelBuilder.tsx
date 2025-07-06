@@ -155,6 +155,41 @@ const industryTemplates = [
   }
 ];
 
+// Function to generate default images for each step
+const generateStepImages = (stepType: string, data: any): string[] => {
+  const imageDefaults = {
+    landing: [
+      `https://source.unsplash.com/800x600/?${data.productName},fitness`,
+      `https://source.unsplash.com/800x600/?${data.targetAudience},lifestyle`
+    ],
+    optin: [
+      `https://source.unsplash.com/800x600/?${data.productName},guide`,
+      `https://source.unsplash.com/800x600/?email,subscription`
+    ],
+    thankyou: [
+      `https://source.unsplash.com/800x600/?thankyou,celebration`,
+      `https://source.unsplash.com/800x600/?email,confirmation`
+    ],
+    email: [
+      `https://source.unsplash.com/800x600/?email,marketing`,
+      `https://source.unsplash.com/800x600/?newsletter,communication`
+    ],
+    offer: [
+      `https://source.unsplash.com/800x600/?sale,discount`,
+      `https://source.unsplash.com/800x600/?${data.productName},deal`
+    ],
+    upsell: [
+      `https://source.unsplash.com/800x600/?upgrade,premium`,
+      `https://source.unsplash.com/800x600/?exclusive,deal`
+    ],
+    downsell: [
+      `https://source.unsplash.com/800x600/?discount,bargain`,
+      `https://source.unsplash.com/800x600/?alternative,offer`
+    ]
+  };
+  return imageDefaults[stepType] || [`https://source.unsplash.com/800x600/?${data.productName}`];
+};
+
 // Page Builder Component for Funnel Steps
 function PageBuilderForStep({ step, onSave, onClose }: { 
   step: FunnelStep; 
@@ -173,7 +208,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   // Convert funnel step content to page elements
   const getInitialElements = (step: FunnelStep) => {
     const elements = [];
-    
+
     if (step.content.headline) {
       elements.push({
         id: `headline-${Date.now()}`,
@@ -186,7 +221,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         }
       });
     }
-    
+
     if (step.content.subheadline) {
       elements.push({
         id: `subheadline-${Date.now()}`,
@@ -199,7 +234,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         }
       });
     }
-    
+
     if (step.content.bodyText) {
       elements.push({
         id: `body-${Date.now()}`,
@@ -211,7 +246,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         }
       });
     }
-    
+
     // Add form for opt-in pages
     if (step.type === 'optin') {
       elements.push({
@@ -224,7 +259,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         }
       });
     }
-    
+
     // Add CTA button for other pages
     if (step.content.ctaText && step.type !== 'optin') {
       elements.push({
@@ -239,14 +274,14 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         }
       });
     }
-    
+
     return elements;
   };
 
   const handleSave = (elements: any[]) => {
     // Convert page elements back to funnel step content
     const updatedContent = { ...step.content };
-    
+
     elements.forEach(element => {
       if (element.type === 'heading' && element.content.level === 'h1') {
         updatedContent.headline = element.content.text;
@@ -260,7 +295,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         updatedContent.ctaText = element.content.button;
       }
     });
-    
+
     onSave({
       ...step,
       content: updatedContent
@@ -316,7 +351,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
 
   function convertElementsToContent(elements: any[], step: FunnelStep) {
     const updatedContent = { ...step.content };
-    
+
     elements.forEach(element => {
       if (element.type === 'heading' && element.content.level === 'h1') {
         updatedContent.headline = element.content.text;
@@ -330,7 +365,7 @@ function PageBuilderForStep({ step, onSave, onClose }: {
         updatedContent.ctaText = element.content.button;
       }
     });
-    
+
     return updatedContent;
   }
 }
@@ -395,13 +430,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
             description: stepContent.description || `High-converting ${stepType} page`,
             content: {
               ...stepContent.content,
-              colors: stepContent.content?.colors || getStepColors(stepType)
+              colors: stepContent.content?.colors || getStepColors(stepType),
+              images: stepContent.content?.images || generateStepImages(stepType, funnelData)
             },
             isComplete: true
           });
         } catch (stepError) {
           console.log(`Using fallback content for ${stepType} step`);
-          // Use enhanced fallback content with visual design
+          // Use enhanced fallback content with visual design and images
           steps.push({
             id: `step-${i + 1}`,
             type: stepType,
@@ -412,7 +448,8 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
               subheadline: getStepSubheadline(stepType, funnelData),
               bodyText: getStepBodyText(stepType, funnelData),
               ctaText: getStepCTA(stepType, funnelData),
-              colors: getStepColors(stepType)
+              colors: getStepColors(stepType),
+              images: generateStepImages(stepType, funnelData)
             },
             isComplete: true
           });
@@ -424,7 +461,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
       setFunnelData(prev => ({ ...prev, steps }));
       setProgress(100);
-      
+
       toast({
         title: "Funnel Generated Successfully!",
         description: `Created ${steps.length} pages with complete copy and design`,
@@ -457,11 +494,11 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stepType, funnelData: data })
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('API call failed:', error);
@@ -475,7 +512,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
   const saveStepEdit = () => {
     if (!currentStepEdit) return;
-    
+
     setFunnelData(prev => ({
       ...prev,
       steps: prev.steps.map(step => 
@@ -490,7 +527,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     // Create a preview URL based on the step
     const previewUrl = `/preview/${step.type}/${step.id}`;
     window.open(previewUrl, '_blank', 'width=1200,height=800');
-    
+
     toast({ 
       title: `Previewing ${step.title}`, 
       description: "Opening live preview in new tab..." 
@@ -542,7 +579,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   onChange={(e) => setFunnelData(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="industry">Industry Template</Label>
                 <Select onValueChange={(value) => {
@@ -655,7 +692,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
             <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
               <Zap className="w-10 h-10 text-primary animate-pulse" />
             </div>
-            
+
             <div>
               <h3 className="text-lg font-medium mb-2">Creating Your {funnelData.productName} Funnel</h3>
               <p className="text-muted-foreground">
@@ -771,7 +808,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                             </Button>
                           </div>
                         </div>
-                      )}
+)}
                       {step.type === 'offer' && step.content.ctaText && (
                         <div className="text-center">
                           <Button size="lg" className="text-lg px-8 py-4" style={{ backgroundColor: step.content.colors?.primary || '#ef4444' }}>
@@ -831,7 +868,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
           <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          
+
           <div>
             <h3 className="text-lg font-medium mb-2">Your {funnelData.productName} funnel is now live!</h3>
             <p className="text-muted-foreground">

@@ -110,7 +110,16 @@ export default function Funnels() {
   }, [funnels]);
 
   const handleEdit = (funnel: FunnelData) => {
-    setEditingFunnel(funnel);
+    const editData = {
+      name: funnel.name,
+      industry: funnel.industry,
+      goal: funnel.goal,
+      productName: funnel.productName || funnel.name,
+      targetAudience: funnel.targetAudience || "Target audience for " + funnel.name,
+      pricePoint: funnel.pricePoint || "$497",
+      steps: funnel.funnelSteps || []
+    };
+    setEditingFunnel({...funnel, ...editData});
     setShowBuilder(true);
   };
 
@@ -360,8 +369,105 @@ export default function Funnels() {
                         size="icon" 
                         className="h-8 w-8"
                         onClick={() => {
-                          const funnelUrl = `/live-funnel/${funnel.name.toLowerCase().replace(/\s+/g, '-')}`;
-                          window.open(funnelUrl, '_blank', 'width=1200,height=800');
+                          // Create a live preview window with funnel content
+                          const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+                          if (previewWindow) {
+                            previewWindow.document.write(`
+                              <!DOCTYPE html>
+                              <html lang="en">
+                              <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>${funnel.name} - Live Funnel</title>
+                                <style>
+                                  body { 
+                                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                                    margin: 0; 
+                                    padding: 40px; 
+                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                    min-height: 100vh;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                  }
+                                  .container { 
+                                    max-width: 800px; 
+                                    background: white;
+                                    padding: 60px;
+                                    border-radius: 20px;
+                                    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                                    text-align: center; 
+                                  }
+                                  h1 { color: #333; font-size: 3rem; margin-bottom: 1rem; }
+                                  h2 { color: #666; font-size: 1.5rem; margin-bottom: 2rem; }
+                                  p { color: #555; font-size: 1.2rem; line-height: 1.6; margin-bottom: 2rem; }
+                                  .btn { 
+                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                    color: white; 
+                                    padding: 15px 40px; 
+                                    border: none; 
+                                    border-radius: 10px; 
+                                    font-size: 1.2rem; 
+                                    cursor: pointer;
+                                    margin: 10px;
+                                    transition: transform 0.2s;
+                                  }
+                                  .btn:hover { transform: translateY(-2px); }
+                                  .stats { 
+                                    display: grid; 
+                                    grid-template-columns: repeat(3, 1fr); 
+                                    gap: 20px; 
+                                    margin: 30px 0; 
+                                  }
+                                  .stat { 
+                                    background: #f8f9fa; 
+                                    padding: 20px; 
+                                    border-radius: 10px; 
+                                    text-align: center; 
+                                  }
+                                  .stat-number { 
+                                    font-size: 2rem; 
+                                    font-weight: bold; 
+                                    color: #667eea; 
+                                  }
+                                  .stat-label { 
+                                    color: #666; 
+                                    font-size: 0.9rem; 
+                                  }
+                                </style>
+                              </head>
+                              <body>
+                                <div class="container">
+                                  <h1>${funnel.name}</h1>
+                                  <h2>${funnel.industry} • ${funnel.goal}</h2>
+                                  <p>This funnel is designed to convert visitors into customers with ${funnel.steps} optimized steps.</p>
+                                  
+                                  <div class="stats">
+                                    <div class="stat">
+                                      <div class="stat-number">${funnel.leads}</div>
+                                      <div class="stat-label">Total Leads</div>
+                                    </div>
+                                    <div class="stat">
+                                      <div class="stat-number">${funnel.conversion}%</div>
+                                      <div class="stat-label">Conversion Rate</div>
+                                    </div>
+                                    <div class="stat">
+                                      <div class="stat-number">$${funnel.revenue.toLocaleString()}</div>
+                                      <div class="stat-label">Revenue Generated</div>
+                                    </div>
+                                  </div>
+                                  
+                                  <button class="btn">Get Started Now</button>
+                                  <p style="margin-top: 40px; font-size: 0.9rem; color: #999;">
+                                    This is a live preview of your ${funnel.name} funnel.
+                                  </p>
+                                </div>
+                              </body>
+                              </html>
+                            `);
+                            previewWindow.document.close();
+                          }
+                          
                           toast({
                             title: "Opening Live Funnel",
                             description: `${funnel.name} is opening in a new tab`,

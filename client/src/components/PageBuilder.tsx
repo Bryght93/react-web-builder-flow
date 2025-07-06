@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCenter } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragStartEvent, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -584,7 +584,7 @@ export default function PageBuilder({ initialElements = [], onSave, onClose }: P
     if (typeof active.id === 'string' && active.id.startsWith('sidebar-')) {
       const elementType = active.id.replace('sidebar-', '');
       const template = AVAILABLE_ELEMENTS.find(el => el.type === elementType);
-      
+
       if (template) {
         const newElement: PageElement = {
           id: `element-${Date.now()}`,
@@ -614,7 +614,7 @@ export default function PageBuilder({ initialElements = [], onSave, onClose }: P
     if (active.id !== over.id) {
       const oldIndex = elements.findIndex(el => el.id === active.id);
       const newIndex = elements.findIndex(el => el.id === over.id);
-      
+
       if (oldIndex !== -1 && newIndex !== -1) {
         setElements(arrayMove(elements, oldIndex, newIndex));
       }
@@ -649,7 +649,7 @@ export default function PageBuilder({ initialElements = [], onSave, onClose }: P
       ...element,
       id: `element-${Date.now()}`,
     };
-    
+
     const index = elements.findIndex(el => el.id === element.id);
     const newElements = [...elements];
     newElements.splice(index + 1, 0, newElement);
@@ -685,43 +685,59 @@ export default function PageBuilder({ initialElements = [], onSave, onClose }: P
 
   return (
     <div className="h-screen flex bg-background">
-      {/* Sidebar - Elements */}
-      <div className="w-80 border-r bg-muted/30 flex flex-col">
-        <div className="p-4 border-b">
-          <h2 className="font-semibold text-lg flex items-center mb-4">
-            <Layers className="w-5 h-5 mr-2" />
-            Page Elements
-          </h2>
-          
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="grid grid-cols-3 w-full">
-              <TabsTrigger value="All" className="text-xs">All</TabsTrigger>
-              <TabsTrigger value="Basic" className="text-xs">Basic</TabsTrigger>
-              <TabsTrigger value="Lead Generation" className="text-xs">Lead Gen</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {filteredElements.map((element) => (
-            <div
-              key={element.type}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', element.type);
-              }}
-              className="p-3 border border-border rounded-lg cursor-move hover:bg-background hover:shadow-soft transition-all flex items-center space-x-3"
-              onClick={() => addElement(element.type)}
-            >
-              <element.icon className="w-5 h-5 text-primary" />
-              <div>
-                <div className="font-medium text-sm">{element.label}</div>
-                <div className="text-xs text-muted-foreground">{element.category}</div>
-              </div>
+        {/* Component Palette */}
+        <div className="w-64 border-r bg-muted/30 overflow-y-auto">
+          <div className="p-3">
+            <h3 className="font-semibold mb-3 text-sm">Components</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {AVAILABLE_ELEMENTS.map((component) => (
+                <div
+                  key={component.type}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData('text/plain', component.type);
+                  }}
+                  className="p-3 bg-card border border-border rounded-lg cursor-grab hover:bg-accent/50 transition-colors"
+                >
+                  <div className="flex flex-col items-center text-center space-y-1">
+                    <ImageIcon className="w-4 h-4 text-primary" />
+                    <div className="text-xs font-medium">{component.label}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+
+            {/* Quick Actions */}
+            <div className="mt-4 space-y-2">
+              <h4 className="font-medium text-xs text-muted-foreground mb-2">Quick Actions</h4>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start text-xs h-8"
+                onClick={() => setElements([])}
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Clear All
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start text-xs h-8"
+                onClick={() => {
+                  const template = [
+                    { id: '1', type: 'heading', content: { text: 'Welcome to Our Page', level: 'h1', align: 'center' } },
+                    { id: '2', type: 'text', content: { text: 'This is a sample paragraph.', align: 'center' } },
+                    { id: '3', type: 'button', content: { text: 'Get Started', variant: 'primary', align: 'center' } }
+                  ];
+                  setElements(template);
+                }}
+              >
+                <Layout className="w-3 h-3 mr-1" />
+                Load Template
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
 
       {/* Main Canvas */}
       <div className="flex-1 flex flex-col">
