@@ -1,48 +1,50 @@
+
 import React, { useState, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Brain, 
-  Sparkles, 
-  Target, 
-  ArrowRight, 
-  Check, 
-  Eye, 
-  Edit3, 
-  Save, 
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import {
+  Zap,
+  Target,
+  FileText,
+  Mail,
+  CreditCard,
+  ArrowRight,
+  Eye,
+  Edit,
+  Copy,
   Download,
-  Globe,
+  Image,
+  Volume2,
+  Sparkles,
+  CheckCircle,
+  XCircle,
+  Plus,
+  Trash2,
+  Type,
+  ImageIcon,
+  Layout,
+  Square,
+  X,
+  ExternalLink,
+  Save,
   Play,
   Pause,
-  RotateCcw,
-  Share,
+  Brain,
+  Palette,
+  Globe,
   Settings,
-  Image as ImageIcon,
-  Type,
-  Layout,
-  Zap,
-  Users,
-  TrendingUp,
-  DollarSign,
-  Clock,
-  Star,
-  Shield,
-  Gift,
-  Video,
-  MessageSquare,
-  Heart,
-  Award,
-  ChevronDown,
-  ChevronUp,
-  Copy,
-  ExternalLink
+  Star
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import PageBuilder from "./PageBuilder";
+import AIPageAssistant from "./AIPageAssistant";
 
 interface FunnelStep {
   id: string;
@@ -51,31 +53,27 @@ interface FunnelStep {
   description: string;
   url: string;
   content: {
-    headline: string;
-    subheadline: string;
-    bodyText: string;
-    ctaText: string;
-    colors: {
+    headline?: string;
+    subheadline?: string;
+    bodyText?: string;
+    ctaText?: string;
+    images?: string[];
+    testimonials?: any[];
+    features?: string[];
+    pricing?: any;
+    colors?: {
       primary: string;
       secondary: string;
       background: string;
       text: string;
-      accent: string;
     };
-    images: string[];
-    testimonials?: any[];
-    features?: string[];
-    guarantees?: string[];
-    pricing?: any;
-    urgency?: string;
-    socialProof?: any;
-    fonts: {
+    fonts?: {
       heading: string;
       body: string;
     };
   };
   isComplete: boolean;
-  analytics: {
+  analytics?: {
     visitors: number;
     conversions: number;
     revenue: number;
@@ -88,371 +86,717 @@ interface LiveFunnelBuilderProps {
   initialFunnelData?: any;
 }
 
+// Enhanced image generation using multiple APIs for variety
+const generateHighQualityImages = (stepType: string, data: any, count: number = 3): string[] => {
+  const productKeyword = data.productName?.toLowerCase().replace(/\s+/g, '+') || 'business';
+  const industryKeyword = data.industry?.toLowerCase() || 'marketing';
+  const timestamp = Date.now();
+  
+  const imageCategories = {
+    landing: [
+      `https://source.unsplash.com/1200x800/?${productKeyword},success,professional,bright`,
+      `https://picsum.photos/1200/800?random=${timestamp}`,
+      `https://source.unsplash.com/1200x800/?${industryKeyword},growth,achievement,modern`,
+      `https://source.unsplash.com/1200x800/?business,team,collaboration,success`,
+      `https://source.unsplash.com/1200x800/?innovation,technology,future,vibrant`
+    ],
+    optin: [
+      `https://source.unsplash.com/1200x800/?ebook,guide,learning,education`,
+      `https://source.unsplash.com/1200x800/?free,download,gift,valuable`,
+      `https://picsum.photos/1200/800?random=${timestamp + 1}`,
+      `https://source.unsplash.com/1200x800/?bonus,exclusive,premium,special`,
+      `https://source.unsplash.com/1200x800/?knowledge,wisdom,insight,expert`
+    ],
+    thankyou: [
+      `https://source.unsplash.com/1200x800/?celebration,success,achievement,joy`,
+      `https://source.unsplash.com/1200x800/?gratitude,thanks,appreciation,smile`,
+      `https://picsum.photos/1200/800?random=${timestamp + 2}`,
+      `https://source.unsplash.com/1200x800/?confetti,party,winning,happy`,
+      `https://source.unsplash.com/1200x800/?milestone,accomplishment,victory,positive`
+    ],
+    email: [
+      `https://source.unsplash.com/1200x800/?email,communication,message,connection`,
+      `https://source.unsplash.com/1200x800/?newsletter,digital,online,modern`,
+      `https://picsum.photos/1200/800?random=${timestamp + 3}`,
+      `https://source.unsplash.com/1200x800/?mailbox,letter,correspondence,personal`,
+      `https://source.unsplash.com/1200x800/?notification,alert,important,urgent`
+    ],
+    offer: [
+      `https://source.unsplash.com/1200x800/?sale,offer,deal,premium`,
+      `https://source.unsplash.com/1200x800/?luxury,exclusive,high-end,quality`,
+      `https://picsum.photos/1200/800?random=${timestamp + 4}`,
+      `https://source.unsplash.com/1200x800/?investment,value,worth,expensive`,
+      `https://source.unsplash.com/1200x800/?package,bundle,complete,comprehensive`
+    ],
+    upsell: [
+      `https://source.unsplash.com/1200x800/?upgrade,premium,exclusive,elite`,
+      `https://source.unsplash.com/1200x800/?vip,special,limited,rare`,
+      `https://picsum.photos/1200/800?random=${timestamp + 5}`,
+      `https://source.unsplash.com/1200x800/?platinum,gold,diamond,luxury`,
+      `https://source.unsplash.com/1200x800/?advanced,professional,expert,master`
+    ],
+    downsell: [
+      `https://source.unsplash.com/1200x800/?alternative,choice,option,flexible`,
+      `https://source.unsplash.com/1200x800/?savings,discount,affordable,budget`,
+      `https://picsum.photos/1200/800?random=${timestamp + 6}`,
+      `https://source.unsplash.com/1200x800/?starter,basic,essential,simple`,
+      `https://source.unsplash.com/1200x800/?value,smart,practical,economical`
+    ]
+  };
+
+  const categoryImages = imageCategories[stepType] || imageCategories.landing;
+  return categoryImages.slice(0, count);
+};
+
+// Human-like copywriting with psychological triggers
+const generateHumanLikeCopy = (stepType: string, data: any) => {
+  const copyTemplates = {
+    landing: {
+      headlines: [
+        `Finally... The ${data.productName} System That Actually Works (Even If You've Failed Before)`,
+        `Warning: This ${data.productName} Method Has Changed Everything For ${data.targetAudience}`,
+        `The Secret ${data.productName} Strategy That's Transforming Lives in Just 30 Days`,
+        `Discover Why ${data.targetAudience} Are Ditching Everything Else For This ${data.productName} System`,
+        `The ${data.productName} Breakthrough That's Making ${data.targetAudience} $10K+ Per Month`
+      ],
+      subheadlines: [
+        `Join over 47,000 ${data.targetAudience} who've already discovered this life-changing system (and why they wish they'd found it sooner)`,
+        `This isn't just another ${data.productName} course... it's the same proven system that helped Sarah go from $0 to $50K in 6 months`,
+        `What if everything you've been taught about ${data.productName} is wrong? (The real truth inside)`,
+        `The one ${data.productName} strategy that's working RIGHT NOW while everything else fails`,
+        `Stop struggling with ${data.productName}. This simple system does all the heavy lifting for you`
+      ],
+      bodyTexts: [
+        `Listen, I get it. You've probably tried everything when it comes to ${data.productName}. The courses, the coaches, the "magic bullets" that promised the world but delivered nothing.\n\nI was exactly where you are now. Frustrated. Overwhelmed. Ready to give up.\n\nThat's when I discovered the ONE thing that changed everything...\n\nThis ${data.productName} system isn't like anything you've seen before. It's based on real psychology, not theory. Real results, not promises.\n\nAnd here's the best part: It works even if you're a complete beginner.`,
+        `What I'm about to share with you goes against everything you've been told about ${data.productName}.\n\nSee, most experts want you to believe it's complicated. That you need years of experience, expensive tools, or some special talent.\n\nBut that's not true.\n\nThe reality is, ${data.productName} can be simple when you know the RIGHT way to do it.\n\nAnd I'm going to show you that way.\n\nThis system has already helped over 10,000 people just like you achieve the ${data.mainGoal} they've been dreaming of.`,
+        `There's something the ${data.productName} "gurus" don't want you to know...\n\nThey make it sound complicated because they want to sell you more courses, more coaching, more "done-for-you" services.\n\nBut the truth is shockingly simple.\n\nAll you need is ONE proven system. ONE clear path. ONE simple method that actually works.\n\nThat's exactly what I'm giving you today.`
+      ],
+      ctas: [
+        `Get Instant Access (Last 24 Hours at This Price)`,
+        `YES! I Want The ${data.productName} System Now`,
+        `Claim My Copy Before Price Goes Up`,
+        `Start My Transformation Today`,
+        `Get Started Risk-Free (60-Day Guarantee)`
+      ]
+    },
+    optin: {
+      headlines: [
+        `Get My FREE "${data.productName} Quick-Start Guide" (Download Instantly)`,
+        `Free Report: The 7 ${data.productName} Mistakes That Keep You Stuck`,
+        `Download: The ${data.productName} Cheat Sheet That's Worth $497`,
+        `Exclusive: The ${data.productName} Blueprint Top Performers Use`,
+        `FREE: The ${data.productName} Toolkit That Does 90% of The Work For You`
+      ],
+      subheadlines: [
+        `This step-by-step guide reveals the exact ${data.productName} system I use to help ${data.targetAudience} achieve ${data.mainGoal} in record time`,
+        `Join 15,000+ ${data.targetAudience} who downloaded this guide and started seeing results within 48 hours`,
+        `The same strategies that cost my private clients $5,000+ are yours FREE (but only for the next 72 hours)`,
+        `Warning: This contains the ${data.productName} secrets that industry leaders don't want you to know`,
+        `Download now and discover why ${data.targetAudience} call this "the only ${data.productName} resource they'll ever need"`
+      ],
+      bodyTexts: [
+        `Inside this exclusive guide, you'll discover:\n\n✓ The "3-Step ${data.productName} Formula" that guarantees results\n✓ Why 97% of ${data.targetAudience} fail (and how to be in the 3% that succeed)\n✓ The #1 mistake that's costing you thousands in lost opportunities\n✓ My secret "10-minute daily routine" that compounds results\n✓ The tools and resources I personally use (most are free)\n\nThis isn't theory. This is the exact system I've used to help over 500 clients achieve their ${data.mainGoal}.\n\nAnd it's yours free.`,
+        `Most ${data.productName} advice is outdated, complicated, or just plain wrong.\n\nThis guide cuts through all the noise and gives you exactly what works in 2024.\n\nInside, you'll get:\n\n• The modern ${data.productName} playbook (works in any market)\n• Case studies of real people getting real results\n• The tools and templates I use with my $5K clients\n• Step-by-step action plans you can start today\n• The psychology behind why this works so well\n\nNo fluff. No theory. Just proven strategies you can implement immediately.`
+      ],
+      ctas: [
+        `Download My FREE Guide Now`,
+        `Get Instant Access (100% Free)`,
+        `Send Me The Guide`,
+        `YES! I Want This Free Resource`,
+        `Download Now (Takes 30 Seconds)`
+      ]
+    },
+    thankyou: {
+      headlines: [
+        `Success! Your ${data.productName} Guide Is On Its Way...`,
+        `Thank You! Check Your Email In The Next 2 Minutes`,
+        `Welcome to The ${data.productName} Community!`,
+        `You're In! Your Free Guide Is Being Delivered Now`,
+        `Congratulations! You've Taken The First Step To ${data.mainGoal}`
+      ],
+      subheadlines: [
+        `While you wait for your guide, here's what happens next...`,
+        `You've just joined 15,000+ smart ${data.targetAudience} who refuse to settle for average results`,
+        `Your ${data.productName} transformation starts right now`,
+        `Important: Check your email (including spam folder) for your instant download link`,
+        `You're about to discover why this simple system changes everything`
+      ],
+      bodyTexts: [
+        `I just sent your free ${data.productName} guide to your email. It should arrive within the next 2-3 minutes.\n\nWhile you wait, I want to share something important...\n\nThe guide you just downloaded has already helped thousands of ${data.targetAudience} achieve ${data.mainGoal}. But here's what separates the ones who succeed from those who don't:\n\nACTION.\n\nDon't just read the guide. Implement what you learn. Start with step 1 today.\n\nYour future self will thank you.`,
+        `Welcome to an exclusive group of action-takers!\n\nYou've just downloaded the same ${data.productName} system that my private clients pay $5,000+ to access.\n\nHere's what you can expect:\n\n• Your guide will arrive in your inbox within 2 minutes\n• Over the next few days, I'll share my best ${data.productName} tips via email\n• You'll get exclusive invites to free training sessions\n• Plus, insider access to tools and resources not available anywhere else\n\nThis is just the beginning of your ${data.productName} journey.`
+      ],
+      ctas: [
+        `Join Our Private Community`,
+        `Check My Email Now`,
+        `Access Bonus Training`,
+        `Continue My Journey`,
+        `Get More Free Resources`
+      ]
+    },
+    offer: {
+      headlines: [
+        `Introducing: The Complete ${data.productName} System (Everything You Need To Succeed)`,
+        `Ready To 10X Your Results? Here's How...`,
+        `The ${data.productName} System That's Changing Lives (Limited Time)`,
+        `Finally... A ${data.productName} Solution That Actually Works`,
+        `Last Chance: Get The Complete ${data.productName} System At 50% Off`
+      ],
+      subheadlines: [
+        `Join the exclusive group of ${data.targetAudience} who are already using this system to achieve ${data.mainGoal} faster than ever before`,
+        `This comprehensive system includes everything you need: training, tools, templates, and ongoing support`,
+        `What would ${data.mainGoal} be worth to you? This system has already helped 1,000+ people get there`,
+        `Stop piecing together random advice. Get the complete, proven system in one place`,
+        `This offer expires in 48 hours. Don't miss your chance to transform your life`
+      ],
+      bodyTexts: [
+        `The free guide you downloaded was just the beginning.\n\nNow I want to give you the COMPLETE system.\n\nThe same system that's helped my clients:\n\n• Sarah increase her income by 400% in 6 months\n• Mike finally achieve the ${data.mainGoal} he'd been chasing for 3 years\n• Jennifer build a 6-figure business in less than 12 months\n\nAnd hundreds more just like them.\n\nThis isn't just another course. It's a complete transformation system that includes:\n\n✓ 8 hours of step-by-step video training\n✓ All my proven templates and frameworks\n✓ Private community access\n✓ Weekly group coaching calls\n✓ 60-day money-back guarantee\n\nRegular price: $997\nToday only: $497\n\nThis offer expires in 48 hours.`,
+        `Most ${data.productName} programs teach you WHAT to do...\n\nBut they leave out the most important part: HOW to do it.\n\nThis system is different.\n\nIt's the exact blueprint I've used to help over 500 clients achieve their ${data.mainGoal}. Nothing held back.\n\nInside you'll get:\n\n• The complete ${data.productName} playbook\n• Done-for-you templates (save 40+ hours)\n• Personal access to me via our private community\n• Weekly implementation calls\n• Real case studies and examples\n• 60-day guarantee (if it doesn't work, get your money back)\n\nThis system normally sells for $997.\n\nBut because you downloaded my free guide, you can get it for just $497.\n\nThis special price expires at midnight tonight.`
+      ],
+      ctas: [
+        `Get The Complete System Now ($497)`,
+        `YES! I Want The Full Training`,
+        `Claim My 50% Discount`,
+        `Start My Transformation`,
+        `Get Instant Access (Risk-Free)`
+      ]
+    }
+  };
+
+  const templates = copyTemplates[stepType] || copyTemplates.landing;
+  return {
+    headline: templates.headlines[Math.floor(Math.random() * templates.headlines.length)],
+    subheadline: templates.subheadlines[Math.floor(Math.random() * templates.subheadlines.length)],
+    bodyText: templates.bodyTexts[Math.floor(Math.random() * templates.bodyTexts.length)],
+    ctaText: templates.ctas[Math.floor(Math.random() * templates.ctas.length)]
+  };
+};
+
+// Enhanced color schemes with psychology-based palettes
+const getAdvancedColorScheme = (stepType: string, industry: string) => {
+  const industryColors = {
+    fitness: { primary: '#ef4444', secondary: '#dc2626', background: '#fef2f2', text: '#1f2937', accent: '#f97316' },
+    business: { primary: '#3b82f6', secondary: '#1d4ed8', background: '#eff6ff', text: '#1f2937', accent: '#8b5cf6' },
+    marketing: { primary: '#10b981', secondary: '#047857', background: '#f0fdf4', text: '#1f2937', accent: '#06b6d4' },
+    realestate: { primary: '#0891b2', secondary: '#0e7490', background: '#f0fdff', text: '#1f2937', accent: '#10b981' },
+    finance: { primary: '#059669', secondary: '#047857', background: '#f0fdf4', text: '#1f2937', accent: '#3b82f6' },
+    education: { primary: '#8b5cf6', secondary: '#7c3aed', background: '#faf5ff', text: '#1f2937', accent: '#ec4899' }
+  };
+
+  const stepAdjustments = {
+    landing: { saturation: 1.0, brightness: 1.0 },
+    optin: { saturation: 0.9, brightness: 1.1 },
+    thankyou: { saturation: 1.1, brightness: 1.2 },
+    email: { saturation: 0.8, brightness: 0.9 },
+    offer: { saturation: 1.2, brightness: 1.0 },
+    upsell: { saturation: 1.3, brightness: 0.9 },
+    downsell: { saturation: 0.7, brightness: 1.1 }
+  };
+
+  const baseColors = industryColors[industry] || industryColors.business;
+  const adjustment = stepAdjustments[stepType] || stepAdjustments.landing;
+
+  return {
+    primary: baseColors.primary,
+    secondary: baseColors.secondary,
+    background: baseColors.background,
+    text: baseColors.text,
+    accent: baseColors.accent
+  };
+};
+
+// Industry-specific templates
 const industryTemplates = [
-  {
-    id: "coaching",
-    name: "Life/Business Coaching",
-    defaultSteps: ["landing", "optin", "email", "offer", "upsell"],
-    marketingAngle: "transformation and personal growth"
-  },
   {
     id: "fitness",
     name: "Fitness & Health",
+    description: "Personal training, nutrition, wellness coaching",
     defaultSteps: ["landing", "optin", "email", "offer", "upsell"],
-    marketingAngle: "physical transformation and wellness"
+    conversionRates: { landing: "12-18%", optin: "35-50%", email: "8-15%", offer: "3-8%", upsell: "15-25%" }
+  },
+  {
+    id: "business",
+    name: "Business Coaching",
+    description: "Entrepreneurship, productivity, leadership",
+    defaultSteps: ["landing", "optin", "thankyou", "email", "offer", "upsell"],
+    conversionRates: { landing: "8-15%", optin: "25-40%", email: "12-20%", offer: "5-12%", upsell: "20-35%" }
   },
   {
     id: "marketing",
     name: "Digital Marketing",
+    description: "SEO, social media, content marketing",
+    defaultSteps: ["landing", "optin", "email", "offer", "upsell", "downsell"],
+    conversionRates: { landing: "10-16%", optin: "30-45%", email: "10-18%", offer: "4-10%", upsell: "18-30%" }
+  },
+  {
+    id: "realestate",
+    name: "Real Estate",
+    description: "Property investment, real estate coaching",
+    defaultSteps: ["landing", "optin", "thankyou", "email", "offer"],
+    conversionRates: { landing: "6-12%", optin: "20-35%", email: "15-25%", offer: "8-15%", upsell: "25-40%" }
+  },
+  {
+    id: "finance",
+    name: "Finance & Investment",
+    description: "Financial planning, investment coaching",
     defaultSteps: ["landing", "optin", "email", "offer", "upsell"],
-    marketingAngle: "business growth and revenue increase"
+    conversionRates: { landing: "5-10%", optin: "18-30%", email: "12-22%", offer: "6-12%", upsell: "20-35%" }
   },
   {
     id: "ecommerce",
     name: "E-commerce",
-    defaultSteps: ["landing", "optin", "email", "offer", "upsell"],
-    marketingAngle: "product sales and customer acquisition"
-  },
-  {
-    id: "education",
-    name: "Online Education",
-    defaultSteps: ["landing", "optin", "email", "offer", "upsell"],
-    marketingAngle: "skill development and knowledge mastery"
-  },
-  {
-    id: "consulting",
-    name: "Business Consulting",
-    defaultSteps: ["landing", "optin", "email", "offer", "upsell"],
-    marketingAngle: "strategic solutions and optimization"
+    description: "Product sales, retail, dropshipping",
+    defaultSteps: ["landing", "offer", "upsell", "downsell"],
+    conversionRates: { landing: "15-25%", offer: "2-5%", upsell: "10-20%", downsell: "15-30%" }
   }
 ];
 
-// Advanced AI copywriting system that acts as expert marketer
-const generateExpertMarketingCopy = (stepType: string, userIntent: any) => {
-  const { productName, targetAudience, mainGoal, pricePoint, industry } = userIntent;
+// Page Builder Component for Funnel Steps with AI Integration
+function PageBuilderForStep({ step, onSave, onClose }: { 
+  step: FunnelStep; 
+  onSave: (step: FunnelStep) => void;
+  onClose: () => void;
+}) {
+  const [currentStep, setCurrentStep] = useState(step);
+  const [isAIProcessing, setIsAIProcessing] = useState(false);
 
-  // AI analyzes the goal to understand the user's real intention
-  const marketingInsights = analyzeBusinessGoal(mainGoal, targetAudience, industry);
+  const handleAIContentUpdate = async (prompt: string) => {
+    setIsAIProcessing(true);
+    try {
+      // Simulate AI processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Generate enhanced content based on prompt
+      const enhancedContent = generateHumanLikeCopy(step.type, { 
+        productName: prompt.split(' ')[0] || 'Product',
+        targetAudience: 'professionals',
+        mainGoal: 'success'
+      });
 
-  switch (stepType) {
-    case 'landing':
-      return generateLandingPageCopy(marketingInsights, userIntent);
-    case 'optin':
-      return generateOptinPageCopy(marketingInsights, userIntent);
-    case 'email':
-      return generateEmailSequenceCopy(marketingInsights, userIntent);
-    case 'offer':
-      return generateOfferPageCopy(marketingInsights, userIntent);
-    case 'upsell':
-      return generateUpsellPageCopy(marketingInsights, userIntent);
-    default:
-      return generateDefaultCopy(stepType, marketingInsights, userIntent);
-  }
-};
-
-const analyzeBusinessGoal = (goal: string, audience: string, industry: string) => {
-  // AI marketing intelligence - understands what user really wants to achieve
-  const painPoints = extractPainPoints(goal, audience);
-  const desires = extractDesires(goal, audience);
-  const objections = predictObjections(audience, industry);
-
-  return {
-    primaryPain: painPoints[0],
-    secondaryPains: painPoints.slice(1),
-    primaryDesire: desires[0],
-    secondaryDesires: desires.slice(1),
-    mainObjections: objections,
-    emotionalTriggers: getEmotionalTriggers(goal, audience),
-    urgencyFactors: getUrgencyFactors(industry),
-    socialProofTypes: getSocialProofTypes(industry)
-  };
-};
-
-const extractPainPoints = (goal: string, audience: string) => {
-  // AI identifies target audience pain points based on goal
-  const commonPains = {
-    "coaching": ["lack of direction", "feeling stuck", "no clear roadmap", "overwhelm", "self-doubt"],
-    "fitness": ["lack of time", "no motivation", "previous failures", "confusion about what works", "feeling out of shape"],
-    "marketing": ["low conversion rates", "wasted ad spend", "no clear strategy", "tech overwhelm", "inconsistent results"],
-    "business": ["revenue plateau", "time management", "team issues", "system inefficiencies", "scaling challenges"]
-  };
-
-  const industry = goal.toLowerCase().includes('coaching') ? 'coaching' : 
-                  goal.toLowerCase().includes('fitness') ? 'fitness' :
-                  goal.toLowerCase().includes('marketing') ? 'marketing' : 'business';
-
-  return commonPains[industry] || commonPains.business;
-};
-
-const extractDesires = (goal: string, audience: string) => {
-  return [
-    "achieve rapid transformation",
-    "gain confidence and clarity",
-    "see measurable results quickly",
-    "have a proven system that works",
-    "join a community of successful people"
-  ];
-};
-
-const predictObjections = (audience: string, industry: string) => {
-  return [
-    "I don't have enough time",
-    "I've tried this before and it didn't work",
-    "It's too expensive",
-    "I'm not sure if it will work for me",
-    "I need to think about it"
-  ];
-};
-
-const getEmotionalTriggers = (goal: string, audience: string) => {
-  return ["fear of missing out", "desire for status", "need for security", "aspiration for freedom"];
-};
-
-const getUrgencyFactors = (industry: string) => {
-  return ["limited time offer", "bonus expires soon", "only available to first 100 people"];
-};
-
-const getSocialProofTypes = (industry: string) => {
-  return ["client testimonials", "case studies", "media mentions", "expert endorsements"];
-};
-
-const generateLandingPageCopy = (insights: any, userIntent: any) => {
-  const { productName, targetAudience, pricePoint } = userIntent;
-
-  return {
-    headline: `Finally... The ${productName} System That Actually Works For ${targetAudience.split(' ').slice(0, 3).join(' ')}`,
-    subheadline: `Discover the proven method that's helped over 10,000 people overcome ${insights.primaryPain} and achieve ${insights.primaryDesire} in just 30 days`,
-    bodyText: `Are you tired of ${insights.primaryPain}? You're not alone. Most ${targetAudience} struggle with the same challenges that are keeping you stuck right now.
-
-What if I told you there's a proven system that eliminates ${insights.primaryPain} and gives you a clear, step-by-step roadmap to ${insights.primaryDesire}?
-
-The ${productName} has already transformed the lives of thousands of people just like you. Here's what makes it different:
-
-✅ No overwhelming theory - just practical, actionable steps
-✅ Works even if you've failed before
-✅ Results start showing in the first 7 days
-✅ Complete support system included
-✅ 60-day money-back guarantee
-
-This isn't just another course. It's a complete transformation system that addresses the root cause of ${insights.primaryPain} and gives you the tools to ${insights.primaryDesire}.`,
-    ctaText: "Get Instant Access - Start Your Transformation Today",
-    features: [
-      `Step-by-step ${productName} implementation guide`,
-      `Private community of ${targetAudience} achieving success`,
-      "Weekly live coaching calls with expert guidance",
-      "Done-for-you templates and frameworks",
-      "Mobile app for learning on-the-go",
-      "60-day money-back guarantee"
-    ],
-    testimonials: [
-      {
-        quote: `The ${productName} completely changed my life. I went from ${insights.primaryPain} to ${insights.primaryDesire} in just 6 weeks!`,
-        author: "Sarah Johnson",
-        role: "Entrepreneur",
-        results: "6-figure success in 90 days",
-        image: "https://images.unsplash.com/photo-1494790108755-2616b612b647?w=100"
-      },
-      {
-        quote: "I wish I had found this system years ago. It's exactly what every struggling person needs.",
-        author: "Michael Chen", 
-        role: "Business Owner",
-        results: "Tripled revenue in 4 months",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100"
-      }
-    ],
-    guarantees: [
-      "60-day money-back guarantee",
-      "Lifetime access to all materials",
-      "Free updates for life"
-    ],
-    urgency: "Limited Time: Save 50% - Offer expires in 48 hours"
-  };
-};
-
-const generateOptinPageCopy = (insights: any, userIntent: any) => {
-  const { productName, targetAudience } = userIntent;
-
-  return {
-    headline: `Free Guide: "The 7 Secrets to ${insights.primaryDesire}"`,
-    subheadline: `Get the same strategies that helped 10,000+ ${targetAudience} overcome ${insights.primaryPain} and achieve breakthrough results`,
-    bodyText: `This comprehensive guide reveals:
-
-• The #1 mistake that keeps most ${targetAudience} stuck (and how to avoid it)
-• The 3-step system for rapid transformation 
-• Real case studies of people who went from struggle to success
-• The exact blueprint successful people use daily
-• Bonus: Quick-start checklist for immediate results
-
-Download your free copy now and start your transformation today!`,
-    ctaText: "Download Free Guide Now",
-    socialProof: "Join 50,000+ people who have downloaded this guide"
-  };
-};
-
-const generateEmailSequenceCopy = (insights: any, userIntent: any) => {
-  const { productName } = userIntent;
-
-  return {
-    headline: "Check Your Email for Your Free Guide",
-    subheadline: "Your transformation journey starts now...",
-    bodyText: `Thank you for downloading the guide! 
-
-Over the next 5 days, you'll receive powerful insights that will help you:
-
-Day 1: Discover the root cause of ${insights.primaryPain}
-Day 2: Learn the 3-step transformation system
-Day 3: See real success stories and case studies  
-Day 4: Get the exact daily routine that creates results
-Day 5: Exclusive invitation to join our ${productName} community
-
-Each email contains actionable strategies you can implement immediately. Make sure to check your inbox (and spam folder) for your first email.`,
-    ctaText: "Check Your Email Now"
-  };
-};
-
-const generateOfferPageCopy = (insights: any, userIntent: any) => {
-  const { productName, targetAudience, pricePoint } = userIntent;
-
-  return {
-    headline: `Get The Complete ${productName} System That Guarantees Your Success`,
-    subheadline: `Everything you need to go from ${insights.primaryPain} to ${insights.primaryDesire} in 90 days or less`,
-    bodyText: `You've seen the free guide. You know this system works. 
-
-Now it's time to get the COMPLETE system that will transform your life.
-
-The ${productName} isn't just a course - it's your complete transformation blueprint that includes:
-
-🎯 THE CORE SYSTEM: Step-by-step video training (12 modules, 40+ videos)
-📱 MOBILE APP: Learn anywhere, anytime on your phone or tablet  
-🏆 PRIVATE COMMUNITY: Connect with 10,000+ successful members
-📞 WEEKLY COACHING CALLS: Direct access to expert guidance
-📋 DONE-FOR-YOU TEMPLATES: Copy-paste frameworks that work
-🎁 BONUS #1: Quick-Start Video Series ($297 value)
-🎁 BONUS #2: Private Facebook Group Access ($197 value)  
-🎁 BONUS #3: 1-Hour Strategy Call ($500 value)
-
-Total Value: $2,491
-Your Investment Today: ${pricePoint}
-
-Plus, you're completely protected by our 60-day money-back guarantee. If you don't see results, we'll refund every penny.
-
-But this offer is only available for the next 48 hours...`,
-    ctaText: `Get Complete System - ${pricePoint}`,
-    features: [
-      "12 comprehensive training modules",
-      "40+ step-by-step video lessons", 
-      "Private community access (10,000+ members)",
-      "Weekly live coaching calls",
-      "Mobile app for on-the-go learning",
-      "Done-for-you templates and frameworks",
-      "Quick-start video series ($297 value)",
-      "1-hour strategy call ($500 value)",
-      "Lifetime access to all materials",
-      "60-day money-back guarantee"
-    ],
-    testimonials: [
-      {
-        quote: `I made my investment back in the first week! This system is pure gold.`,
-        author: "Jennifer Martinez",
-        role: "Online Entrepreneur", 
-        results: "ROI of 500% in 30 days",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100"
-      },
-      {
-        quote: "Finally, a system that actually works. No fluff, just results.",
-        author: "David Thompson",
-        role: "Business Consultant",
-        results: "Doubled income in 60 days", 
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"
-      }
-    ],
-    guarantees: [
-      "60-day money-back guarantee",
-      "Lifetime access to all materials", 
-      "Free updates and new content",
-      "24/7 customer support"
-    ],
-    urgency: "⚡ Limited Time: Save 50% - Only 24 hours left!",
-    pricing: {
-      original: "$997",
-      current: pricePoint,
-      savings: "Save $500"
+      setCurrentStep(prev => ({
+        ...prev,
+        content: {
+          ...prev.content,
+          ...enhancedContent,
+          images: generateHighQualityImages(step.type, { productName: prompt }, 3)
+        }
+      }));
+    } catch (error) {
+      console.error('AI update failed:', error);
+    } finally {
+      setIsAIProcessing(false);
     }
   };
-};
 
-const generateUpsellPageCopy = (insights: any, userIntent: any) => {
-  const { productName } = userIntent;
+  const getInitialElements = (step: FunnelStep) => {
+    const elements = [];
 
-  return {
-    headline: "Wait! Add 1-on-1 Coaching For Just $297 More",
-    subheadline: "Accelerate your results with personal guidance from our expert coaches",
-    bodyText: `Congratulations on getting the ${productName}!
+    if (step.content.headline) {
+      elements.push({
+        id: `headline-${Date.now()}`,
+        type: 'heading',
+        content: {
+          text: step.content.headline,
+          level: 'h1',
+          align: 'center',
+          color: step.content.colors?.primary || '#000000'
+        }
+      });
+    }
 
-You're about to transform your life with our proven system. But what if you could get results even faster?
+    if (step.content.subheadline) {
+      elements.push({
+        id: `subheadline-${Date.now()}`,
+        type: 'heading',
+        content: {
+          text: step.content.subheadline,
+          level: 'h2',
+          align: 'center',
+          color: '#666666'
+        }
+      });
+    }
 
-Our 1-on-1 coaching program has helped thousands of students achieve breakthrough results in half the time.
+    if (step.content.images && step.content.images.length > 0) {
+      elements.push({
+        id: `hero-image-${Date.now()}`,
+        type: 'image',
+        content: {
+          src: step.content.images[0],
+          alt: `${step.title} Hero Image`,
+          width: '100%',
+          height: 'auto',
+          align: 'center'
+        }
+      });
+    }
 
-Here's what you get:
+    if (step.content.bodyText) {
+      elements.push({
+        id: `body-${Date.now()}`,
+        type: 'text',
+        content: {
+          text: step.content.bodyText,
+          align: 'left',
+          color: '#444444'
+        }
+      });
+    }
 
-🎯 3 personal coaching sessions with certified coaches
-📞 Direct phone/video access when you need support  
-⚡ Personalized action plan based on your specific situation
-🏆 Priority access to all new programs and updates
-💬 Direct messaging access to your coach
+    // Add features/benefits if available
+    if (step.content.features && step.content.features.length > 0) {
+      step.content.features.forEach((feature, index) => {
+        elements.push({
+          id: `feature-${index}-${Date.now()}`,
+          type: 'text',
+          content: {
+            text: `✓ ${feature}`,
+            align: 'left',
+            color: '#10b981'
+          }
+        });
+      });
+    }
 
-Normally $997, but since you just joined, you can add this for just $297.
+    // Add testimonials for offer pages
+    if (step.type === 'offer' && step.content.testimonials) {
+      step.content.testimonials.forEach((testimonial, index) => {
+        elements.push({
+          id: `testimonial-${index}-${Date.now()}`,
+          type: 'testimonial',
+          content: {
+            quote: testimonial.quote,
+            author: testimonial.author,
+            role: testimonial.role,
+            company: testimonial.company,
+            avatar: testimonial.avatar,
+            rating: testimonial.rating
+          }
+        });
+      });
+    }
 
-This is only available right now - once you leave this page, this offer disappears forever.`,
-    ctaText: "Add 1-on-1 Coaching - $297",
-    urgency: "This offer expires in 10 minutes"
+    // Add form for opt-in pages
+    if (step.type === 'optin') {
+      elements.push({
+        id: `form-${Date.now()}`,
+        type: 'form',
+        content: {
+          title: 'Get Your Free Access',
+          fields: ['name', 'email'],
+          button: step.content.ctaText || 'Download Now'
+        }
+      });
+    }
+
+    // Add CTA button for other pages
+    if (step.content.ctaText && step.type !== 'optin') {
+      elements.push({
+        id: `cta-${Date.now()}`,
+        type: 'button',
+        content: {
+          text: step.content.ctaText,
+          variant: 'primary',
+          size: 'large',
+          align: 'center',
+          link: '#'
+        }
+      });
+    }
+
+    return elements;
   };
-};
 
-const generateDefaultCopy = (stepType: string, insights: any, userIntent: any) => {
-  return {
-    headline: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
-    subheadline: "Professional content coming soon...",
-    bodyText: "AI-generated content will appear here",
-    ctaText: "Take Action Now"
-  };
-};
+  const handleSave = (elements: any[]) => {
+    const updatedContent = { ...step.content };
 
-// Professional 2025-style image generation
-const generateModernImages = (stepType: string, userIntent: any, count: number = 3) => {
-  const { industry, productName } = userIntent;
+    elements.forEach(element => {
+      if (element.type === 'heading' && element.content.level === 'h1') {
+        updatedContent.headline = element.content.text;
+      } else if (element.type === 'heading' && element.content.level === 'h2') {
+        updatedContent.subheadline = element.content.text;
+      } else if (element.type === 'text') {
+        updatedContent.bodyText = element.content.text;
+      } else if (element.type === 'button') {
+        updatedContent.ctaText = element.content.text;
+      } else if (element.type === 'form') {
+        updatedContent.ctaText = element.content.button;
+      }
+    });
 
-  const imageCategories = {
-    landing: [
-      `https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop&crop=center`,
-      `https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop&crop=center`,
-      `https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=600&fit=crop&crop=center`
-    ],
-    optin: [
-      `https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=600&h=400&fit=crop&crop=center`,
-      `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop&crop=center`
-    ],
-    offer: [
-      `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop&crop=center`,
-      `https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&h=600&fit=crop&crop=center`,
-      `https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800&h=600&fit=crop&crop=center`
-    ]
+    onSave({
+      ...step,
+      content: updatedContent
+    });
   };
 
-  return imageCategories[stepType] || imageCategories.landing;
-};
+  return (
+    <div className="h-screen flex">
+      {/* AI Assistant Sidebar */}
+      <div className="w-80 border-r bg-muted/30 overflow-y-auto">
+        <div className="p-4">
+          <div className="mb-4">
+            <h3 className="font-semibold mb-2 flex items-center">
+              <Brain className="w-4 h-4 mr-2 text-primary" />
+              AI Content Assistant
+            </h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Describe what you want and AI will generate professional copy and images
+            </p>
+            <div className="space-y-3">
+              <Textarea
+                placeholder="e.g., Create compelling copy for a fitness course landing page that converts busy professionals..."
+                rows={3}
+                className="text-sm"
+              />
+              <Button 
+                className="w-full" 
+                size="sm"
+                onClick={() => handleAIContentUpdate("fitness course for busy professionals")}
+                disabled={isAIProcessing}
+              >
+                {isAIProcessing ? (
+                  <>
+                    <Brain className="w-3 h-3 mr-2 animate-pulse" />
+                    AI Processing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3 h-3 mr-2" />
+                    Generate with AI
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+          <AIPageAssistant
+            onContentUpdate={(content) => setCurrentStep(prev => ({ ...prev, content }))}
+            currentContent={currentStep.content}
+            pageType={currentStep.type}
+          />
+        </div>
+      </div>
 
-const getAdvanced2025ColorScheme = (stepType: string, industry: string) => {
-  const schemes = {
-    landing: { primary: '#2563eb', secondary: '#1d4ed8', background: '#f8fafc', text: '#1e293b', accent: '#3b82f6' },
-    optin: { primary: '#059669', secondary: '#047857', background: '#f0fdf4', text: '#1e293b', accent: '#10b981' },
-    email: { primary: '#7c3aed', secondary: '#6d28d9', background: '#faf5ff', text: '#1e293b', accent: '#8b5cf6' },
-    offer: { primary: '#dc2626', secondary: '#b91c1c', background: '#fef2f2', text: '#1e293b', accent: '#ef4444' },
-    upsell: { primary: '#d97706', secondary: '#b45309', background: '#fffbeb', text: '#1e293b', accent: '#f59e0b' }
-  };
+      {/* Main Editor */}
+      <div className="flex-1 flex flex-col">
+        <div className="h-16 border-b bg-background px-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="font-semibold">Editing: {currentStep.title}</h1>
+            <Badge variant="outline">{currentStep.type}</Badge>
+            <Badge variant="secondary">{currentStep.url}</Badge>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              // Live preview functionality
+              const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+              if (previewWindow) {
+                previewWindow.document.write(generatePreviewHTML(currentStep));
+                previewWindow.document.close();
+              }
+            }}>
+              <Eye className="w-4 h-4 mr-1" />
+              Live Preview
+            </Button>
+            <Button variant="outline" onClick={onClose}>
+              <X className="w-4 h-4 mr-2" />
+              Close Editor
+            </Button>
+            <Button onClick={() => {
+              onSave(currentStep);
+              onClose();
+            }}>
+              <Save className="w-4 h-4 mr-2" />
+              Save Page
+            </Button>
+          </div>
+        </div>
+        <div className="flex-1">
+          <PageBuilder
+            initialElements={getInitialElements(currentStep)}
+            onSave={(elements) => {
+              const updatedContent = convertElementsToContent(elements, currentStep);
+              setCurrentStep(prev => ({ ...prev, content: updatedContent }));
+            }}
+            onClose={onClose}
+          />
+        </div>
+      </div>
+    </div>
+  );
 
-  return schemes[stepType] || schemes.landing;
-};
+  function convertElementsToContent(elements: any[], step: FunnelStep) {
+    const updatedContent = { ...step.content };
+
+    elements.forEach(element => {
+      if (element.type === 'heading' && element.content.level === 'h1') {
+        updatedContent.headline = element.content.text;
+      } else if (element.type === 'heading' && element.content.level === 'h2') {
+        updatedContent.subheadline = element.content.text;
+      } else if (element.type === 'text') {
+        updatedContent.bodyText = element.content.text;
+      } else if (element.type === 'button') {
+        updatedContent.ctaText = element.content.text;
+      } else if (element.type === 'form') {
+        updatedContent.ctaText = element.content.button;
+      }
+    });
+
+    return updatedContent;
+  }
+
+  function generatePreviewHTML(step: FunnelStep) {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${step.title} - Live Preview</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6; 
+            background: ${step.content.colors?.background || '#ffffff'};
+            color: ${step.content.colors?.text || '#333333'};
+          }
+          .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+          .hero { text-align: center; margin-bottom: 60px; }
+          h1 { 
+            font-size: 3rem; 
+            font-weight: bold; 
+            color: ${step.content.colors?.primary || '#000000'};
+            margin-bottom: 20px;
+            line-height: 1.2;
+          }
+          h2 { 
+            font-size: 1.5rem; 
+            color: #666666; 
+            margin-bottom: 30px;
+            font-weight: normal;
+          }
+          .hero-image { 
+            width: 100%; 
+            max-width: 600px; 
+            height: auto; 
+            border-radius: 10px; 
+            margin: 30px auto;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          }
+          .content { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            font-size: 1.2rem; 
+            line-height: 1.8;
+            margin-bottom: 40px;
+          }
+          .cta-button { 
+            display: inline-block;
+            background: ${step.content.colors?.primary || '#3b82f6'}; 
+            color: white; 
+            padding: 20px 40px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 1.3rem; 
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          }
+          .cta-button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+          }
+          .form-container { 
+            max-width: 500px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+          }
+          .form-input { 
+            width: 100%; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 2px solid #e5e5e5; 
+            border-radius: 8px; 
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease;
+          }
+          .form-input:focus { 
+            border-color: ${step.content.colors?.primary || '#3b82f6'};
+            outline: none;
+          }
+          .features { 
+            max-width: 600px; 
+            margin: 40px auto; 
+            text-align: left;
+          }
+          .feature-item { 
+            display: flex; 
+            align-items: center; 
+            margin: 15px 0; 
+            font-size: 1.1rem;
+          }
+          .feature-icon { 
+            color: #10b981; 
+            margin-right: 10px; 
+            font-weight: bold;
+          }
+          @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.2rem; }
+            .container { padding: 20px 15px; }
+            .cta-button { padding: 15px 30px; font-size: 1.1rem; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="hero">
+            ${step.content.headline ? `<h1>${step.content.headline}</h1>` : ''}
+            ${step.content.subheadline ? `<h2>${step.content.subheadline}</h2>` : ''}
+            ${step.content.images && step.content.images[0] ? 
+              `<img src="${step.content.images[0]}" alt="Hero Image" class="hero-image" />` : ''}
+          </div>
+          
+          ${step.content.bodyText ? `<div class="content">${step.content.bodyText.replace(/\n/g, '<br><br>')}</div>` : ''}
+          
+          ${step.content.features ? `
+            <div class="features">
+              ${step.content.features.map(feature => 
+                `<div class="feature-item">
+                  <span class="feature-icon">✓</span>
+                  ${feature}
+                </div>`
+              ).join('')}
+            </div>
+          ` : ''}
+          
+          ${step.type === 'optin' ? `
+            <div class="form-container">
+              <h3 style="text-align: center; margin-bottom: 20px;">Get Your Free Access</h3>
+              <form>
+                <input type="text" placeholder="Enter your first name" class="form-input" />
+                <input type="email" placeholder="Enter your email address" class="form-input" />
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 15px;">
+                  ${step.content.ctaText || 'Get Free Access'}
+                </button>
+              </form>
+            </div>
+          ` : step.content.ctaText ? `
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="#" class="cta-button">${step.content.ctaText}</a>
+            </div>
+          ` : ''}
+        </div>
+      </body>
+      </html>
+    `;
+  }
+}
 
 export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelData }: LiveFunnelBuilderProps) {
   const [currentStep, setCurrentStep] = useState(initialFunnelData ? 2 : 0);
@@ -466,15 +810,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     productName: initialFunnelData?.productName || "",
     pricePoint: initialFunnelData?.pricePoint || "",
     steps: initialFunnelData?.steps || [] as FunnelStep[],
-    userIntent: initialFunnelData?.userIntent || ""
+    aiDescription: initialFunnelData?.aiDescription || ""
   });
   const [selectedTemplate, setSelectedTemplate] = useState(initialFunnelData?.industry || "");
   const [currentStepEdit, setCurrentStepEdit] = useState<FunnelStep | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [savedFunnels, setSavedFunnels] = useState<any[]>([]);
   const { toast } = useToast();
   const synthRef = useRef<SpeechSynthesis | null>(null);
 
+  // Initialize speech synthesis
   React.useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       synthRef.current = window.speechSynthesis;
@@ -492,48 +835,77 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     }
   };
 
-  const generateAIFunnel = async () => {
+  const generateLiveFunnel = async () => {
     setIsGenerating(true);
     setProgress(0);
 
     try {
       const template = industryTemplates.find(t => t.id === selectedTemplate);
-      const stepTypes = template?.defaultSteps || ["landing", "optin", "email", "offer", "upsell"];
+      const stepTypes = template?.defaultSteps || ["landing", "optin", "email", "offer"];
 
       const steps: FunnelStep[] = [];
-      const stepProgress = 70 / stepTypes.length;
+      const stepProgress = 60 / stepTypes.length;
 
-      setProgress(15);
-      toast({ title: "🧠 AI Marketing Expert analyzing your business..." });
-      speakText("AI is analyzing your business requirements to create expert marketing content");
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      setProgress(20);
+      toast({ title: "🧠 AI analyzing your business requirements..." });
 
       for (let i = 0; i < stepTypes.length; i++) {
         const stepType = stepTypes[i] as FunnelStep['type'];
-        const currentProgress = 15 + (i + 1) * stepProgress;
+        const currentProgress = 20 + (i + 1) * stepProgress;
         setProgress(currentProgress);
-
+        
         toast({ 
-          title: `🎨 Creating ${stepType} page with expert copywriting...`,
-          description: "Generating human-like content that converts"
+          title: `🎨 Creating ${stepType} page with AI copywriting...`,
+          description: "Generating human-like content and professional images"
         });
 
-        // Generate expert marketing copy based on user's business goals
-        const copyContent = generateExpertMarketingCopy(stepType, funnelData);
-        const colorScheme = getAdvanced2025ColorScheme(stepType, selectedTemplate);
-        const images = generateModernImages(stepType, funnelData, 3);
+        // Generate enhanced content with human-like copywriting
+        const copyContent = generateHumanLikeCopy(stepType, funnelData);
+        const colorScheme = getAdvancedColorScheme(stepType, selectedTemplate);
+        const images = generateHighQualityImages(stepType, funnelData, 3);
+
+        // Add testimonials for offer pages
+        const testimonials = stepType === 'offer' ? [
+          {
+            quote: "This system completely transformed my business. I went from struggling to making $50K+ per month!",
+            author: "Sarah Johnson",
+            role: "Entrepreneur",
+            company: "SJ Consulting",
+            avatar: "https://source.unsplash.com/100x100/?portrait,professional,woman",
+            rating: 5
+          },
+          {
+            quote: "The strategies in this program are pure gold. I wish I had found this years ago!",
+            author: "Mike Chen",
+            role: "Business Owner",
+            company: "Growth Solutions",
+            avatar: "https://source.unsplash.com/100x100/?portrait,professional,man",
+            rating: 5
+          }
+        ] : [];
+
+        // Add features/benefits
+        const features = [
+          `Step-by-step ${funnelData.productName} implementation guide`,
+          `Proven strategies that work for ${funnelData.targetAudience}`,
+          `Done-for-you templates and frameworks`,
+          `Private community access with 1000+ members`,
+          `Weekly live Q&A and coaching calls`,
+          `60-day money-back guarantee`
+        ];
 
         const step: FunnelStep = {
           id: `step-${i + 1}`,
           type: stepType,
           title: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
-          description: `AI-generated ${stepType} page with expert copywriting`,
+          description: `High-converting ${stepType} page with AI-generated content`,
           url: `/funnel/${funnelData.name.toLowerCase().replace(/\s+/g, '-')}/${stepType}`,
           content: {
             ...copyContent,
             colors: colorScheme,
             images: images,
+            testimonials: testimonials,
+            features: features,
             fonts: {
               heading: 'Inter, sans-serif',
               body: 'System-ui, sans-serif'
@@ -548,309 +920,423 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         };
 
         steps.push(step);
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 1200));
       }
 
       setFunnelData(prev => ({ ...prev, steps }));
       setProgress(100);
 
       toast({
-        title: "🎉 Expert Marketing Funnel Generated!",
-        description: `Created ${steps.length} pages with professional copywriting that converts visitors into customers`,
+        title: "🎉 AI Funnel Generated Successfully!",
+        description: `Created ${steps.length} pages with human-like copy, professional images, and optimized conversion elements`,
       });
 
-      speakText(`Your expert marketing funnel is ready with ${steps.length} professionally designed pages that will attract your ideal customers!`);
+      speakText(`Your ${funnelData.productName} funnel is ready with ${steps.length} professionally designed pages!`);
 
-      setTimeout(() => {
-        setCurrentStep(2);
-      }, 1000);
+      // Immediate transition to review step after generation
+      setCurrentStep(2);
 
     } catch (error) {
+      console.error('Funnel generation error:', error);
       toast({
-        title: "Generation Error",
-        description: "Failed to generate funnel. Please try again.",
-        variant: "destructive"
+        title: "Generation Failed",
+        description: "Unable to generate funnel. Please try again.",
+        variant: "destructive",
       });
-      setIsGenerating(false);
       setProgress(0);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
   const editStep = (step: FunnelStep) => {
     setCurrentStepEdit(step);
-    setIsEditing(true);
   };
 
-  const saveStepEdit = () => {
-    if (currentStepEdit) {
-      setFunnelData(prev => ({
-        ...prev,
-        steps: prev.steps.map(step => 
-          step.id === currentStepEdit.id ? currentStepEdit : step
-        )
-      }));
-      setIsEditing(false);
-      setCurrentStepEdit(null);
-      toast({ title: "✅ Step saved successfully!" });
+  const saveStepEdit = (updatedStep: FunnelStep) => {
+    setFunnelData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step => 
+        step.id === updatedStep.id ? updatedStep : step
+      )
+    }));
+    setCurrentStepEdit(null);
+    toast({ title: "✅ Page updated successfully" });
+  };
+
+  const previewStep = (step: FunnelStep) => {
+    const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (previewWindow) {
+      previewWindow.document.write(generateFullPreviewHTML(step));
+      previewWindow.document.close();
     }
+    toast({ 
+      title: `👀 Previewing ${step.title}`, 
+      description: "Opening live preview in new tab..." 
+    });
   };
 
-  const saveFunnelToLibrary = () => {
-    const savedFunnel = {
-      id: Date.now().toString(),
-      ...funnelData,
-      savedAt: new Date().toISOString(),
-      status: 'saved'
-    };
-
-    setSavedFunnels(prev => [...prev, savedFunnel]);
-    toast({ title: "💾 Funnel saved to library!" });
+  const viewLiveFunnel = () => {
+    const funnelWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (funnelWindow) {
+      funnelWindow.document.write(generateFunnelIndexHTML());
+      funnelWindow.document.close();
+    }
+    toast({ 
+      title: "🚀 Opening Live Funnel", 
+      description: "Your complete funnel is opening in a new tab" 
+    });
   };
 
   const exportFunnel = () => {
     const funnelExport = {
       ...funnelData,
-      exportedAt: new Date().toISOString(),
-      version: '1.0'
+      exportDate: new Date().toISOString(),
+      version: "2.0",
+      metadata: {
+        totalPages: funnelData.steps.length,
+        estimatedConversion: "8-15%",
+        industry: selectedTemplate,
+        generatedBy: "LeadGenius AI"
+      }
     };
-
+    
     const blob = new Blob([JSON.stringify(funnelExport, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${funnelData.name}-funnel.json`;
+    a.download = `${funnelData.name.toLowerCase().replace(/\s+/g, '-')}-funnel-export.json`;
     a.click();
-
-    toast({ title: "📥 Funnel exported successfully!" });
+    URL.revokeObjectURL(url);
+    
+    toast({ 
+      title: "📥 Funnel Exported!", 
+      description: "Complete funnel data with AI content exported successfully" 
+    });
   };
 
-  const previewStep = (step: FunnelStep) => {
-    const previewHtml = generateStepPreviewHTML(step);
-    const newWindow = window.open('', '_blank');
-    if (newWindow) {
-      newWindow.document.write(previewHtml);
-      newWindow.document.close();
-    }
-  };
-
-  const generateStepPreviewHTML = (step: FunnelStep) => {
-    const { content } = step;
+  const generateFullPreviewHTML = (step: FunnelStep) => {
     return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${step.title} - Preview</title>
+        <title>${step.title} - ${funnelData.name}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { 
-            font-family: ${content.fonts.body}; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
             line-height: 1.6; 
-            color: ${content.colors.text};
-            background: ${content.colors.background};
+            background: ${step.content.colors?.background || '#ffffff'};
+            color: ${step.content.colors?.text || '#1f2937'};
           }
-          .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-          .hero { 
-            background: linear-gradient(135deg, ${content.colors.primary}, ${content.colors.secondary});
-            color: white; 
-            padding: 80px 0; 
-            text-align: center;
-          }
-          .headline { 
-            font-size: 3.5rem; 
+          .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+          .hero { text-align: center; margin-bottom: 80px; }
+          h1 { 
+            font-size: clamp(2.5rem, 5vw, 4rem); 
             font-weight: 800; 
-            margin-bottom: 20px;
-            font-family: ${content.fonts.heading};
-            line-height: 1.2;
+            color: ${step.content.colors?.primary || '#1f2937'};
+            margin-bottom: 24px;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
           }
-          .subheadline { 
-            font-size: 1.5rem; 
-            margin-bottom: 30px; 
-            opacity: 0.95;
+          h2 { 
+            font-size: clamp(1.25rem, 3vw, 1.75rem); 
+            color: #6b7280; 
+            margin-bottom: 40px;
+            font-weight: 500;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
           }
-          .cta-button { 
-            background: ${content.colors.accent}; 
-            color: white; 
-            padding: 20px 40px; 
+          .hero-image { 
+            width: 100%; 
+            max-width: 700px; 
+            height: auto; 
+            border-radius: 20px; 
+            margin: 40px auto;
+            display: block;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+          }
+          .content { 
+            max-width: 800px; 
+            margin: 0 auto 50px; 
             font-size: 1.25rem; 
+            line-height: 1.8;
+            color: #374151;
+          }
+          .content p { margin-bottom: 24px; }
+          .cta-button { 
+            display: inline-block;
+            background: linear-gradient(135deg, ${step.content.colors?.primary || '#3b82f6'}, ${step.content.colors?.secondary || '#1d4ed8'}); 
+            color: white; 
+            padding: 24px 48px; 
             border: none; 
-            border-radius: 8px; 
+            border-radius: 15px; 
+            font-size: 1.4rem; 
+            font-weight: 700;
             cursor: pointer;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-decoration: none;
             transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            letter-spacing: 0.025em;
           }
           .cta-button:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
           }
-          .content-section { 
-            padding: 60px 0; 
+          .form-container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 50px; 
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            border: 1px solid #e5e7eb;
+          }
+          .form-title { 
+            text-align: center; 
+            font-size: 1.75rem; 
+            font-weight: 700; 
+            margin-bottom: 30px;
+            color: ${step.content.colors?.primary || '#1f2937'};
+          }
+          .form-input { 
+            width: 100%; 
+            padding: 18px 20px; 
+            margin: 12px 0; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 12px; 
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+          }
+          .form-input:focus { 
+            border-color: ${step.content.colors?.primary || '#3b82f6'};
+            outline: none;
+            box-shadow: 0 0 0 3px ${step.content.colors?.primary || '#3b82f6'}20;
+          }
+          .features { 
+            max-width: 700px; 
+            margin: 60px auto; 
+            display: grid;
+            gap: 20px;
+          }
+          .feature-item { 
+            display: flex; 
+            align-items: flex-start; 
+            padding: 20px;
             background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid ${step.content.colors?.primary || '#10b981'};
           }
-          .features-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 30px; 
-            margin: 40px 0;
+          .feature-icon { 
+            color: ${step.content.colors?.primary || '#10b981'}; 
+            margin-right: 15px; 
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 2px;
           }
-          .feature-card { 
-            padding: 30px; 
-            background: #f8fafc; 
-            border-radius: 12px; 
-            text-align: center;
-            border: 2px solid ${content.colors.primary}20;
+          .feature-text {
+            font-size: 1.1rem;
+            color: #374151;
+            font-weight: 500;
           }
-          .testimonial { 
-            background: #f8fafc; 
-            padding: 40px; 
-            border-radius: 12px; 
-            margin: 30px 0;
-            border-left: 4px solid ${content.colors.primary};
+          .testimonials {
+            max-width: 1000px;
+            margin: 80px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
           }
-          .testimonial-quote { 
-            font-size: 1.2rem; 
-            font-style: italic; 
+          .testimonial {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid #f3f4f6;
+          }
+          .stars {
+            display: flex;
             margin-bottom: 20px;
-            color: ${content.colors.text};
           }
-          .testimonial-author { 
-            font-weight: 600; 
-            color: ${content.colors.primary};
-          }
-          .urgency-banner { 
-            background: #fee2e2; 
-            color: #dc2626; 
-            text-align: center; 
-            padding: 15px; 
-            font-weight: 600;
-            border-radius: 8px;
-            margin: 20px 0;
-          }
-          .guarantee-box { 
-            background: #f0fdf4; 
-            border: 2px solid #22c55e; 
-            border-radius: 12px; 
-            padding: 30px; 
-            text-align: center; 
-            margin: 40px 0;
-          }
-          .price-section { 
-            background: linear-gradient(135deg, ${content.colors.primary}, ${content.colors.secondary}); 
-            color: white; 
-            padding: 60px 0; 
-            text-align: center;
-          }
-          .price-original { 
-            font-size: 1.5rem; 
-            text-decoration: line-through; 
-            opacity: 0.7;
-          }
-          .price-current { 
-            font-size: 3rem; 
-            font-weight: 800; 
+          .star {
             color: #fbbf24;
+            font-size: 1.2rem;
+            margin-right: 2px;
           }
-          .social-proof { 
-            text-align: center; 
-            padding: 40px 0; 
-            background: #f8fafc;
+          .quote {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #374151;
+            margin-bottom: 25px;
+            font-style: italic;
+          }
+          .author {
+            display: flex;
+            align-items: center;
+          }
+          .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+          }
+          .author-info h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+          }
+          .author-info p {
+            color: #6b7280;
+            font-size: 0.9rem;
+          }
+          .urgency-banner {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            font-weight: 600;
+            font-size: 0.95rem;
+          }
+          .main-content {
+            margin-top: 60px;
           }
           @media (max-width: 768px) {
-            .headline { font-size: 2.5rem; }
-            .subheadline { font-size: 1.25rem; }
-            .features-grid { grid-template-columns: 1fr; }
+            .container { padding: 40px 15px; }
+            .cta-button { padding: 18px 36px; font-size: 1.2rem; }
+            .form-container { padding: 30px 25px; }
+            .testimonials { grid-template-columns: 1fr; }
+            .feature-item { padding: 15px; }
           }
         </style>
       </head>
       <body>
-        <div class="hero">
-          <div class="container">
-            <h1 class="headline">${content.headline}</h1>
-            <p class="subheadline">${content.subheadline}</p>
-            <button class="cta-button">${content.ctaText}</button>
-          </div>
-        </div>
-
-        <div class="content-section">
-          <div class="container">
-            ${content.urgency ? `<div class="urgency-banner">⚡ ${content.urgency}</div>` : ''}
-
-            <div style="font-size: 1.1rem; line-height: 1.8; white-space: pre-line;">${content.bodyText}</div>
-
-            ${content.features ? `
-              <div class="features-grid">
-                ${content.features.map(feature => `
-                  <div class="feature-card">
-                    <h3 style="color: ${content.colors.primary}; margin-bottom: 15px;">✅ ${feature}</h3>
-                  </div>
-                `).join('')}
-              </div>
-            ` : ''}
-
-            ${content.testimonials ? content.testimonials.map(testimonial => `
-              <div class="testimonial">
-                <div class="testimonial-quote">"${testimonial.quote}"</div>
-                <div class="testimonial-author">
-                  — ${testimonial.author}, ${testimonial.role}
-                  ${testimonial.results ? `<br><strong>${testimonial.results}</strong>` : ''}
-                </div>
-              </div>
-            `).join('') : ''}
-
-            ${content.pricing ? `
-              <div class="price-section">
-                <div class="container">
-                  <div class="price-original">${content.pricing.original}</div>
-                  <div class="price-current">${content.pricing.current}</div>
-                  <div style="font-size: 1.2rem; margin: 20px 0;">${content.pricing.savings}</div>
-                  <button class="cta-button">${content.ctaText}</button>
-                </div>
-              </div>
-            ` : ''}
-
-            ${content.guarantees ? `
-              <div class="guarantee-box">
-                <h3 style="color: #22c55e; margin-bottom: 15px;">🛡️ Your Success is Guaranteed</h3>
-                ${content.guarantees.map(guarantee => `<p>✅ ${guarantee}</p>`).join('')}
-              </div>
-            ` : ''}
-
-            <div style="text-align: center; margin: 60px 0;">
-              <button class="cta-button">${content.ctaText}</button>
-            </div>
-          </div>
-        </div>
-
-        ${content.socialProof ? `
-          <div class="social-proof">
-            <div class="container">
-              <h3 style="color: ${content.colors.primary}; margin-bottom: 20px;">Join 50,000+ Successful People</h3>
-              <p style="font-size: 1.1rem;">${content.socialProof}</p>
-            </div>
+        ${step.type === 'offer' ? `
+          <div class="urgency-banner">
+            ⏰ Limited Time Offer: Save 50% - Offer Expires in 24 Hours!
           </div>
         ` : ''}
+        
+        <div class="main-content">
+          <div class="container">
+            <div class="hero">
+              ${step.content.headline ? `<h1>${step.content.headline}</h1>` : ''}
+              ${step.content.subheadline ? `<h2>${step.content.subheadline}</h2>` : ''}
+              ${step.content.images && step.content.images[0] ? 
+                `<img src="${step.content.images[0]}" alt="Hero Image" class="hero-image" onerror="this.src='https://via.placeholder.com/700x400/3b82f6/ffffff?text=Professional+Image'" />` : ''}
+            </div>
+            
+            ${step.content.bodyText ? `
+              <div class="content">
+                ${step.content.bodyText.split('\n').map(paragraph => 
+                  paragraph.trim() ? `<p>${paragraph}</p>` : ''
+                ).join('')}
+              </div>
+            ` : ''}
+            
+            ${step.content.features && step.content.features.length > 0 ? `
+              <div class="features">
+                ${step.content.features.map(feature => 
+                  `<div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span class="feature-text">${feature}</span>
+                  </div>`
+                ).join('')}
+              </div>
+            ` : ''}
+            
+            ${step.content.testimonials && step.content.testimonials.length > 0 ? `
+              <div class="testimonials">
+                ${step.content.testimonials.map(testimonial => 
+                  `<div class="testimonial">
+                    <div class="stars">
+                      ${'★'.repeat(testimonial.rating || 5)}
+                    </div>
+                    <div class="quote">"${testimonial.quote}"</div>
+                    <div class="author">
+                      <img src="${testimonial.avatar}" alt="${testimonial.author}" class="author-avatar" />
+                      <div class="author-info">
+                        <h4>${testimonial.author}</h4>
+                        <p>${testimonial.role} at ${testimonial.company}</p>
+                      </div>
+                    </div>
+                  </div>`
+                ).join('')}
+              </div>
+            ` : ''}
+            
+            ${step.type === 'optin' ? `
+              <div class="form-container">
+                <h3 class="form-title">Get Your Free Access Now</h3>
+                <form onsubmit="alert('Form submitted! (This is a preview)'); return false;">
+                  <input type="text" placeholder="Enter your first name" class="form-input" required />
+                  <input type="email" placeholder="Enter your email address" class="form-input" required />
+                  <button type="submit" class="cta-button" style="width: 100%; margin-top: 20px;">
+                    ${step.content.ctaText || 'Get Free Access'}
+                  </button>
+                </form>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #6b7280;">
+                  🔒 100% Privacy Guaranteed. No Spam Ever.
+                </p>
+              </div>
+            ` : step.content.ctaText ? `
+              <div style="text-align: center; margin: 50px 0;">
+                <a href="#" class="cta-button" onclick="alert('CTA clicked! (This is a preview)'); return false;">
+                  ${step.content.ctaText}
+                </a>
+                <p style="margin-top: 20px; font-size: 0.9rem; color: #6b7280;">
+                  ✅ 60-Day Money-Back Guarantee
+                </p>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <script>
+          // Add some interactivity
+          document.addEventListener('DOMContentLoaded', function() {
+            console.log('Live preview loaded for: ${step.title}');
+            
+            // Animate elements on scroll
+            const observerOptions = {
+              threshold: 0.1,
+              rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  entry.target.style.opacity = '1';
+                  entry.target.style.transform = 'translateY(0)';
+                }
+              });
+            }, observerOptions);
+            
+            // Observe all content elements
+            document.querySelectorAll('.feature-item, .testimonial, .content').forEach(el => {
+              el.style.opacity = '0';
+              el.style.transform = 'translateY(20px)';
+              el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+              observer.observe(el);
+            });
+          });
+        </script>
       </body>
       </html>
     `;
   };
 
-  const viewCompleteFunnel = () => {
-    const funnelOverviewHtml = generateFunnelOverviewHTML();
-    const newWindow = window.open('', '_blank');
-    if (newWindow) {
-      newWindow.document.write(funnelOverviewHtml);
-      newWindow.document.close();
-    }
-  };
-
-  const generateFunnelOverviewHTML = () => {
+  const generateFunnelIndexHTML = () => {
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -858,219 +1344,237 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${funnelData.name} - Complete Funnel</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { 
             font-family: 'Inter', sans-serif; 
-            line-height: 1.6; 
-            color: #1e293b;
             background: #f8fafc;
+            color: #1f2937;
           }
-          .header { 
-            background: linear-gradient(135deg, #2563eb, #1d4ed8); 
-            color: white; 
+          .header {
+            background: white;
             padding: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
           }
-          .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-          .nav { 
-            display: flex; 
-            justify-content: space-between; 
+          .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
           }
-          .nav-links { 
-            display: flex; 
-            list-style: none; 
+          .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+          }
+          .nav {
+            display: flex;
             gap: 30px;
           }
-          .nav-links a { 
-            color: white; 
-            text-decoration: none; 
+          .nav a {
+            text-decoration: none;
+            color: #6b7280;
             font-weight: 500;
-            transition: opacity 0.3s;
+            transition: color 0.3s ease;
           }
-          .nav-links a:hover { opacity: 0.8; }
-          .funnel-overview { 
-            padding: 60px 0; 
-            text-align: center;
+          .nav a:hover, .nav a.active {
+            color: #3b82f6;
           }
-          .funnel-title { 
-            font-size: 3rem; 
-            font-weight: 800; 
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
+          .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+          }
+          .funnel-overview {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+          }
+          .funnel-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
           }
-          .funnel-description { 
-            font-size: 1.25rem; 
-            color: #64748b; 
-            max-width: 600px; 
-            margin: 0 auto 40px;
+          .funnel-description {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 30px;
           }
-          .funnel-stats { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 20px; 
-            margin: 40px 0;
+          .funnel-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
           }
-          .stat-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border: 2px solid #e2e8f0;
-            transition: transform 0.3s ease;
+          .stat-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
           }
-          .stat-card:hover { transform: translateY(-5px); }
-          .stat-number { 
-            font-size: 2.5rem; 
-            font-weight: 800; 
-            color: #2563eb;
+          .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 5px;
           }
-          .stat-label { 
-            color: #64748b; 
-            font-weight: 500;
+          .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
           }
-          .funnel-flow { 
-            padding: 60px 0;
+          .funnel-flow {
+            display: grid;
+            gap: 30px;
           }
-          .step-card { 
-            background: white; 
-            border-radius: 16px; 
-            padding: 30px; 
-            margin: 30px 0; 
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            border: 2px solid #e2e8f0;
+          .step-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
             transition: all 0.3s ease;
           }
-          .step-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+          .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
           }
-          .step-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+          .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 20px;
           }
-          .step-info h3 { 
-            font-size: 1.5rem; 
-            font-weight: 700; 
-            color: #1e293b; 
+          .step-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 8px;
+            color: #1f2937;
           }
-          .step-info p { 
-            color: #64748b; 
-            margin-bottom: 8px;
+          .step-info p {
+            color: #6b7280;
+            margin-bottom: 10px;
           }
-          .step-url { 
-            font-family: monospace; 
-            font-size: 0.9rem; 
-            color: #2563eb; 
-            background: #f1f5f9; 
-            padding: 4px 8px; 
-            border-radius: 4px;
+          .step-url {
+            font-size: 0.85rem;
+            color: #3b82f6;
+            font-family: monospace;
+            background: #eff6ff;
+            padding: 4px 8px;
+            border-radius: 6px;
           }
-          .step-actions { 
-            display: flex; 
+          .step-actions {
+            display: flex;
             gap: 10px;
           }
-          .btn { 
-            padding: 12px 24px; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.3s ease;
+          .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-          }
-          .btn-primary { 
-            background: #2563eb; 
-            color: white;
-          }
-          .btn-primary:hover { 
-            background: #1d4ed8; 
-            transform: translateY(-2px);
-          }
-          .btn-outline { 
-            background: transparent; 
-            color: #2563eb; 
-            border: 2px solid #2563eb;
-          }
-          .btn-outline:hover { 
-            background: #2563eb; 
-            color: white;
-          }
-          .performance-indicator { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            padding: 15px; 
-            background: #f8fafc; 
-            border-radius: 8px; 
-            margin: 15px 0;
+            transition: all 0.3s ease;
             font-size: 0.9rem;
-            color: #64748b;
           }
-          .step-preview { 
-            background: #f8fafc; 
-            border-radius: 8px; 
-            padding: 20px; 
+          .btn-primary {
+            background: #3b82f6;
+            color: white;
+          }
+          .btn-primary:hover {
+            background: #1d4ed8;
+          }
+          .btn-outline {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+          }
+          .btn-outline:hover {
+            background: #f9fafb;
+            color: #374151;
+          }
+          .step-preview {
             margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border-left: 4px solid #3b82f6;
           }
-          .preview-headline { 
-            font-size: 1.25rem; 
-            font-weight: 700; 
-            color: #1e293b; 
-            margin-bottom: 10px;
+          .preview-headline {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
           }
-          .preview-content { 
-            color: #64748b; 
-            line-height: 1.6;
+          .preview-subheadline {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+          }
+          .performance-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #10b981;
+            font-weight: 500;
+          }
+          .flow-arrow {
+            text-align: center;
+            color: #d1d5db;
+            font-size: 1.5rem;
+            margin: 10px 0;
           }
           @media (max-width: 768px) {
+            .container { padding: 20px 15px; }
+            .funnel-overview { padding: 25px; }
             .funnel-title { font-size: 2rem; }
-            .step-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .step-actions { width: 100%; }
-            .btn { width: 100%; justify-content: center; }
+            .step-actions { flex-direction: column; }
+            .nav { display: none; }
           }
         </style>
       </head>
       <body>
-        <header class="header">
-          <div class="container">
+        <div class="header">
+          <div class="header-content">
+            <div class="logo">${funnelData.name}</div>
             <nav class="nav">
-              <div style="font-size: 1.25rem; font-weight: 700;">LeadGenius AI</div>
-              <ul class="nav-links">
-                ${funnelData.steps.map((step, index) => 
-                  `<li><a href="#step-${index + 1}">${step.title}</a></li>`
-                ).join('')}
-              </ul>
+              ${funnelData.steps.map((step, index) => 
+                `<a href="#step-${index + 1}" onclick="scrollToStep(${index + 1})">${step.title}</a>`
+              ).join('')}
             </nav>
           </div>
-        </header>
+        </div>
 
         <div class="container">
           <div class="funnel-overview">
             <h1 class="funnel-title">${funnelData.name}</h1>
             <p class="funnel-description">
-              AI-generated marketing funnel designed for ${funnelData.targetAudience} with ${funnelData.steps.length} optimized conversion pages
+              Complete AI-generated funnel for ${funnelData.targetAudience} with ${funnelData.steps.length} optimized pages
             </p>
-
+            
             <div class="funnel-stats">
               <div class="stat-card">
                 <div class="stat-number">${funnelData.steps.length}</div>
                 <div class="stat-label">Total Pages</div>
               </div>
               <div class="stat-card">
-                <div class="stat-number">12-18%</div>
-                <div class="stat-label">Expected Conversion</div>
+                <div class="stat-number">8-15%</div>
+                <div class="stat-label">Est. Conversion</div>
               </div>
               <div class="stat-card">
                 <div class="stat-number">${funnelData.pricePoint || '$497'}</div>
@@ -1093,15 +1597,15 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                     <div class="step-url">${step.url}</div>
                   </div>
                   <div class="step-actions">
-                    <button class="btn btn-primary" onclick="window.open('${step.url}', '_blank')">
-                      👁️ Preview Page
+                    <button class="btn btn-primary" onclick="openStepPreview('${step.id}')">
+                      👁️ Preview
                     </button>
-                    <button class="btn btn-outline" onclick="alert('Edit functionality would open step editor')">
-                      ✏️ Edit Page
+                    <button class="btn btn-outline" onclick="editStep('${step.id}')">
+                      ✏️ Edit
                     </button>
                   </div>
                 </div>
-
+                
                 <div class="performance-indicator">
                   <span>📊</span>
                   <span>${step.analytics?.visitors || 0} visitors</span>
@@ -1110,257 +1614,173 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   <span>•</span>
                   <span>$${step.analytics?.revenue || 0} revenue</span>
                 </div>
-
+                
                 <div class="step-preview">
-                  <div class="preview-headline">${step.content.headline || 'AI-generated headline'}</div>
-                  <div class="preview-content">${step.content.subheadline || 'Professional subheadline content'}</div>
+                  <div class="preview-headline">${step.content.headline || 'Headline will appear here'}</div>
+                  <div class="preview-subheadline">${step.content.subheadline || 'Subheadline will appear here'}</div>
                 </div>
               </div>
+              
+              ${index < funnelData.steps.length - 1 ? '<div class="flow-arrow">⬇️</div>' : ''}
             `).join('')}
           </div>
-
-          <div style="text-align: center; padding: 60px 0; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 16px; color: white; margin: 40px 0;">
-            <h2 style="font-size: 2rem; margin-bottom: 20px;">🚀 Ready to Launch Your Funnel?</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 30px; opacity: 0.9;">
-              Your AI-generated funnel is ready to start converting visitors into customers
-            </p>
-            <button class="btn btn-primary" style="background: white; color: #2563eb; font-size: 1.1rem;">
-              Launch Funnel Now
-            </button>
-          </div>
         </div>
+
+        <script>
+          function scrollToStep(stepNumber) {
+            document.getElementById('step-' + stepNumber).scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+          
+          function openStepPreview(stepId) {
+            alert('Opening preview for step: ' + stepId + '\\n\\nIn a real implementation, this would open the live page preview.');
+          }
+          
+          function editStep(stepId) {
+            alert('Opening editor for step: ' + stepId + '\\n\\nIn a real implementation, this would open the page builder.');
+          }
+
+          // Update active nav link on scroll
+          document.addEventListener('scroll', function() {
+            const steps = document.querySelectorAll('[id^="step-"]');
+            const navLinks = document.querySelectorAll('.nav a');
+            
+            let current = '';
+            steps.forEach(step => {
+              const rect = step.getBoundingClientRect();
+              if (rect.top <= 100) {
+                current = step.id;
+              }
+            });
+            
+            navLinks.forEach(link => {
+              link.classList.remove('active');
+              if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+              }
+            });
+          });
+        </script>
       </body>
       </html>
     `;
   };
 
-  if (isEditing && currentStepEdit) {
-    return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Edit {currentStepEdit.title}</h1>
-              <p className="text-muted-foreground">Customize your page content and design</p>
-            </div>
-            <div className="space-x-2">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
-                <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
-                Back to Funnel
-              </Button>
-              <Button onClick={saveStepEdit}>
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="border-0 shadow-soft">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Edit3 className="w-5 h-5" />
-                  <span>Edit Content</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label>Headline</Label>
-                  <Input
-                    value={currentStepEdit.content.headline}
-                    onChange={(e) => setCurrentStepEdit({
-                      ...currentStepEdit,
-                      content: { ...currentStepEdit.content, headline: e.target.value }
-                    })}
-                  />
-                </div>
-
-                <div>
-                  <Label>Subheadline</Label>
-                  <Textarea
-                    value={currentStepEdit.content.subheadline}
-                    onChange={(e) => setCurrentStepEdit({
-                      ...currentStepEdit,
-                      content: { ...currentStepEdit.content, subheadline: e.target.value }
-                    })}
-                    rows={2}
-                  />
-                </div>
-
-                <div>
-                  <Label>Body Text</Label>
-                  <Textarea
-                    value={currentStepEdit.content.bodyText}
-                    onChange={(e) => setCurrentStepEdit({
-                      ...currentStepEdit,
-                      content: { ...currentStepEdit.content, bodyText: e.target.value }
-                    })}
-                    rows={6}
-                  />
-                </div>
-
-                <div>
-                  <Label>Call-to-Action Button Text</Label>
-                  <Input
-                    value={currentStepEdit.content.ctaText}
-                    onChange={(e) => setCurrentStepEdit({
-                      ...currentStepEdit,
-                      content: { ...currentStepEdit.content, ctaText: e.target.value }
-                    })}
-                  />
-                </div>
-
-                {currentStepEdit.content.urgency && (
-                  <div>
-                    <Label>Urgency Message</Label>
-                    <Input
-                      value={currentStepEdit.content.urgency}
-                      onChange={(e) => setCurrentStepEdit({
-                        ...currentStepEdit,
-                        content: { ...currentStepEdit.content, urgency: e.target.value }
-                      })}
-                    />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-soft">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Eye className="w-5 h-5" />
-                  <span>Live Preview</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="border rounded-lg p-6 bg-white min-h-[500px]">
-                  <div 
-                    className="text-center p-8 rounded-lg mb-6"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${currentStepEdit.content.colors.primary}, ${currentStepEdit.content.colors.secondary})`,
-                      color: 'white'
-                    }}
-                  >
-                    <h1 className="text-2xl font-bold mb-4">{currentStepEdit.content.headline}</h1>
-                    <p className="text-lg opacity-90 mb-6">{currentStepEdit.content.subheadline}</p>
-                    <button 
-                      className="px-6 py-3 rounded-lg font-semibold"
-                      style={{ background: currentStepEdit.content.colors.accent, color: 'white' }}
-                    >
-                      {currentStepEdit.content.ctaText}
-                    </button>
-                  </div>
-
-                  {currentStepEdit.content.urgency && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-center text-red-700 font-semibold">
-                      ⚡ {currentStepEdit.content.urgency}
-                    </div>
-                  )}
-
-                  <div className="prose prose-lg max-w-none">
-                    <p style={{ whiteSpace: 'pre-line' }}>{currentStepEdit.content.bodyText}</p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => previewStep(currentStepEdit)}>
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Full Preview
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const steps = [
-    { number: 1, title: "Business Intelligence", completed: currentStep > 0 },
-    { number: 2, title: "AI Generation", completed: currentStep > 1 },
-    { number: 3, title: "Review & Edit", completed: currentStep > 2 }
+    { title: "Funnel Setup", description: "Configure your funnel basics with AI assistance" },
+    { title: "AI Generation", description: "AI creates professional pages with human-like copy" },
+    { title: "Review & Edit", description: "Customize and perfect your funnel pages" },
+    { title: "Launch", description: "Make your funnel live and start converting" }
   ];
 
-  return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">AI Funnel Expert</h1>
-            <p className="text-muted-foreground">Expert marketer that creates funnels that convert</p>
-          </div>
-          {onBack && (
-            <Button variant="outline" onClick={onBack}>
-              <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
-              Back
-            </Button>
-          )}
-        </div>
-
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-12">
-          <div className="flex items-center space-x-8">
-            {steps.map((step, index) => (
-              <div key={step.number} className="flex items-center">
-                <div className={`
-                  flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all
-                  ${step.completed 
-                    ? 'bg-success border-success text-white' 
-                    : currentStep === step.number - 1 
-                      ? 'border-primary text-primary bg-primary/10' 
-                      : 'border-muted-foreground text-muted-foreground'
-                  }
-                `}>
-                  {step.completed ? <Check className="w-6 h-6" /> : step.number}
-                </div>
-                <span className={`ml-3 text-sm font-medium ${
-                  step.completed || currentStep === step.number - 1 ? 'text-foreground' : 'text-muted-foreground'
-                }`}>
-                  {step.title}
-                </span>
-                {index < steps.length - 1 && (
-                  <ArrowRight className="w-5 h-5 mx-6 text-muted-foreground" />
-                )}
+  if (currentStep === 0) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-6xl mx-auto">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Brain className="w-6 h-6 text-primary" />
+                <span>AI Funnel Builder - FunnelKit Style</span>
+              </CardTitle>
+              <div className="flex items-center space-x-4 mt-4">
+                {steps.map((step, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                      index <= currentStep ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <span className={`text-sm ${index <= currentStep ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </span>
+                    {index < steps.length - 1 && (
+                      <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center space-x-2 text-lg">
+                    <Brain className="w-5 h-5 text-primary" />
+                    <span>AI Funnel Genius</span>
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Describe your complete funnel vision and let AI create everything - copywriting, images, and funnel flow
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    placeholder="Example: I want to sell my online course on confidence building for introverts. My target audience is shy professionals aged 25-40 who struggle with networking. I want a complete funnel with a free confidence checklist as lead magnet, email sequence, and main offer at $297. Include upsells for 1-on-1 coaching at $997..."
+                    rows={6}
+                    value={funnelData.aiDescription}
+                    onChange={(e) => setFunnelData(prev => ({ ...prev, aiDescription: e.target.value }))}
+                    className="resize-none"
+                  />
+                  <Button 
+                    className="mt-3 w-full" 
+                    onClick={() => {
+                      const description = funnelData.aiDescription || "";
+                      if (description) {
+                        const productName = description.match(/sell my ([^.]+)/)?.[1] || "Premium Course";
+                        const audience = description.match(/target audience is ([^.]+)/)?.[1] || "Professionals";
+                        const price = description.match(/\$(\d+)/)?.[0] || "$497";
+                        
+                        setFunnelData(prev => ({
+                          ...prev,
+                          name: productName + " Funnel",
+                          productName: productName,
+                          targetAudience: audience,
+                          pricePoint: price,
+                          mainGoal: `Generate leads and sales for ${productName}`
+                        }));
+                        
+                        toast({
+                          title: "🧠 AI Analysis Complete!",
+                          description: "Form auto-filled based on your description"
+                        });
+                      }
+                    }}
+                    disabled={!funnelData.aiDescription}
+                  >
+                    <Brain className="w-4 h-4 mr-2" />
+                    Auto-Fill From AI Description
+                  </Button>
+                </CardContent>
+              </Card>
 
-        {/* Step 1: Business Intelligence Gathering */}
-        {currentStep === 0 && (
-          <div className="space-y-8">
-            <Card className="border-0 shadow-soft bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <Brain className="w-5 h-5 text-primary" />
-                  <span>AI Marketing Intelligence Gathering</span>
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  I'm an expert marketer. Tell me about your business so I can create a funnel that attracts your ideal customers and drives conversions.
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                   <div>
-                    <Label>Business/Product Name *</Label>
+                    <Label htmlFor="funnelName">Funnel Name</Label>
                     <Input
-                      placeholder="e.g., Ultimate Confidence Course, Business Growth Accelerator"
-                      value={funnelData.productName}
-                      onChange={(e) => setFunnelData(prev => ({ ...prev, productName: e.target.value }))}
+                      id="funnelName"
+                      placeholder="e.g., Fitness Transformation Program"
+                      value={funnelData.name}
+                      onChange={(e) => setFunnelData(prev => ({ ...prev, name: e.target.value }))}
                     />
                   </div>
 
                   <div>
-                    <Label>Industry *</Label>
-                    <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                    <Label htmlFor="industry">Industry Template</Label>
+                    <Select onValueChange={(value) => {
+                      setSelectedTemplate(value);
+                      setFunnelData(prev => ({ ...prev, industry: value }));
+                    }} value={selectedTemplate}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your industry" />
+                        <SelectValue placeholder="Choose your industry" />
                       </SelectTrigger>
                       <SelectContent>
-                        {industryTemplates.map(template => (
+                        {industryTemplates.map((template) => (
                           <SelectItem key={template.id} value={template.id}>
-                            {template.name}
+                            <div>
+                              <div className="font-medium">{template.name}</div>
+                              <div className="text-sm text-muted-foreground">{template.description}</div>
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1368,232 +1788,510 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   </div>
 
                   <div>
-                    <Label>Price Point *</Label>
-                    <Select 
-                      value={funnelData.pricePoint} 
-                      onValueChange={(value) => setFunnelData(prev => ({ ...prev, pricePoint: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select price range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="$97">$97 - Entry Level</SelectItem>
-                        <SelectItem value="$197">$197 - Standard</SelectItem>
-                        <SelectItem value="$297">$297 - Premium</SelectItem>
-                        <SelectItem value="$497">$497 - Professional</SelectItem>
-                        <SelectItem value="$997">$997 - Elite</SelectItem>
-                        <SelectItem value="$1997">$1997+ - Luxury</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="productName">Product/Service Name</Label>
+                    <Input
+                      id="productName"
+                      placeholder="e.g., 90-Day Body Transformation"
+                      value={funnelData.productName}
+                      onChange={(e) => setFunnelData(prev => ({ ...prev, productName: e.target.value }))}
+                    />
                   </div>
 
                   <div>
-                    <Label>Funnel Name *</Label>
+                    <Label htmlFor="pricePoint">Price Point</Label>
                     <Input
-                      placeholder="e.g., Confidence Transformation Funnel"
-                      value={funnelData.name}
-                      onChange={(e) => setFunnelData(prev => ({ ...prev, name: e.target.value }))}
+                      id="pricePoint"
+                      placeholder="e.g., $497"
+                      value={funnelData.pricePoint}
+                      onChange={(e) => setFunnelData(prev => ({ ...prev, pricePoint: e.target.value }))}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label>Target Audience (Be Specific) *</Label>
-                  <Textarea
-                    placeholder="e.g., Introverted professionals aged 25-40 who struggle with networking and public speaking, work in corporate environments, earn $50K+, want to advance their careers but lack confidence..."
-                    rows={3}
-                    value={funnelData.targetAudience}
-                    onChange={(e) => setFunnelData(prev => ({ ...prev, targetAudience: e.target.value }))}
-                  />
-                </div>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="targetAudience">Target Audience</Label>
+                    <Textarea
+                      id="targetAudience"
+                      placeholder="e.g., Busy professionals aged 25-45 who want to get fit but struggle with time and motivation"
+                      value={funnelData.targetAudience}
+                      onChange={(e) => setFunnelData(prev => ({ ...prev, targetAudience: e.target.value }))}
+                      rows={3}
+                    />
+                  </div>
 
-                <div>
-                  <Label>Business Goal (This helps AI understand your intention) *</Label>
-                  <Textarea
-                    placeholder="e.g., I want to generate high-quality leads for my confidence coaching program. My goal is to help introverted professionals overcome social anxiety and become confident leaders. I want to attract people who are serious about transformation and willing to invest in themselves..."
-                    rows={4}
-                    value={funnelData.mainGoal}
-                    onChange={(e) => setFunnelData(prev => ({ ...prev, mainGoal: e.target.value }))}
-                  />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    💡 This information helps me understand your business intent and create copy that attracts your ideal customers. It won't appear on your funnel pages.
+                  <div>
+                    <Label htmlFor="mainGoal">Main Goal</Label>
+                    <Textarea
+                      id="mainGoal"
+                      placeholder="e.g., Generate high-quality leads for my personal training program and convert them into paid clients"
+                      value={funnelData.mainGoal}
+                      onChange={(e) => setFunnelData(prev => ({ ...prev, mainGoal: e.target.value }))}
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {selectedTemplate && (
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <h3 className="font-medium mb-2">AI-Generated Funnel Structure Preview</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {industryTemplates.find(t => t.id === selectedTemplate)?.defaultSteps.map((step, index) => (
+                      <div key={index} className="bg-background rounded-lg p-3 border">
+                        <div className="font-medium text-sm capitalize mb-1">{step.replace(/([A-Z])/g, ' $1').trim()} Page</div>
+                        <div className="text-xs text-muted-foreground">
+                          Est. Conv: {industryTemplates.find(t => t.id === selectedTemplate)?.conversionRates[step] || '5-10%'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-3">
+                    🎯 Each page will have human-like copywriting, professional images, and conversion optimization
                   </p>
                 </div>
+              )}
 
-                <Button 
-                  className="w-full" 
-                  size="lg"
-                  onClick={() => {
-                    if (funnelData.productName && selectedTemplate && funnelData.targetAudience && funnelData.mainGoal && funnelData.pricePoint && funnelData.name) {
-                      setCurrentStep(1);
-                      generateAIFunnel();
-                    } else {
-                      toast({
-                        title: "Missing Information",
-                        description: "Please fill in all required fields to continue.",
-                        variant: "destructive"
-                      });
-                    }
-                  }}
-                  disabled={!funnelData.productName || !selectedTemplate || !funnelData.targetAudience || !funnelData.mainGoal || !funnelData.pricePoint || !funnelData.name}
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Analyze & Generate Expert Funnel
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={onBack}>
+                  Cancel
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                <Button 
+                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                  onClick={() => setCurrentStep(1)}
+                  disabled={!funnelData.name || !selectedTemplate || !funnelData.productName}
+                >
+                  <Brain className="w-4 h-4 mr-2" />
+                  Generate AI Funnel
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
-        {/* Step 2: AI Generation */}
-        {currentStep === 1 && (
-          <div className="text-center space-y-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-              <Brain className="w-10 h-10 text-white" />
+  if (currentStep === 1) {
+    return (
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Brain className="w-6 h-6 text-primary animate-pulse" />
+            <span>AI Generating Your Professional Funnel</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="text-center space-y-4">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+              <Brain className="w-10 h-10 text-white animate-pulse" />
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-4">AI Marketing Expert at Work</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Analyzing your business, understanding your target audience, and creating expert-level marketing copy that converts visitors into customers...
+              <h3 className="text-lg font-medium mb-2">Creating Your {funnelData.productName} Funnel</h3>
+              <p className="text-muted-foreground">
+                AI is generating human-like copywriting, professional images, and conversion-optimized layouts
               </p>
             </div>
 
-            <div className="max-w-md mx-auto">
-              <Progress value={progress} className="mb-4" />
-              <p className="text-sm text-muted-foreground">{progress}% Complete</p>
+            <div className="w-full max-w-md mx-auto">
+              <Progress value={progress} className="h-3" />
+              <p className="text-sm text-muted-foreground mt-2">{progress}% Complete</p>
             </div>
 
-            {isGenerating && (
-              <div className="bg-muted/30 rounded-lg p-6 max-w-2xl mx-auto">
-                <div className="flex items-center justify-center space-x-2 text-primary">
-                  <Zap className="w-5 h-5 animate-pulse" />
-                  <span className="font-medium">Creating your conversion-optimized funnel...</span>
+            <div className="bg-muted/50 rounded-lg p-4 max-w-md mx-auto">
+              <div className="text-sm space-y-2">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Human-like copywriting with psychological triggers</span>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Professional images from premium sources</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Conversion-optimized page layouts</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>FunnelKit-style page connections</span>
+                </div>
+              </div>
+            </div>
+
+            {!isGenerating && progress === 0 && (
+              <Button onClick={generateLiveFunnel} size="lg" className="mt-6 bg-gradient-to-r from-primary to-accent">
+                <Brain className="w-5 h-5 mr-2" />
+                Generate Professional Funnel
+              </Button>
+            )}
+
+            {progress === 100 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-center space-x-2 text-green-600">
+                  <CheckCircle className="w-6 h-6" />
+                  <span className="font-medium">Professional Funnel Generated Successfully!</span>
+                </div>
+                <Button 
+                  onClick={() => {
+                    console.log('Moving to review step with funnel data:', funnelData);
+                    setCurrentStep(2);
+                  }} 
+                  size="lg" 
+                  className="bg-gradient-to-r from-green-500 to-green-600"
+                >
+                  Review Your Professional Funnel
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
               </div>
             )}
           </div>
-        )}
+        </CardContent>
+      </Card>
+    );
+  }
 
-        {/* Step 3: Review & Edit */}
-        {currentStep === 2 && funnelData.steps.length > 0 && (
-          <div className="space-y-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-success to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Your Expert Funnel is Ready!</h2>
-              <p className="text-muted-foreground">
-                AI has created {funnelData.steps.length} professional pages with expert copywriting designed to convert your target audience
-              </p>
+  if (currentStep === 2) {
+    // Safety check - ensure we have funnel data before rendering review
+    if (!funnelData.steps || funnelData.steps.length === 0) {
+      console.error('No funnel steps available for review');
+      return (
+        <Card className="w-full max-w-4xl mx-auto">
+          <CardContent className="text-center py-8">
+            <div className="text-red-500 mb-4">
+              <XCircle className="w-12 h-12 mx-auto mb-2" />
+              <h3 className="text-lg font-medium">Error Loading Funnel</h3>
+              <p className="text-sm text-muted-foreground">No funnel data available for review</p>
             </div>
+            <Button onClick={() => setCurrentStep(0)} variant="outline">
+              Start Over
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
 
-            <div className="grid lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-blue-700">{funnelData.steps.length}</div>
-                <p className="text-sm text-blue-600">Expert Pages</p>
+    return (
+      <div className="w-full max-w-7xl mx-auto space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Eye className="w-6 h-6 text-primary" />
+                <span>Review & Edit Your AI-Generated Funnel</span>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-green-700">12-18%</div>
-                <p className="text-sm text-green-600">Expected Conversion</p>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => speakText(`Your ${funnelData.productName} funnel includes ${funnelData.steps.length} professionally designed pages with human-like copywriting and high-quality images.`)}
+                >
+                  <Volume2 className="w-4 h-4 mr-2" />
+                  Read Summary
+                </Button>
+                <Button onClick={viewLiveFunnel} className="bg-gradient-to-r from-primary to-accent">
+                  <Globe className="w-4 h-4 mr-2" />
+                  View Live Funnel
+                </Button>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-purple-700">{funnelData.pricePoint}</div>
-                <p className="text-sm text-purple-600">Price Point</p>
-              </div>
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-orange-700">AI</div>
-                <p className="text-sm text-orange-600">Generated</p>
-              </div>
-            </div>
+            </CardTitle>
+          </CardHeader>
+        </Card>
 
-            <div className="grid gap-6">
-              {funnelData.steps.map((step, index) => (
-                <Card key={step.id} className="border-0 shadow-soft hover:shadow-strong transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-foreground">
-                          Step {index + 1}: {step.title}
-                        </h3>
-                        <p className="text-muted-foreground">{step.description}</p>
-                        <p className="text-xs text-muted-foreground font-mono mt-1">{step.url}</p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
-                          <Eye className="w-4 h-4 mr-2" />
-                          Preview
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => editStep(step)}>
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          Edit
-                        </Button>
-                      </div>
+        <div className="grid gap-4">
+          {funnelData.steps.map((step, index) => (
+            <Card key={step.id} className="overflow-hidden">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">{index + 1}</span>
                     </div>
-
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground bg-muted/30 rounded-lg p-3">
-                      <span className="flex items-center space-x-1">
-                        <Users className="w-4 h-4" />
-                        <span>{step.analytics.visitors} visitors</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
-                        <TrendingUp className="w-4 h-4" />
-                        <span>{step.analytics.conversions} conversions</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
-                        <DollarSign className="w-4 h-4" />
-                        <span>${step.analytics.revenue} revenue</span>
-                      </span>
+                    <div>
+                      <h3 className="font-medium flex items-center space-x-2">
+                        <span>{step.title}</span>
+                        <Badge variant="outline">{step.type}</Badge>
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                      <p className="text-xs text-primary font-mono mt-1">{step.url}</p>
                     </div>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
+                      <Eye className="w-4 h-4 mr-1" />
+                      Live Preview
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => editStep(step)}>
+                      <Edit className="w-4 h-4 mr-1" />
+                      Edit Page
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => {
+                      const stepData = JSON.stringify(step, null, 2);
+                      const blob = new Blob([stepData], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${step.title.toLowerCase().replace(/\s+/g, '-')}.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      toast({ title: "📥 Page Exported", description: `${step.title} exported successfully` });
+                    }}>
+                      <Download className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
+                  <div className="p-6 min-h-[400px]" style={{ backgroundColor: step.content.colors?.background || '#ffffff' }}>
+                    <div className="space-y-6">
+                      {step.content.images && step.content.images[0] && (
+                        <div className="text-center">
+                          <img 
+                            src={step.content.images[0]} 
+                            alt={`${step.title} Hero`}
+                            className="max-w-full h-auto rounded-lg shadow-md mx-auto"
+                            style={{ maxHeight: '200px' }}
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://via.placeholder.com/600x300/3b82f6/ffffff?text=Professional+Image';
+                            }}
+                          />
+                        </div>
+                      )}
 
-                    <div className="mt-4 p-4 bg-muted/20 rounded-lg">
-                      <p className="font-medium text-sm mb-2">Preview:</p>
-                      <h4 className="font-semibold text-foreground">{step.content.headline}</h4>
-                      <p className="text-sm text-muted-foreground">{step.content.subheadline}</p>
+                      {step.content.headline && (
+                        <h1 className="text-3xl font-bold text-center" style={{ color: step.content.colors?.primary || '#000000' }}>
+                          {step.content.headline}
+                        </h1>
+                      )}
+
+                      {step.content.subheadline && (
+                        <p className="text-xl text-center text-muted-foreground">
+                          {step.content.subheadline}
+                        </p>
+                      )}
+
+                      {step.content.bodyText && (
+                        <div className="max-w-3xl mx-auto">
+                          <div className="text-lg leading-relaxed">
+                            {step.content.bodyText.split('\n').map((paragraph, idx) => (
+                              paragraph.trim() && <p key={idx} className="mb-4">{paragraph}</p>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {step.content.features && step.content.features.length > 0 && (
+                        <div className="max-w-2xl mx-auto">
+                          <div className="grid gap-3">
+                            {step.content.features.slice(0, 4).map((feature, idx) => (
+                              <div key={idx} className="flex items-start space-x-3 bg-white/50 p-3 rounded-lg">
+                                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                <span className="text-sm">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {step.type === 'optin' && (
+                        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-sm border">
+                          <div className="space-y-4">
+                            <Input placeholder="Enter your first name" />
+                            <Input placeholder="Enter your email address" type="email" />
+                            <Button className="w-full" style={{ backgroundColor: step.content.colors?.primary || '#3b82f6' }}>
+                              {step.content.ctaText || 'Get Free Access'}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {step.content.ctaText && step.type !== 'optin' && (
+                        <div className="text-center">
+                          <Button size="lg" className="text-lg px-8 py-4" style={{ backgroundColor: step.content.colors?.primary || '#3b82f6' }}>
+                            {step.content.ctaText}
+                          </Button>
+                        </div>
+                      )}
+
+                      {step.content.testimonials && step.content.testimonials.length > 0 && (
+                        <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto mt-8">
+                          {step.content.testimonials.map((testimonial, idx) => (
+                            <Card key={idx} className="p-4">
+                              <div className="flex mb-2">
+                                {[...Array(testimonial.rating || 5)].map((_, i) => (
+                                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                ))}
+                              </div>
+                              <p className="italic text-sm mb-3">"{testimonial.quote}"</p>
+                              <div className="flex items-center">
+                                <img 
+                                  src={testimonial.avatar} 
+                                  className="w-8 h-8 rounded-full mr-3" 
+                                  alt="Avatar"
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://via.placeholder.com/50x50/3b82f6/ffffff?text=👤';
+                                  }}
+                                />
+                                <div>
+                                  <div className="font-semibold text-sm">{testimonial.author}</div>
+                                  <div className="text-xs text-muted-foreground">{testimonial.role} at {testimonial.company}</div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                  </div>
+                </div>
 
-            <div className="flex justify-center space-x-4 pt-8">
-              <Button variant="outline" onClick={viewCompleteFunnel}>
-                <Globe className="w-4 h-4 mr-2" />
-                View Complete Funnel
-              </Button>
-              <Button variant="outline" onClick={saveFunnelToLibrary}>
-                <Save className="w-4 h-4 mr-2" />
-                Save to Library
-              </Button>
-              <Button variant="outline" onClick={exportFunnel}>
-                <Download className="w-4 h-4 mr-2" />
-                Export Funnel
-              </Button>
-              <Button onClick={() => {
-                const newFunnel = {
-                  id: Date.now().toString(),
-                  name: funnelData.name,
-                  industry: selectedTemplate,
-                  goal: funnelData.mainGoal,
-                  status: 'active' as const,
-                  leads: 0,
-                  conversion: 0,
-                  revenue: 0,
-                  created: 'Just now',
-                  steps: funnelData.steps.length,
-                  traffic: 0,
-                  aiGenerated: true,
-                  funnelData: funnelData
-                };
-                onComplete?.(newFunnel);
-              }} className="bg-gradient-to-r from-primary to-accent">
-                <Target className="w-4 h-4 mr-2" />
-                Launch Funnel
-              </Button>
-            </div>
+                {/* Performance metrics */}
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Estimated Performance:</span>
+                    <div className="flex space-x-4">
+                      <span>👥 {step.analytics?.visitors || Math.floor(Math.random() * 1000) + 100} visitors</span>
+                      <span>📈 {step.analytics?.conversions || Math.floor(Math.random() * 50) + 10} conversions</span>
+                      <span>💰 ${step.analytics?.revenue || Math.floor(Math.random() * 5000) + 1000} revenue</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex justify-between items-center">
+          <Button variant="outline" onClick={() => setCurrentStep(1)}>
+            <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
+            Back to Generation
+          </Button>
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" onClick={exportFunnel}>
+              <Download className="w-4 h-4 mr-2" />
+              Export Complete Funnel
+            </Button>
+            
+            <Button variant="outline" onClick={() => {
+              const libraryData = JSON.parse(localStorage.getItem('funnel-library') || '[]');
+              const libraryItem = {
+                id: Date.now().toString(),
+                name: funnelData.name,
+                industry: funnelData.industry,
+                steps: funnelData.steps.length,
+                template: funnelData,
+                savedDate: new Date().toISOString(),
+                aiGenerated: true
+              };
+              libraryData.push(libraryItem);
+              localStorage.setItem('funnel-library', JSON.stringify(libraryData));
+              toast({ title: "💾 Saved to Library!", description: "AI funnel template saved for future use" });
+            }}>
+              <Save className="w-4 h-4 mr-2" />
+              Save to Library
+            </Button>
+            
+            <Button onClick={() => setCurrentStep(3)} className="bg-gradient-to-r from-green-500 to-green-600">
+              <Play className="w-4 h-4 mr-2" />
+              Launch Funnel
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+
+        {currentStepEdit && (
+          <div className="fixed inset-0 bg-background z-50">
+            <PageBuilderForStep 
+              step={currentStepEdit}
+              onSave={saveStepEdit}
+              onClose={() => setCurrentStepEdit(null)}
+            />
           </div>
         )}
       </div>
-    </div>
+    );
+  }
+
+  // Final step (currentStep === 3) - Launch confirmation
+  return (
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <CheckCircle className="w-6 h-6 text-green-600" />
+          <span>🎉 AI Funnel Launched Successfully!</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-center space-y-6">
+        <div className="space-y-4">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-white" />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-medium mb-2">Your {funnelData.productName} funnel is now live!</h3>
+            <p className="text-muted-foreground">
+              All {funnelData.steps.length} pages are AI-optimized with human-like copywriting and professional images, ready to convert visitors into customers.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            <div className="text-center p-4 bg-muted/50 rounded-lg">
+              <Globe className="w-8 h-8 mx-auto text-primary mb-2" />
+              <p className="font-medium">Live Pages</p>
+              <p className="text-sm text-muted-foreground">{funnelData.steps.length} Connected</p>
+            </div>
+            <div className="text-center p-4 bg-muted/50 rounded-lg">
+              <Brain className="w-8 h-8 mx-auto text-primary mb-2" />
+              <p className="font-medium">AI Content</p>
+              <p className="text-sm text-muted-foreground">Human-like Copy</p>
+            </div>
+            <div className="text-center p-4 bg-muted/50 rounded-lg">
+              <ImageIcon className="w-8 h-8 mx-auto text-primary mb-2" />
+              <p className="font-medium">Pro Images</p>
+              <p className="text-sm text-muted-foreground">High-Quality</p>
+            </div>
+            <div className="text-center p-4 bg-muted/50 rounded-lg">
+              <Target className="w-8 h-8 mx-auto text-primary mb-2" />
+              <p className="font-medium">Conversion</p>
+              <p className="text-sm text-muted-foreground">8-15% Expected</p>
+            </div>
+          </div>
+
+          <div className="flex justify-center space-x-4">
+            <Button 
+              variant="outline"
+              onClick={viewLiveFunnel}
+            >
+              <Globe className="w-4 h-4 mr-2" />
+              View Complete Funnel
+            </Button>
+            <Button onClick={() => {
+              const newFunnel = {
+                id: Date.now().toString(),
+                name: funnelData.name,
+                industry: funnelData.industry,
+                goal: funnelData.mainGoal,
+                status: 'active' as const,
+                leads: 0,
+                conversion: 0,
+                revenue: 0,
+                created: 'Just now',
+                steps: funnelData.steps.length,
+                traffic: 0,
+                aiGenerated: true,
+                funnelData: funnelData
+              };
+              onComplete?.(newFunnel);
+            }} className="bg-gradient-to-r from-primary to-accent">
+              <Target className="w-4 h-4 mr-2" />
+              Go to Funnels Dashboard
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
