@@ -123,8 +123,13 @@ const Funnels = () => {
   if (showBuilder) {
     return (
       <LiveFunnelBuilder 
-        onClose={() => setShowBuilder(false)}
-        editingFunnel={editingFunnel}
+        onComplete={(newFunnel) => {
+          console.log('Funnel completed:', newFunnel);
+          setShowBuilder(false);
+          toast.success('Funnel created successfully!');
+        }}
+        onBack={() => setShowBuilder(false)}
+        initialFunnelData={editingFunnel}
       />
     );
   }

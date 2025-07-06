@@ -1,5 +1,5 @@
 
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,8 @@ import {
   Brain,
   Palette,
   Globe,
-  Settings
+  Settings,
+  Star
 } from "lucide-react";
 import PageBuilder from "./PageBuilder";
 import AIPageAssistant from "./AIPageAssistant";
@@ -814,7 +815,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   const [selectedTemplate, setSelectedTemplate] = useState(initialFunnelData?.industry || "");
   const [currentStepEdit, setCurrentStepEdit] = useState<FunnelStep | null>(null);
   const { toast } = useToast();
-  const synthRef = useRef<any>(null);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
+
+  // Initialize speech synthesis
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      synthRef.current = window.speechSynthesis;
+    }
+  }, []);
 
   const speakText = (text: string) => {
     if (synthRef.current) {
@@ -925,9 +933,8 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
       speakText(`Your ${funnelData.productName} funnel is ready with ${steps.length} professionally designed pages!`);
 
-      setTimeout(() => {
-        setCurrentStep(2);
-      }, 2000);
+      // Immediate transition to review step after generation
+      setCurrentStep(2);
 
     } catch (error) {
       console.error('Funnel generation error:', error);
@@ -1927,7 +1934,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   <CheckCircle className="w-6 h-6" />
                   <span className="font-medium">Professional Funnel Generated Successfully!</span>
                 </div>
-                <Button onClick={() => setCurrentStep(2)} size="lg" className="bg-gradient-to-r from-green-500 to-green-600">
+                <Button 
+                  onClick={() => {
+                    console.log('Moving to review step with funnel data:', funnelData);
+                    setCurrentStep(2);
+                  }} 
+                  size="lg" 
+                  className="bg-gradient-to-r from-green-500 to-green-600"
+                >
                   Review Your Professional Funnel
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
@@ -1940,6 +1954,25 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   }
 
   if (currentStep === 2) {
+    // Safety check - ensure we have funnel data before rendering review
+    if (!funnelData.steps || funnelData.steps.length === 0) {
+      console.error('No funnel steps available for review');
+      return (
+        <Card className="w-full max-w-4xl mx-auto">
+          <CardContent className="text-center py-8">
+            <div className="text-red-500 mb-4">
+              <XCircle className="w-12 h-12 mx-auto mb-2" />
+              <h3 className="text-lg font-medium">Error Loading Funnel</h3>
+              <p className="text-sm text-muted-foreground">No funnel data available for review</p>
+            </div>
+            <Button onClick={() => setCurrentStep(0)} variant="outline">
+              Start Over
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
+
     return (
       <div className="w-full max-w-7xl mx-auto space-y-6">
         <Card>
@@ -2182,6 +2215,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     );
   }
 
+  // Final step (currentStep === 3) - Launch confirmation
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
