@@ -25,6 +25,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import FunnelBuilder from "@/components/FunnelBuilder";
 import InstantFunnelWizard from "@/components/InstantFunnelWizard";
+import LiveLeadMagnetBuilder from "@/components/LiveLeadMagnetBuilder";
 
 const initialMagnets = [
   {
@@ -109,6 +110,7 @@ function getTypeIcon(type: string) {
 
 export default function LeadMagnets() {
   const [showBuilder, setShowBuilder] = useState(false);
+  const [showLiveBuilder, setShowLiveBuilder] = useState(false);
   const [showFunnelBuilder, setShowFunnelBuilder] = useState(false);
   const [showInstantFunnel, setShowInstantFunnel] = useState(false);
   const [selectedType, setSelectedType] = useState("");
@@ -213,6 +215,22 @@ export default function LeadMagnets() {
       <InstantFunnelWizard 
         onComplete={handleInstantFunnelComplete}
         onBack={() => setShowInstantFunnel(false)} 
+      />
+    );
+  }
+
+  if (showLiveBuilder) {
+    return (
+      <LiveLeadMagnetBuilder 
+        onComplete={(magnetData) => {
+          setMagnets(prev => [magnetData, ...prev]);
+          setShowLiveBuilder(false);
+          toast({
+            title: "Lead Magnet Created Successfully!",
+            description: "Your live lead magnet is ready to capture leads.",
+          });
+        }}
+        onBack={() => setShowLiveBuilder(false)} 
       />
     );
   }
@@ -381,9 +399,13 @@ export default function LeadMagnets() {
               <Zap className="w-4 h-4 mr-2" />
               Instant Funnel
             </Button>
-            <Button variant="gradient" onClick={() => setShowBuilder(true)}>
+            <Button variant="gradient" onClick={() => setShowLiveBuilder(true)}>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Live Lead Magnet
+            </Button>
+            <Button variant="outline" onClick={() => setShowBuilder(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Create Lead Magnet
+              Classic Builder
             </Button>
           </div>
         </div>

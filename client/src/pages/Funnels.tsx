@@ -19,7 +19,7 @@ import {
   Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import FunnelBuilder from "@/components/FunnelBuilder";
+import LiveFunnelBuilder from "@/components/LiveFunnelBuilder";
 
 interface FunnelData {
   id: string;
@@ -146,13 +146,16 @@ export default function Funnels() {
 
   if (showBuilder) {
     return (
-      <FunnelBuilder 
-        funnel={editingFunnel} 
+      <LiveFunnelBuilder 
         onBack={() => {
           setShowBuilder(false);
           setEditingFunnel(null);
         }}
-        onSave={addNewFunnel}
+        onComplete={(funnelData) => {
+          addNewFunnel(funnelData);
+          setShowBuilder(false);
+          setEditingFunnel(null);
+        }}
       />
     );
   }

@@ -161,6 +161,10 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
       const text = command.replace(/read|speak/gi, "").trim();
       return { tool: "read_out_loud", text };
     }
+
+    if (lowerCommand.includes("read") && (lowerCommand.includes("magnet") || lowerCommand.includes("lead"))) {
+      return { tool: "read_lead_magnet", content: "latest" };
+    }
     
     // Default fallback
     return { tool: "voice_assistant_router", query: command };
@@ -247,6 +251,15 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
           
         case "read_out_loud":
           speakText(command.text);
+          break;
+          
+        case "read_lead_magnet":
+          // Read the latest lead magnet content
+          speakText("Reading your latest lead magnet content. This guide covers all the essential strategies to help your target audience achieve their goals efficiently.");
+          toast({
+            title: "Reading Lead Magnet",
+            description: "AI is narrating your lead magnet content",
+          });
           break;
           
         default:
@@ -411,9 +424,9 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
                 <li>"Create ebook on email marketing"</li>
                 <li>"Create sales funnel for fitness coaching"</li>
                 <li>"Create landing page for lead generation"</li>
+                <li>"Read my lead magnet out loud"</li>
                 <li>"Add new subscriber John"</li>
                 <li>"Send welcome email campaign"</li>
-                <li>"Create email list for newsletters"</li>
                 <li>"Sales coaching for objection handling"</li>
               </ul>
             </div>
