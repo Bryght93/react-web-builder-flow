@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Zap, Eye, Edit, Play, Pause, Trash2, Copy, Download, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -145,7 +144,7 @@ const Funnels = () => {
             Create high-converting funnels with AI-powered assistance
           </p>
         </div>
-        
+
         <div className="flex gap-3">
           <Button variant="outline" onClick={handleCreateNew}>
             <Plus className="w-4 h-4 mr-2" />
@@ -213,7 +212,7 @@ const Funnels = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg line-clamp-1">{funnel.title}</CardTitle>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -222,7 +221,7 @@ const Funnels = () => {
                       <span>{funnel.lastModified}</span>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-3 gap-3 text-center">
                       <div>
@@ -238,7 +237,7 @@ const Funnels = () => {
                         <div className="text-xs text-muted-foreground">Revenue</div>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <Button 
                         size="sm" 
@@ -258,7 +257,7 @@ const Funnels = () => {
                           </>
                         )}
                       </Button>
-                      
+
                       <Button 
                         size="sm" 
                         variant={funnel.status === 'active' ? 'secondary' : 'default'}
@@ -270,11 +269,11 @@ const Funnels = () => {
                           <Play className="w-3 h-3" />
                         )}
                       </Button>
-                      
+
                       <Button size="sm" variant="ghost" onClick={() => handleExport(funnel)}>
                         <Download className="w-3 h-3" />
                       </Button>
-                      
+
                       <Button size="sm" variant="ghost" onClick={() => handleDuplicate(funnel)}>
                         <Copy className="w-3 h-3" />
                       </Button>
