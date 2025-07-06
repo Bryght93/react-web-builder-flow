@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mic, MicOff, Zap, X } from "lucide-react";
+import { Mic, MicOff, Zap, X, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface VoiceCommand {
   tool: string;
@@ -108,15 +109,12 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
       
       // Execute the routed command
       await executeCommand(routedCommand);
-      
-      speakText(`Command processed: ${routedCommand.tool.replace('_', ' ')}`);
     } catch (error) {
       toast({
         title: "Command Processing Error",
         description: "Unable to process the voice command. Please try again.",
         variant: "destructive",
       });
-      speakText("Sorry, I couldn't process that command. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -149,6 +147,16 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
       return { tool: "create_email_list", list_name: listName };
     }
     
+    if (lowerCommand.includes("create") && (lowerCommand.includes("landing") || lowerCommand.includes("page"))) {
+      const topic = extractTopic(command, ["landing", "page"]);
+      return { tool: "create_landing_page", topic, goal: "Generate leads" };
+    }
+    
+    if (lowerCommand.includes("coaching") || lowerCommand.includes("sales help")) {
+      const situation = command.replace(/coaching|sales help/gi, "").trim();
+      return { tool: "sales_coaching", situation };
+    }
+    
     if (lowerCommand.includes("read") || lowerCommand.includes("speak")) {
       const text = command.replace(/read|speak/gi, "").trim();
       return { tool: "read_out_loud", text };
@@ -168,47 +176,156 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
   };
 
   const executeCommand = async (command: VoiceCommand) => {
-    // Simulate command execution
-    switch (command.tool) {
-      case "generate_ebook":
-        toast({
-          title: "eBook Creation Started",
-          description: `Creating eBook on: ${command.topic}`,
-        });
-        break;
-      case "generate_funnel":
-        toast({
-          title: "Funnel Creation Started", 
-          description: `Building funnel for: ${command.product_description}`,
-        });
-        break;
-      case "add_subscriber":
-        toast({
-          title: "Subscriber Added",
-          description: "New contact added via voice command",
-        });
-        break;
-      case "send_email_campaign":
-        toast({
-          title: "Email Campaign",
-          description: "Preparing email campaign",
-        });
-        break;
-      case "create_email_list":
-        toast({
-          title: "Email List Created",
-          description: `New list: ${command.list_name}`,
-        });
-        break;
-      case "read_out_loud":
-        speakText(command.text);
-        break;
-      default:
-        toast({
-          title: "Command Recognized",
-          description: `Processing: ${command.query || 'voice command'}`,
-        });
+    try {
+      switch (command.tool) {
+        case "generate_ebook":
+          // Create actual eBook content
+          const ebookContent = await generateEbookContent(command.topic);
+          toast({
+            title: "eBook Generated Successfully",
+            description: `Created "${ebookContent.title}" with ${ebookContent.chapters.length} chapters`,
+          });
+          // Navigate to lead magnets page to show the new eBook
+          window.location.href = '/lead-magnets';
+          break;
+          
+        case "generate_funnel":
+          // Create actual funnel with pages
+          const funnelData = await generateFunnelContent(command.product_description);
+          toast({
+            title: "Funnel Created Successfully",
+            description: `Built "${funnelData.name}" with ${funnelData.steps.length} steps`,
+          });
+          // Navigate to funnels page to show the new funnel
+          window.location.href = '/funnels';
+          break;
+          
+        case "add_subscriber":
+          // Add real subscriber to database
+          await addSubscriberToDatabase(command.name, command.email || "voice@example.com");
+          toast({
+            title: "Subscriber Added",
+            description: `${command.name} added to your email list`,
+          });
+          break;
+          
+        case "send_email_campaign":
+          // Send actual email campaign
+          const campaign = await sendEmailCampaign(command.list_name, command.subject || "Voice Generated Email");
+          toast({
+            title: "Email Campaign Sent",
+            description: `Sent to ${campaign.recipients} subscribers`,
+          });
+          break;
+          
+        case "create_email_list":
+          // Create actual email list
+          await createEmailList(command.list_name);
+          toast({
+            title: "Email List Created",
+            description: `List "${command.list_name}" is ready to use`,
+          });
+          break;
+          
+        case "create_landing_page":
+          // Generate actual landing page
+          const landingPage = await generateLandingPage(command.topic, command.goal);
+          toast({
+            title: "Landing Page Created",
+            description: `"${landingPage.title}" is now live`,
+          });
+          break;
+          
+        case "sales_coaching":
+          // Provide AI sales coaching
+          const coachingAdvice = await getSalesCoaching(command.situation);
+          toast({
+            title: "Sales Coaching Provided",
+            description: coachingAdvice.summary,
+          });
+          break;
+          
+        case "read_out_loud":
+          speakText(command.text);
+          break;
+          
+        default:
+          toast({
+            title: "Command Processed",
+            description: `Executed: ${command.query || 'voice command'}`,
+          });
+      }
+    } catch (error) {
+      toast({
+        title: "Execution Error",
+        description: "Failed to complete the requested action",
+        variant: "destructive",
+      });
     }
+  };
+
+  // Helper functions for live functionality
+  const generateEbookContent = async (topic: string) => {
+    const response = await apiRequest('/api/generate-ebook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic })
+    });
+    return response.json();
+  };
+
+  const generateFunnelContent = async (productDescription: string) => {
+    const response = await apiRequest('/api/generate-funnel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productDescription })
+    });
+    return response.json();
+  };
+
+  const addSubscriberToDatabase = async (name: string, email: string) => {
+    const response = await apiRequest('/api/subscribers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, source: 'voice' })
+    });
+    return response.json();
+  };
+
+  const sendEmailCampaign = async (listName: string, subject: string) => {
+    const response = await apiRequest('/api/send-campaign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ listName, subject })
+    });
+    return response.json();
+  };
+
+  const createEmailList = async (listName: string) => {
+    const response = await apiRequest('/api/email-lists', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: listName })
+    });
+    return response.json();
+  };
+
+  const generateLandingPage = async (topic: string, goal: string) => {
+    const response = await apiRequest('/api/generate-landing-page', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, goal })
+    });
+    return response.json();
+  };
+
+  const getSalesCoaching = async (situation: string) => {
+    const response = await apiRequest('/api/sales-coaching', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ situation })
+    });
+    return response.json();
   };
 
   if (!isOpen) {
@@ -217,7 +334,7 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
-          className="rounded-full h-14 w-14 bg-gradient-primary hover:bg-gradient-primary/90 shadow-lg"
+          className="rounded-full h-14 w-14 bg-blue-600 hover:bg-blue-700 shadow-lg border-2 border-white"
         >
           <Zap className="w-6 h-6 text-white" />
         </Button>
@@ -264,6 +381,13 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
                   {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                   {isListening ? "Stop" : "Speak"}
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => speakText("VoiceFunnels AI is ready to help you create funnels, lead magnets, and more.")}
+                >
+                  <Volume2 className="w-4 h-4" />
+                </Button>
               </div>
             </div>
 
@@ -285,9 +409,12 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
               <p>Try saying:</p>
               <ul className="list-disc list-inside space-y-1 mt-1">
                 <li>"Create ebook on email marketing"</li>
+                <li>"Create sales funnel for fitness coaching"</li>
+                <li>"Create landing page for lead generation"</li>
                 <li>"Add new subscriber John"</li>
-                <li>"Create sales funnel"</li>
-                <li>"Send welcome email"</li>
+                <li>"Send welcome email campaign"</li>
+                <li>"Create email list for newsletters"</li>
+                <li>"Sales coaching for objection handling"</li>
               </ul>
             </div>
           </div>
