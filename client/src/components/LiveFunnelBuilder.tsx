@@ -26,8 +26,14 @@ import {
   CheckCircle,
   XCircle,
   Plus,
-  Trash2
+  Trash2,
+  Type,
+  ImageIcon,
+  Layout,
+  Square,
+  X
 } from "lucide-react";
+import PageBuilder from "./PageBuilder";
 
 interface FunnelStep {
   id: string;
@@ -53,6 +59,72 @@ interface LiveFunnelBuilderProps {
   onComplete?: (funnelData: any) => void;
   onBack?: () => void;
 }
+
+// Helper functions for enhanced step content
+const getStepColors = (stepType: string) => {
+  const colorSchemes = {
+    landing: { primary: '#10b981', secondary: '#047857', background: '#f0fdf4' },
+    optin: { primary: '#3b82f6', secondary: '#1d4ed8', background: '#eff6ff' },
+    thankyou: { primary: '#06b6d4', secondary: '#0891b2', background: '#f0fdff' },
+    email: { primary: '#8b5cf6', secondary: '#7c3aed', background: '#faf5ff' },
+    offer: { primary: '#ef4444', secondary: '#dc2626', background: '#fef2f2' },
+    upsell: { primary: '#f59e0b', secondary: '#d97706', background: '#fffbeb' },
+    downsell: { primary: '#6b7280', secondary: '#4b5563', background: '#f9fafb' }
+  };
+  return colorSchemes[stepType] || colorSchemes.landing;
+};
+
+const getStepHeadline = (stepType: string, data: any) => {
+  const headlines = {
+    landing: `Transform Your Life with ${data.productName}`,
+    optin: `Get Your FREE ${data.productName} Guide`,
+    thankyou: `Thank You! Your ${data.productName} is On Its Way`,
+    email: `Welcome to Your ${data.productName} Journey`,
+    offer: `Get The Complete ${data.productName} System`,
+    upsell: `Upgrade Your ${data.productName} Experience`,
+    downsell: `Don't Miss This Special Offer`
+  };
+  return headlines[stepType] || `${data.productName} - ${stepType}`;
+};
+
+const getStepSubheadline = (stepType: string, data: any) => {
+  const subheadlines = {
+    landing: `Join thousands who have achieved ${data.mainGoal?.toLowerCase() || 'success'} with our proven system`,
+    optin: `Enter your details below to download your FREE guide instantly`,
+    thankyou: `Check your email for instant access and next steps`,
+    email: `You're about to discover the secrets that will change everything`,
+    offer: `Everything you need to succeed, backed by our 60-day guarantee`,
+    upsell: `Add premium features for just ${data.pricePoint || '$97'} more`,
+    downsell: `This one-time offer expires in 15 minutes`
+  };
+  return subheadlines[stepType] || `Optimized for ${data.targetAudience}`;
+};
+
+const getStepBodyText = (stepType: string, data: any) => {
+  const bodyTexts = {
+    landing: `${data.productName} is specifically designed for ${data.targetAudience}. Our proven system has helped thousands achieve ${data.mainGoal?.toLowerCase() || 'their goals'}. Don't wait - your transformation starts today.`,
+    optin: `This comprehensive guide reveals the exact strategies used by successful people in your field. Valued at ${data.pricePoint || '$97'}, it's yours FREE today. No spam, unsubscribe anytime.`,
+    thankyou: `Your ${data.productName} guide is being sent to your email right now. While you wait, join our exclusive community of like-minded individuals on the same journey.`,
+    email: `Over the next few days, you'll receive powerful insights and actionable strategies. Each email contains proven techniques you can implement immediately.`,
+    offer: `The complete ${data.productName} system includes: Step-by-step training, downloadable resources, community access, and personal support. Limited time: Save 50% today only.`,
+    upsell: `Take your results to the next level with our premium package. Get 1-on-1 coaching, advanced strategies, and priority support. This exclusive upgrade is only available to ${data.productName} customers.`,
+    downsell: `Not ready for the full program? No problem! Get our essential starter package for just ${data.pricePoint || '$47'}. Same proven system, perfect for beginners.`
+  };
+  return bodyTexts[stepType] || `Professional ${stepType} content for ${data.productName}`;
+};
+
+const getStepCTA = (stepType: string, data: any) => {
+  const ctas = {
+    landing: 'Get Started Today',
+    optin: 'Download FREE Guide',
+    thankyou: 'Join Our Community',
+    email: 'Check Your Email',
+    offer: `Get ${data.productName} - ${data.pricePoint || 'Special Price'}`,
+    upsell: 'Upgrade Now',
+    downsell: 'Get Starter Package'
+  };
+  return ctas[stepType] || 'Continue';
+};
 
 const industryTemplates = [
   {
@@ -80,6 +152,137 @@ const industryTemplates = [
     defaultSteps: ["landing", "offer", "upsell", "downsell"]
   }
 ];
+
+// Page Builder Component for Funnel Steps
+function PageBuilderForStep({ step, onSave, onClose }: { 
+  step: FunnelStep; 
+  onSave: (step: FunnelStep) => void;
+  onClose: () => void;
+}) {
+  // Convert funnel step content to page elements
+  const getInitialElements = (step: FunnelStep) => {
+    const elements = [];
+    
+    if (step.content.headline) {
+      elements.push({
+        id: `headline-${Date.now()}`,
+        type: 'heading',
+        content: {
+          text: step.content.headline,
+          level: 'h1',
+          align: 'center',
+          color: step.content.colors?.primary || '#000000'
+        }
+      });
+    }
+    
+    if (step.content.subheadline) {
+      elements.push({
+        id: `subheadline-${Date.now()}`,
+        type: 'heading',
+        content: {
+          text: step.content.subheadline,
+          level: 'h2',
+          align: 'center',
+          color: '#666666'
+        }
+      });
+    }
+    
+    if (step.content.bodyText) {
+      elements.push({
+        id: `body-${Date.now()}`,
+        type: 'text',
+        content: {
+          text: step.content.bodyText,
+          align: 'center',
+          color: '#444444'
+        }
+      });
+    }
+    
+    // Add form for opt-in pages
+    if (step.type === 'optin') {
+      elements.push({
+        id: `form-${Date.now()}`,
+        type: 'form',
+        content: {
+          title: 'Get Your Free Access',
+          fields: ['name', 'email'],
+          button: step.content.ctaText || 'Download Now'
+        }
+      });
+    }
+    
+    // Add CTA button for other pages
+    if (step.content.ctaText && step.type !== 'optin') {
+      elements.push({
+        id: `cta-${Date.now()}`,
+        type: 'button',
+        content: {
+          text: step.content.ctaText,
+          variant: 'primary',
+          size: 'large',
+          align: 'center',
+          link: '#'
+        }
+      });
+    }
+    
+    return elements;
+  };
+
+  const handleSave = (elements: any[]) => {
+    // Convert page elements back to funnel step content
+    const updatedContent = { ...step.content };
+    
+    elements.forEach(element => {
+      if (element.type === 'heading' && element.content.level === 'h1') {
+        updatedContent.headline = element.content.text;
+      } else if (element.type === 'heading' && element.content.level === 'h2') {
+        updatedContent.subheadline = element.content.text;
+      } else if (element.type === 'text') {
+        updatedContent.bodyText = element.content.text;
+      } else if (element.type === 'button') {
+        updatedContent.ctaText = element.content.text;
+      } else if (element.type === 'form') {
+        updatedContent.ctaText = element.content.button;
+      }
+    });
+    
+    onSave({
+      ...step,
+      content: updatedContent
+    });
+  };
+
+  return (
+    <div className="h-screen">
+      <div className="h-16 border-b bg-background px-4 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="font-semibold">Editing: {step.title}</h1>
+          <Badge variant="outline">{step.type}</Badge>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={onClose}>
+            <X className="w-4 h-4 mr-2" />
+            Close Editor
+          </Button>
+          <Button onClick={() => handleSave(getInitialElements(step))}>
+            Save Page Design
+          </Button>
+        </div>
+      </div>
+      <div className="h-[calc(100vh-4rem)]">
+        <PageBuilder
+          initialElements={getInitialElements(step)}
+          onSave={handleSave}
+          onClose={onClose}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuilderProps) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -139,27 +342,26 @@ export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuil
             type: stepType,
             title: stepContent.title || `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
             description: stepContent.description || `High-converting ${stepType} page`,
-            content: stepContent.content || {
-              headline: `Your ${funnelData.productName} ${stepType} Page`,
-              subheadline: `Optimized for ${funnelData.targetAudience}`,
-              bodyText: `Professional ${stepType} content for ${funnelData.productName}`,
-              ctaText: stepType === 'optin' ? 'Get Free Access' : stepType === 'offer' ? `Get ${funnelData.productName}` : 'Continue'
+            content: {
+              ...stepContent.content,
+              colors: stepContent.content?.colors || getStepColors(stepType)
             },
             isComplete: true
           });
         } catch (stepError) {
           console.log(`Using fallback content for ${stepType} step`);
-          // Use fallback content if API fails
+          // Use enhanced fallback content with visual design
           steps.push({
             id: `step-${i + 1}`,
             type: stepType,
             title: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
             description: `High-converting ${stepType} page for ${funnelData.productName}`,
             content: {
-              headline: `Transform Your Results with ${funnelData.productName}`,
-              subheadline: `Join thousands who have discovered the secret to ${funnelData.mainGoal.toLowerCase()}`,
-              bodyText: `${funnelData.productName} is specifically designed for ${funnelData.targetAudience}. Our proven system delivers real results.`,
-              ctaText: stepType === 'optin' ? 'Get Free Access' : stepType === 'offer' ? `Get ${funnelData.productName} - ${funnelData.pricePoint}` : 'Continue'
+              headline: getStepHeadline(stepType, funnelData),
+              subheadline: getStepSubheadline(stepType, funnelData),
+              bodyText: getStepBodyText(stepType, funnelData),
+              ctaText: getStepCTA(stepType, funnelData),
+              colors: getStepColors(stepType)
             },
             isComplete: true
           });
@@ -436,17 +638,17 @@ export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuil
 
   if (currentStep === 2) {
     return (
-      <div className="w-full max-w-6xl mx-auto space-y-6">
+      <div className="w-full max-w-7xl mx-auto space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Eye className="w-6 h-6 text-primary" />
-                <span>Review & Edit Your Funnel</span>
+                <span>Review & Edit Your Funnel Pages</span>
               </div>
               <Button
                 variant="outline"
-                onClick={() => speakText(`Your ${funnelData.productName} funnel includes ${funnelData.steps.length} optimized pages with professional copy and design.`)}
+                onClick={() => speakText(`Your ${funnelData.productName} funnel includes ${funnelData.steps.length} professionally designed pages ready for customization.`)}
               >
                 <Volume2 className="w-4 h-4 mr-2" />
                 Read Funnel Summary
@@ -472,41 +674,63 @@ export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuil
                   <div className="flex items-center space-x-2">
                     <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
                       <Eye className="w-4 h-4 mr-1" />
-                      Preview
+                      Preview Page
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => editStep(step)}>
+                    <Button variant="default" size="sm" onClick={() => editStep(step)}>
                       <Edit className="w-4 h-4 mr-1" />
-                      Edit
+                      Edit Page Design
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="bg-muted/30 rounded-lg p-4 space-y-3">
-                  {step.content.headline && (
-                    <div>
-                      <Label className="text-xs text-muted-foreground">HEADLINE</Label>
-                      <p className="font-medium text-lg">{step.content.headline}</p>
+                {/* Visual Page Preview */}
+                <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
+                  <div className="p-6 min-h-[300px]" style={{ backgroundColor: step.content.colors?.background || '#ffffff' }}>
+                    {/* Page Preview */}
+                    <div className="space-y-6">
+                      {step.content.headline && (
+                        <h1 className="text-3xl font-bold text-center" style={{ color: step.content.colors?.primary || '#000000' }}>
+                          {step.content.headline}
+                        </h1>
+                      )}
+                      {step.content.subheadline && (
+                        <p className="text-xl text-center text-muted-foreground">
+                          {step.content.subheadline}
+                        </p>
+                      )}
+                      {step.content.bodyText && (
+                        <div className="max-w-2xl mx-auto text-center">
+                          <p className="text-lg leading-relaxed">{step.content.bodyText}</p>
+                        </div>
+                      )}
+                      {step.type === 'optin' && (
+                        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-sm border">
+                          <div className="space-y-4">
+                            <Input placeholder="Enter your first name" />
+                            <Input placeholder="Enter your email address" type="email" />
+                            <Button className="w-full" style={{ backgroundColor: step.content.colors?.primary || '#3b82f6' }}>
+                              {step.content.ctaText || 'Get Free Access'}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                      {step.type === 'offer' && step.content.ctaText && (
+                        <div className="text-center">
+                          <Button size="lg" className="text-lg px-8 py-4" style={{ backgroundColor: step.content.colors?.primary || '#ef4444' }}>
+                            {step.content.ctaText}
+                          </Button>
+                        </div>
+                      )}
+                      {(step.type === 'landing' || step.type === 'thankyou') && step.content.ctaText && (
+                        <div className="text-center">
+                          <Button size="lg" className="text-lg px-8 py-4" style={{ backgroundColor: step.content.colors?.primary || '#10b981' }}>
+                            {step.content.ctaText}
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {step.content.subheadline && (
-                    <div>
-                      <Label className="text-xs text-muted-foreground">SUBHEADLINE</Label>
-                      <p className="text-muted-foreground">{step.content.subheadline}</p>
-                    </div>
-                  )}
-                  {step.content.bodyText && (
-                    <div>
-                      <Label className="text-xs text-muted-foreground">BODY TEXT</Label>
-                      <p className="text-sm">{step.content.bodyText}</p>
-                    </div>
-                  )}
-                  {step.content.ctaText && (
-                    <div>
-                      <Label className="text-xs text-muted-foreground">CALL TO ACTION</Label>
-                      <Button className="mt-1">{step.content.ctaText}</Button>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -523,65 +747,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuil
           </Button>
         </div>
 
-        {/* Edit Modal */}
+        {/* Full-Screen Page Editor Modal */}
         {currentStepEdit && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-              <CardHeader>
-                <CardTitle>Edit {currentStepEdit.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>Headline</Label>
-                  <Input
-                    value={currentStepEdit.content.headline || ""}
-                    onChange={(e) => setCurrentStepEdit(prev => prev ? {
-                      ...prev,
-                      content: { ...prev.content, headline: e.target.value }
-                    } : null)}
-                  />
-                </div>
-                <div>
-                  <Label>Subheadline</Label>
-                  <Input
-                    value={currentStepEdit.content.subheadline || ""}
-                    onChange={(e) => setCurrentStepEdit(prev => prev ? {
-                      ...prev,
-                      content: { ...prev.content, subheadline: e.target.value }
-                    } : null)}
-                  />
-                </div>
-                <div>
-                  <Label>Body Text</Label>
-                  <Textarea
-                    value={currentStepEdit.content.bodyText || ""}
-                    onChange={(e) => setCurrentStepEdit(prev => prev ? {
-                      ...prev,
-                      content: { ...prev.content, bodyText: e.target.value }
-                    } : null)}
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <Label>Call to Action</Label>
-                  <Input
-                    value={currentStepEdit.content.ctaText || ""}
-                    onChange={(e) => setCurrentStepEdit(prev => prev ? {
-                      ...prev,
-                      content: { ...prev.content, ctaText: e.target.value }
-                    } : null)}
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setCurrentStepEdit(null)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={saveStepEdit}>
-                    Save Changes
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="fixed inset-0 bg-background z-50">
+            <PageBuilderForStep 
+              step={currentStepEdit}
+              onSave={saveStepEdit}
+              onClose={() => setCurrentStepEdit(null)}
+            />
           </div>
         )}
       </div>
