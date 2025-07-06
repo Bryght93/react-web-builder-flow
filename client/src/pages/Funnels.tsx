@@ -33,6 +33,10 @@ interface FunnelData {
   created: string;
   steps: number;
   traffic: number;
+  funnelSteps?: any[]; // Store actual funnel step data
+  targetAudience?: string;
+  productName?: string;
+  pricePoint?: string;
 }
 
 const initialFunnels: FunnelData[] = [
@@ -174,12 +178,35 @@ export default function Funnels() {
   if (showBuilder) {
     return (
       <LiveFunnelBuilder 
+        initialFunnelData={editingFunnel ? {
+          name: editingFunnel.name,
+          industry: editingFunnel.industry,
+          goal: editingFunnel.goal,
+          productName: editingFunnel.productName || editingFunnel.name,
+          targetAudience: editingFunnel.targetAudience || "Target audience",
+          pricePoint: editingFunnel.pricePoint || "$497",
+          steps: editingFunnel.funnelSteps || []
+        } : undefined}
         onBack={() => {
           setShowBuilder(false);
           setEditingFunnel(null);
         }}
         onComplete={(funnelData) => {
-          addNewFunnel(funnelData);
+          if (editingFunnel) {
+            // Update existing funnel
+            setFunnels(prev => prev.map(f => 
+              f.id === editingFunnel.id 
+                ? { ...f, ...funnelData, funnelSteps: funnelData.steps }
+                : f
+            ));
+            toast({
+              title: "Funnel Updated",
+              description: `${funnelData.name} has been updated successfully`,
+            });
+          } else {
+            // Add new funnel
+            addNewFunnel(funnelData);
+          }
           setShowBuilder(false);
           setEditingFunnel(null);
         }}
@@ -328,6 +355,22 @@ export default function Funnels() {
                   <div className="flex items-center justify-between pt-4 border-t border-border">
                     <span className="text-xs text-muted-foreground">Created {funnel.created}</span>
                     <div className="flex items-center space-x-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => {
+                          const funnelUrl = `/live-funnel/${funnel.name.toLowerCase().replace(/\s+/g, '-')}`;
+                          window.open(funnelUrl, '_blank', 'width=1200,height=800');
+                          toast({
+                            title: "Opening Live Funnel",
+                            description: `${funnel.name} is opening in a new tab`,
+                          });
+                        }}
+                        title="View Live Funnel"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
                       <Button 
                         variant="ghost" 
                         size="icon" 

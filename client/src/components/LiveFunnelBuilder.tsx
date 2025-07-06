@@ -34,6 +34,7 @@ import {
   X
 } from "lucide-react";
 import PageBuilder from "./PageBuilder";
+import AIPageAssistant from "./AIPageAssistant";
 
 interface FunnelStep {
   id: string;
@@ -58,6 +59,7 @@ interface FunnelStep {
 interface LiveFunnelBuilderProps {
   onComplete?: (funnelData: any) => void;
   onBack?: () => void;
+  initialFunnelData?: any;
 }
 
 // Helper functions for enhanced step content
@@ -159,6 +161,15 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   onSave: (step: FunnelStep) => void;
   onClose: () => void;
 }) {
+  const [currentStep, setCurrentStep] = useState(step);
+
+  const handleAIContentUpdate = (updatedContent: any) => {
+    setCurrentStep(prev => ({
+      ...prev,
+      content: updatedContent
+    }));
+  };
+
   // Convert funnel step content to page elements
   const getInitialElements = (step: FunnelStep) => {
     const elements = [];
@@ -257,47 +268,87 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   };
 
   return (
-    <div className="h-screen">
-      <div className="h-16 border-b bg-background px-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="font-semibold">Editing: {step.title}</h1>
-          <Badge variant="outline">{step.type}</Badge>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={onClose}>
-            <X className="w-4 h-4 mr-2" />
-            Close Editor
-          </Button>
-          <Button onClick={() => handleSave(getInitialElements(step))}>
-            Save Page Design
-          </Button>
+    <div className="h-screen flex">
+      {/* AI Assistant Sidebar */}
+      <div className="w-80 border-r bg-muted/30 overflow-y-auto">
+        <div className="p-4">
+          <AIPageAssistant
+            onContentUpdate={handleAIContentUpdate}
+            currentContent={currentStep.content}
+            pageType={currentStep.type}
+          />
         </div>
       </div>
-      <div className="h-[calc(100vh-4rem)]">
-        <PageBuilder
-          initialElements={getInitialElements(step)}
-          onSave={handleSave}
-          onClose={onClose}
-        />
+
+      {/* Main Editor */}
+      <div className="flex-1 flex flex-col">
+        <div className="h-16 border-b bg-background px-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="font-semibold">Editing: {currentStep.title}</h1>
+            <Badge variant="outline">{currentStep.type}</Badge>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" onClick={onClose}>
+              <X className="w-4 h-4 mr-2" />
+              Close Editor
+            </Button>
+            <Button onClick={() => {
+              onSave(currentStep);
+              onClose();
+            }}>
+              Save Page Design
+            </Button>
+          </div>
+        </div>
+        <div className="flex-1">
+          <PageBuilder
+            initialElements={getInitialElements(currentStep)}
+            onSave={(elements) => {
+              const updatedContent = convertElementsToContent(elements, currentStep);
+              handleAIContentUpdate(updatedContent);
+            }}
+            onClose={onClose}
+          />
+        </div>
       </div>
     </div>
   );
+
+  function convertElementsToContent(elements: any[], step: FunnelStep) {
+    const updatedContent = { ...step.content };
+    
+    elements.forEach(element => {
+      if (element.type === 'heading' && element.content.level === 'h1') {
+        updatedContent.headline = element.content.text;
+      } else if (element.type === 'heading' && element.content.level === 'h2') {
+        updatedContent.subheadline = element.content.text;
+      } else if (element.type === 'text') {
+        updatedContent.bodyText = element.content.text;
+      } else if (element.type === 'button') {
+        updatedContent.ctaText = element.content.text;
+      } else if (element.type === 'form') {
+        updatedContent.ctaText = element.content.button;
+      }
+    });
+    
+    return updatedContent;
+  }
 }
 
-export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuilderProps) {
-  const [currentStep, setCurrentStep] = useState(0);
+export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelData }: LiveFunnelBuilderProps) {
+  const [currentStep, setCurrentStep] = useState(initialFunnelData ? 2 : 0); // Go to review if editing
   const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(initialFunnelData ? 100 : 0);
   const [funnelData, setFunnelData] = useState({
-    name: "",
-    industry: "",
-    targetAudience: "",
-    mainGoal: "",
-    productName: "",
-    pricePoint: "",
-    steps: [] as FunnelStep[]
+    name: initialFunnelData?.name || "",
+    industry: initialFunnelData?.industry || "",
+    targetAudience: initialFunnelData?.targetAudience || "",
+    mainGoal: initialFunnelData?.goal || "",
+    productName: initialFunnelData?.productName || "",
+    pricePoint: initialFunnelData?.pricePoint || "",
+    steps: initialFunnelData?.steps || [] as FunnelStep[]
   });
-  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState(initialFunnelData?.industry || "");
   const [currentStepEdit, setCurrentStepEdit] = useState<FunnelStep | null>(null);
   const { toast } = useToast();
   const synthRef = useRef<any>(null);
@@ -436,8 +487,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuil
   };
 
   const previewStep = (step: FunnelStep) => {
-    toast({ title: `Previewing ${step.title}`, description: "Opening preview in new tab..." });
-    // In a real implementation, this would open a preview window
+    // Create a preview URL based on the step
+    const previewUrl = `/preview/${step.type}/${step.id}`;
+    window.open(previewUrl, '_blank', 'width=1200,height=800');
+    
+    toast({ 
+      title: `Previewing ${step.title}`, 
+      description: "Opening live preview in new tab..." 
+    });
   };
 
   const steps = [
@@ -801,7 +858,17 @@ export default function LiveFunnelBuilder({ onComplete, onBack }: LiveFunnelBuil
           </div>
 
           <div className="flex justify-center space-x-4">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={() => {
+                const funnelUrl = `/live-funnel/${funnelData.name.toLowerCase().replace(/\s+/g, '-')}`;
+                window.open(funnelUrl, '_blank', 'width=1200,height=800');
+                toast({ 
+                  title: "Opening Live Funnel", 
+                  description: "Your funnel is opening in a new tab" 
+                });
+              }}
+            >
               <Eye className="w-4 h-4 mr-2" />
               View Live Funnel
             </Button>
