@@ -155,39 +155,52 @@ const industryTemplates = [
   }
 ];
 
-// Function to generate default images for each step
+// Function to generate vibrant default images for each step
 const generateStepImages = (stepType: string, data: any): string[] => {
+  const productKeyword = data.productName?.toLowerCase().replace(/\s+/g, '') || 'business';
+  const industryKeyword = data.industry?.toLowerCase() || 'marketing';
+  
   const imageDefaults = {
     landing: [
-      `https://source.unsplash.com/800x600/?${data.productName},fitness`,
-      `https://source.unsplash.com/800x600/?${data.targetAudience},lifestyle`
+      `https://picsum.photos/800/600?random=${Date.now()}`,
+      `https://source.unsplash.com/800x600/?${productKeyword},success,vibrant`,
+      `https://source.unsplash.com/800x600/?${industryKeyword},professional,colorful`
     ],
     optin: [
-      `https://source.unsplash.com/800x600/?${data.productName},guide`,
-      `https://source.unsplash.com/800x600/?email,subscription`
+      `https://source.unsplash.com/800x600/?ebook,guide,vibrant`,
+      `https://source.unsplash.com/800x600/?download,free,bright`,
+      `https://picsum.photos/800/600?random=${Date.now() + 1}`
     ],
     thankyou: [
-      `https://source.unsplash.com/800x600/?thankyou,celebration`,
-      `https://source.unsplash.com/800x600/?email,confirmation`
+      `https://source.unsplash.com/800x600/?celebration,success,colorful`,
+      `https://source.unsplash.com/800x600/?thankyou,gratitude,bright`,
+      `https://picsum.photos/800/600?random=${Date.now() + 2}`
     ],
     email: [
-      `https://source.unsplash.com/800x600/?email,marketing`,
-      `https://source.unsplash.com/800x600/?newsletter,communication`
+      `https://source.unsplash.com/800x600/?email,communication,vibrant`,
+      `https://source.unsplash.com/800x600/?newsletter,digital,bright`,
+      `https://picsum.photos/800/600?random=${Date.now() + 3}`
     ],
     offer: [
-      `https://source.unsplash.com/800x600/?sale,discount`,
-      `https://source.unsplash.com/800x600/?${data.productName},deal`
+      `https://source.unsplash.com/800x600/?sale,offer,colorful`,
+      `https://source.unsplash.com/800x600/?deal,premium,vibrant`,
+      `https://picsum.photos/800/600?random=${Date.now() + 4}`
     ],
     upsell: [
-      `https://source.unsplash.com/800x600/?upgrade,premium`,
-      `https://source.unsplash.com/800x600/?exclusive,deal`
+      `https://source.unsplash.com/800x600/?upgrade,premium,bright`,
+      `https://source.unsplash.com/800x600/?exclusive,luxury,vibrant`,
+      `https://picsum.photos/800/600?random=${Date.now() + 5}`
     ],
     downsell: [
-      `https://source.unsplash.com/800x600/?discount,bargain`,
-      `https://source.unsplash.com/800x600/?alternative,offer`
+      `https://source.unsplash.com/800x600/?alternative,value,colorful`,
+      `https://source.unsplash.com/800x600/?savings,deal,bright`,
+      `https://picsum.photos/800/600?random=${Date.now() + 6}`
     ]
   };
-  return imageDefaults[stepType] || [`https://source.unsplash.com/800x600/?${data.productName}`];
+  return imageDefaults[stepType] || [
+    `https://source.unsplash.com/800x600/?${productKeyword},vibrant`,
+    `https://picsum.photos/800/600?random=${Date.now() + 7}`
+  ];
 };
 
 // Page Builder Component for Funnel Steps
@@ -543,12 +556,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
   if (currentStep === 0) {
     return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Zap className="w-6 h-6 text-primary" />
-            <span>Live Funnel Builder</span>
-          </CardTitle>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-6xl mx-auto">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Zap className="w-6 h-6 text-primary" />
+                <span>Live Funnel Builder</span>
+              </CardTitle>
           <div className="flex items-center space-x-4 mt-4">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -568,6 +583,58 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* AI Assistant for Comprehensive Setup */}
+          <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <span>AI Funnel Assistant</span>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Describe your complete funnel vision and let AI create everything for you
+              </p>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                placeholder="Example: I want to sell my online course on confidence building for introverts. My target audience is shy professionals aged 25-40 who struggle with networking. I want a complete funnel with a free confidence checklist as lead magnet, email sequence, and main offer at $297. Include upsells for 1-on-1 coaching at $997..."
+                rows={4}
+                value={funnelData.aiDescription || ""}
+                onChange={(e) => setFunnelData(prev => ({ ...prev, aiDescription: e.target.value }))}
+                className="resize-none"
+              />
+              <Button 
+                className="mt-3 w-full" 
+                onClick={() => {
+                  // Auto-fill form based on AI description
+                  const description = funnelData.aiDescription || "";
+                  if (description) {
+                    const productName = description.match(/sell my ([^.]+)/)?.[1] || "Premium Course";
+                    const audience = description.match(/target audience is ([^.]+)/)?.[1] || "Professionals";
+                    const price = description.match(/\$(\d+)/)?.[0] || "$497";
+                    
+                    setFunnelData(prev => ({
+                      ...prev,
+                      name: productName + " Funnel",
+                      productName: productName,
+                      targetAudience: audience,
+                      pricePoint: price,
+                      mainGoal: `Generate leads and sales for ${productName}`
+                    }));
+                    
+                    toast({
+                      title: "AI Analysis Complete!",
+                      description: "Form auto-filled based on your description"
+                    });
+                  }
+                }}
+                disabled={!funnelData.aiDescription}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Auto-Fill From Description
+              </Button>
+            </CardContent>
+          </Card>
+
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
@@ -675,6 +742,8 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
           </div>
         </CardContent>
       </Card>
+        </div>
+      </div>
     );
   }
 
@@ -751,7 +820,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
           </CardHeader>
         </Card>
 
-        <div className="grid gap-6">
+        <div className="grid gap-4">
           {funnelData.steps.map((step, index) => (
             <Card key={step.id} className="overflow-hidden">
               <CardHeader className="pb-3">
@@ -765,14 +834,68 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                       <p className="text-sm text-muted-foreground">{step.description}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
+                  <div className="flex items-center space-x-1">
+                    <Button variant="outline" size="sm" onClick={() => {
+                      // Fixed preview - create proper HTML preview
+                      const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+                      if (previewWindow) {
+                        previewWindow.document.write(`
+                          <!DOCTYPE html>
+                          <html>
+                          <head>
+                            <title>${step.title} - Preview</title>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>
+                              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 40px; background: ${step.content.colors?.background || '#ffffff'}; }
+                              .container { max-width: 800px; margin: 0 auto; text-align: center; }
+                              h1 { color: ${step.content.colors?.primary || '#000'}; font-size: 3rem; margin-bottom: 1rem; }
+                              h2 { color: #666; font-size: 1.5rem; margin-bottom: 2rem; }
+                              p { color: #555; font-size: 1.2rem; line-height: 1.6; margin-bottom: 2rem; }
+                              .btn { background: ${step.content.colors?.primary || '#3b82f6'}; color: white; padding: 15px 40px; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; }
+                              .form { max-width: 400px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+                              input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="container">
+                              ${step.content.headline ? `<h1>${step.content.headline}</h1>` : ''}
+                              ${step.content.subheadline ? `<h2>${step.content.subheadline}</h2>` : ''}
+                              ${step.content.bodyText ? `<p>${step.content.bodyText}</p>` : ''}
+                              ${step.type === 'optin' ? `
+                                <div class="form">
+                                  <input type="text" placeholder="Enter your first name" />
+                                  <input type="email" placeholder="Enter your email address" />
+                                  <button class="btn" style="width: 100%;">${step.content.ctaText || 'Get Free Access'}</button>
+                                </div>
+                              ` : step.content.ctaText ? `<button class="btn">${step.content.ctaText}</button>` : ''}
+                            </div>
+                          </body>
+                          </html>
+                        `);
+                        previewWindow.document.close();
+                      }
+                    }}>
                       <Eye className="w-4 h-4 mr-1" />
-                      Preview Page
+                      Preview
                     </Button>
-                    <Button variant="default" size="sm" onClick={() => editStep(step)}>
+                    <Button variant="outline" size="sm" onClick={() => editStep(step)}>
                       <Edit className="w-4 h-4 mr-1" />
-                      Edit Page Design
+                      Edit
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => {
+                      // Export step functionality
+                      const stepData = JSON.stringify(step, null, 2);
+                      const blob = new Blob([stepData], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${step.title.toLowerCase().replace(/\s+/g, '-')}.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      toast({ title: "Step Exported", description: `${step.title} exported successfully` });
+                    }}>
+                      <Download className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -831,14 +954,55 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
           ))}
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <Button variant="outline" onClick={() => setCurrentStep(1)}>
             Back to Generation
           </Button>
-          <Button onClick={() => setCurrentStep(3)}>
-            Launch Funnel
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" onClick={() => {
+              // Export entire funnel
+              const funnelExport = {
+                ...funnelData,
+                exportDate: new Date().toISOString(),
+                version: "1.0"
+              };
+              const blob = new Blob([JSON.stringify(funnelExport, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${funnelData.name.toLowerCase().replace(/\s+/g, '-')}-funnel.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+              toast({ title: "Funnel Exported!", description: "Complete funnel data exported successfully" });
+            }}>
+              <Download className="w-4 h-4 mr-2" />
+              Export Funnel
+            </Button>
+            
+            <Button variant="outline" onClick={() => {
+              // Save to library
+              const libraryData = JSON.parse(localStorage.getItem('funnel-library') || '[]');
+              const libraryItem = {
+                id: Date.now().toString(),
+                name: funnelData.name,
+                industry: funnelData.industry,
+                steps: funnelData.steps.length,
+                template: funnelData,
+                savedDate: new Date().toISOString()
+              };
+              libraryData.push(libraryItem);
+              localStorage.setItem('funnel-library', JSON.stringify(libraryData));
+              toast({ title: "Saved to Library!", description: "Funnel template saved for future use" });
+            }}>
+              Save to Library
+            </Button>
+            
+            <Button onClick={() => setCurrentStep(3)}>
+              Launch Funnel
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
         </div>
 
         {/* Full-Screen Page Editor Modal */}

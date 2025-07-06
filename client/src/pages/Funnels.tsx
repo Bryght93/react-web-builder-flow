@@ -110,14 +110,16 @@ export default function Funnels() {
   }, [funnels]);
 
   const handleEdit = (funnel: FunnelData) => {
+    // Load the complete funnel data for editing
     const editData = {
       name: funnel.name,
       industry: funnel.industry,
       goal: funnel.goal,
       productName: funnel.productName || funnel.name,
-      targetAudience: funnel.targetAudience || "Target audience for " + funnel.name,
+      targetAudience: funnel.targetAudience || `Target audience for ${funnel.name}`,
       pricePoint: funnel.pricePoint || "$497",
-      steps: funnel.funnelSteps || []
+      steps: funnel.funnelSteps || [],
+      aiDescription: funnel.aiDescription || `Complete funnel for ${funnel.name} targeting ${funnel.industry} industry`
     };
     setEditingFunnel({...funnel, ...editData});
     setShowBuilder(true);
@@ -172,8 +174,13 @@ export default function Funnels() {
       conversion: funnelData.conversion || 0,
       revenue: funnelData.revenue || 0,
       created: funnelData.created || 'Just now',
-      steps: funnelData.steps || 5,
-      traffic: funnelData.traffic || 0
+      steps: Array.isArray(funnelData.steps) ? funnelData.steps.length : (funnelData.steps || 5),
+      traffic: funnelData.traffic || 0,
+      funnelSteps: Array.isArray(funnelData.steps) ? funnelData.steps : [],
+      targetAudience: funnelData.targetAudience,
+      productName: funnelData.productName,
+      pricePoint: funnelData.pricePoint,
+      aiDescription: funnelData.aiDescription
     };
     
     setFunnels(prev => [newFunnel, ...prev]);
