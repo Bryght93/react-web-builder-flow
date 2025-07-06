@@ -29,11 +29,22 @@ export function Navbar() {
           {/* Quick Actions - Only show on dashboard pages */}
           {!isHomepage && (
             <div className="hidden md:flex items-center space-x-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => {
+                // Navigate to leads page or open add lead modal
+                const event = new CustomEvent('quickAddLead');
+                window.dispatchEvent(event);
+              }}>
                 <Users className="w-4 h-4 mr-2" />
                 Quick Add Lead
               </Button>
-              <Button variant="default" size="sm">
+              <Button variant="default" size="sm" onClick={() => {
+                // Navigate to funnel creation
+                window.location.href = '/funnels';
+                setTimeout(() => {
+                  const event = new CustomEvent('createFunnel');
+                  window.dispatchEvent(event);
+                }, 100);
+              }}>
                 <Target className="w-4 h-4 mr-2" />
                 Create Funnel
               </Button>

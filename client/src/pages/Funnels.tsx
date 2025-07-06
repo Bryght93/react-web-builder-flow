@@ -90,6 +90,14 @@ export default function Funnels() {
         console.error('Error loading funnels:', error);
       }
     }
+
+    // Listen for create funnel event from navbar
+    const handleCreateFunnel = () => {
+      setShowBuilder(true);
+    };
+
+    window.addEventListener('createFunnel', handleCreateFunnel);
+    return () => window.removeEventListener('createFunnel', handleCreateFunnel);
   }, []);
 
   // Save funnels to localStorage when funnels change
@@ -140,8 +148,27 @@ export default function Funnels() {
     funnel.industry.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const addNewFunnel = (funnelData: FunnelData) => {
-    setFunnels(prev => [funnelData, ...prev]);
+  const addNewFunnel = (funnelData: any) => {
+    const newFunnel: FunnelData = {
+      id: funnelData.id || Date.now().toString(),
+      name: funnelData.name || 'New Funnel',
+      industry: funnelData.industry || 'General',
+      goal: funnelData.goal || 'Generate leads',
+      status: funnelData.status || 'active',
+      leads: funnelData.leads || 0,
+      conversion: funnelData.conversion || 0,
+      revenue: funnelData.revenue || 0,
+      created: funnelData.created || 'Just now',
+      steps: funnelData.steps || 5,
+      traffic: funnelData.traffic || 0
+    };
+    
+    setFunnels(prev => [newFunnel, ...prev]);
+    
+    toast({
+      title: "Funnel Created Successfully!",
+      description: `${newFunnel.name} has been added to your funnels`,
+    });
   };
 
   if (showBuilder) {
