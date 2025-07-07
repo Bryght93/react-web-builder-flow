@@ -1016,22 +1016,16 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     }
   };
 
-  // Auto-save on data changes
+  // Auto-save on data changes (disabled to prevent page shaking)
   React.useEffect(() => {
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-    
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      autoSaveFunnel();
-    }, 3000); // Auto-save after 3 seconds of inactivity
-    
+    // Temporarily disabled auto-save to prevent page shaking
+    // Only save when user explicitly completes actions or manually saves
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [funnelData]);
+  }, []);
 
   const speakText = (text: string) => {
     if (synthRef.current) {
@@ -2441,6 +2435,23 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                 >
                   <Volume2 className="w-4 h-4 mr-2" />
                   Read Summary
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={autoSaveFunnel}
+                  disabled={isAutoSaving}
+                >
+                  {isAutoSaving ? (
+                    <>
+                      <Save className="w-4 h-4 mr-2 animate-pulse" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Funnel
+                    </>
+                  )}
                 </Button>
                 <Button onClick={viewLiveFunnel} className="bg-gradient-to-r from-primary to-accent">
                   <Globe className="w-4 h-4 mr-2" />
