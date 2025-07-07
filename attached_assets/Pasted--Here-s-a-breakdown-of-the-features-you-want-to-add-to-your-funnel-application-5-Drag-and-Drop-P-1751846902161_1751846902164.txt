@@ -1,0 +1,22 @@
+
+Here's a breakdown of the features you want to add to your funnel application:
+5.	Drag and Drop Page Builder:
+•	Implement an advanced drag-and-drop page builder similar to Elementor that allows users to customize their funnels easily. This builder should have a variety of elements available for use, and it will be monetized for access to additional features.
+Drag and Drop Functionality: Users should be able to drag elements directly from the sidebar to the canvas with their mouse. The drag-and-drop should allow for more intuitive placement of elements rather than just clicking to drop in a random location.
+Editable Content Containers: Each content container on the canvas should be editable directly, allowing users to modify text or properties without navigating away.
+Implementation Plan:
+•	Implement a drag-and-drop functionality that listens for mouse events, allowing elements to be dragged from a sidebar and placed precisely on the canvas.
+•	Make sure that the containers for the content are editable so users can make changes in place, which enhances the user experience.
+•	Let the element on the page builder be small squares so that it doesn’t take too much space
+•	The page builder holder should be open and close feature just like elementor you can toggle it on and bring it out
+•	The page builder should have advance features and very long list of elements.
+•	
+6.	AI Assistant for Live Editing:
+•	Introduce a voice AI feature that allows users to make edits to specific areas of their funnel pages either by speaking or typing. This will require integrating an advanced AI capable of processing both voice commands and text inputs for editing. There is also a floating voice AI, it should be powerful enough to understand every features of the app, I mean everything, such that if user ask it to create something it can trigger and perform the task immediately. The user should be able to speak long sentences or long conversation and ai understand it to perform it
+7.	Funnel Saving and Editing Features:
+•	Ensure that funnels are saved to a library by default. Users should have the ability to edit their funnels anytime (live, paused, or in draft state). Additional capabilities such as analytics, automation, and split-testing features should also be included.
+I want the following features in the funnel page builder:
+
+8.	Performance:
+•	It's crucial that the application opens and functions quickly after implementing these features.
+Before I start generating the code, let me know if I have captured everything accurately and whether you are ready for me to proceed with the implementation.
