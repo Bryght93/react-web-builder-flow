@@ -1151,6 +1151,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   };
 
   const editStep = (step: FunnelStep) => {
+    console.log('Editing step:', step);
     setCurrentStepEdit(step);
   };
 
@@ -1166,27 +1167,59 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   };
 
   const previewStep = (step: FunnelStep) => {
-    const previewWindow = window.open('', '_blank', 'width=1200,height=800');
-    if (previewWindow) {
-      previewWindow.document.write(generateFullPreviewHTML(step));
-      previewWindow.document.close();
+    try {
+      const previewWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+      if (previewWindow) {
+        const html = generateFullPreviewHTML(step);
+        previewWindow.document.write(html);
+        previewWindow.document.close();
+        toast({ 
+          title: `👀 Previewing ${step.title}`, 
+          description: "Opening live preview in new tab..." 
+        });
+      } else {
+        toast({ 
+          title: "❌ Preview Failed", 
+          description: "Please allow popups for this site to view previews.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Preview error:', error);
+      toast({ 
+        title: "❌ Preview Error", 
+        description: "Unable to open preview. Please try again.",
+        variant: "destructive"
+      });
     }
-    toast({ 
-      title: `👀 Previewing ${step.title}`, 
-      description: "Opening live preview in new tab..." 
-    });
   };
 
   const viewLiveFunnel = () => {
-    const funnelWindow = window.open('', '_blank', 'width=1200,height=800');
-    if (funnelWindow) {
-      funnelWindow.document.write(generateFunnelIndexHTML());
-      funnelWindow.document.close();
+    try {
+      const funnelWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+      if (funnelWindow) {
+        const html = generateFunnelIndexHTML();
+        funnelWindow.document.write(html);
+        funnelWindow.document.close();
+        toast({ 
+          title: "🚀 Opening Live Funnel", 
+          description: "Your complete funnel is opening in a new tab" 
+        });
+      } else {
+        toast({ 
+          title: "❌ Funnel Preview Failed", 
+          description: "Please allow popups for this site to view the live funnel.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Live funnel error:', error);
+      toast({ 
+        title: "❌ Funnel Error", 
+        description: "Unable to open live funnel. Please try again.",
+        variant: "destructive"
+      });
     }
-    toast({ 
-      title: "🚀 Opening Live Funnel", 
-      description: "Your complete funnel is opening in a new tab" 
-    });
   };
 
   const exportFunnel = () => {
@@ -2269,7 +2302,15 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   <Volume2 className="w-4 h-4 mr-2" />
                   Read Summary
                 </Button>
-                <Button onClick={viewLiveFunnel} className="bg-gradient-to-r from-primary to-accent">
+                <Button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('View Live Funnel clicked');
+                    viewLiveFunnel();
+                  }} 
+                  className="bg-gradient-to-r from-primary to-accent"
+                >
                   <Globe className="w-4 h-4 mr-2" />
                   View Live Funnel
                 </Button>
@@ -2297,11 +2338,29 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                     </div>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Preview button clicked for step:', step.id);
+                        previewStep(step);
+                      }}
+                    >
                       <Eye className="w-4 h-4 mr-1" />
                       Preview
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => editStep(step)}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Edit button clicked for step:', step.id);
+                        editStep(step);
+                      }}
+                    >
                       <Edit className="w-4 h-4 mr-1" />
                       🚀 Advanced Builder
                     </Button>
@@ -2533,11 +2592,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         </div>
 
         {currentStepEdit && (
-          <div className="fixed inset-0 bg-background z-50">
+          <div className="fixed inset-0 bg-background z-50 overflow-auto">
             <PageBuilderForStep 
               step={currentStepEdit}
               onSave={saveStepEdit}
-              onClose={() => setCurrentStepEdit(null)}
+              onClose={() => {
+                console.log('Closing page builder');
+                setCurrentStepEdit(null);
+              }}
             />
           </div>
         )}
