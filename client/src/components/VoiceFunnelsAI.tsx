@@ -317,9 +317,6 @@ export default function VoiceFunnelsAI() {
     // Extract topic from command
     const topic = extractTopic(command, ['ebook', 'book']);
 
-    // Simulate AI generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
     const content: AIGeneratedContent = {
       type: 'ebook',
       title: `${topic} Complete Guide`,
@@ -343,8 +340,6 @@ export default function VoiceFunnelsAI() {
 
   const generateFunnel = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['funnel', 'sales funnel']);
-
-    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const content: AIGeneratedContent = {
       type: 'funnel',
@@ -379,8 +374,6 @@ export default function VoiceFunnelsAI() {
   const generateLandingPage = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['landing page', 'landing', 'page']);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
     const content: AIGeneratedContent = {
       type: 'landing-page',
       title: `${topic} Landing Page`,
@@ -402,8 +395,6 @@ export default function VoiceFunnelsAI() {
 
   const generateEmail = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['email', 'message']);
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const content: AIGeneratedContent = {
       type: 'email',
@@ -428,8 +419,6 @@ export default function VoiceFunnelsAI() {
   const generateLeadMagnet = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['lead magnet', 'freebie', 'free']);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
     const content: AIGeneratedContent = {
       type: 'lead-magnet',
       title: `Free ${topic} Toolkit`,
@@ -450,7 +439,6 @@ export default function VoiceFunnelsAI() {
   };
 
   const analyzeLeads = async (): Promise<{ response: string }> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Simulate lead analysis
     const analysis = {
@@ -469,8 +457,6 @@ export default function VoiceFunnelsAI() {
 
   const generateMarketingStrategy = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['strategy', 'plan', 'marketing']);
-
-    await new Promise(resolve => setTimeout(resolve, 2500));
 
     const content: AIGeneratedContent = {
       type: 'funnel',

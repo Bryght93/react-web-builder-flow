@@ -1082,118 +1082,83 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     }
   };
 
-  const generateLiveFunnel = async () => {
-    setIsGenerating(true);
-    setProgress(0);
+  const generateLiveFunnel = () => {
+    // Generate sample funnel instantly
+    const template = industryTemplates.find(t => t.id === selectedTemplate);
+    const stepTypes = template?.defaultSteps || ["landing", "optin", "email", "offer"];
 
-    try {
-      const template = industryTemplates.find(t => t.id === selectedTemplate);
-      const stepTypes = template?.defaultSteps || ["landing", "optin", "email", "offer"];
+    const steps: FunnelStep[] = stepTypes.map((stepType, i) => {
+      const copyContent = generateHumanLikeCopy(stepType as FunnelStep['type'], funnelData);
+      const colorScheme = getAdvancedColorScheme(stepType as FunnelStep['type'], selectedTemplate);
+      const images = generateHighQualityImages(stepType as FunnelStep['type'], funnelData, 3);
 
-      const steps: FunnelStep[] = [];
-      const stepProgress = 60 / stepTypes.length;
+      // Add testimonials for offer pages
+      const testimonials = stepType === 'offer' ? [
+        {
+          quote: "This system completely transformed my business. I went from struggling to making $50K+ per month!",
+          author: "Sarah Johnson",
+          role: "Entrepreneur",
+          company: "SJ Consulting",
+          avatar: "https://source.unsplash.com/100x100/?portrait,professional,woman",
+          rating: 5
+        },
+        {
+          quote: "The strategies in this program are pure gold. I wish I had found this years ago!",
+          author: "Mike Chen",
+          role: "Business Owner",
+          company: "Growth Solutions",
+          avatar: "https://source.unsplash.com/100x100/?portrait,professional,man",
+          rating: 5
+        }
+      ] : [];
 
-      setProgress(20);
-      toast({ title: "🧠 AI analyzing your business requirements..." });
+      // Add features/benefits
+      const features = [
+        `Step-by-step ${funnelData.productName} implementation guide`,
+        `Proven strategies that work for ${funnelData.targetAudience}`,
+        `Done-for-you templates and frameworks`,
+        `Private community access with 1000+ members`,
+        `Weekly live Q&A and coaching calls`,
+        `60-day money-back guarantee`
+      ];
 
-      for (let i = 0; i < stepTypes.length; i++) {
-        const stepType = stepTypes[i] as FunnelStep['type'];
-        const currentProgress = 20 + (i + 1) * stepProgress;
-        setProgress(currentProgress);
-        
-        toast({ 
-          title: `🎨 Creating ${stepType} page with AI copywriting...`,
-          description: "Generating human-like content and professional images"
-        });
-
-        // Generate enhanced content with human-like copywriting
-        const copyContent = generateHumanLikeCopy(stepType, funnelData);
-        const colorScheme = getAdvancedColorScheme(stepType, selectedTemplate);
-        const images = generateHighQualityImages(stepType, funnelData, 3);
-
-        // Add testimonials for offer pages
-        const testimonials = stepType === 'offer' ? [
-          {
-            quote: "This system completely transformed my business. I went from struggling to making $50K+ per month!",
-            author: "Sarah Johnson",
-            role: "Entrepreneur",
-            company: "SJ Consulting",
-            avatar: "https://source.unsplash.com/100x100/?portrait,professional,woman",
-            rating: 5
-          },
-          {
-            quote: "The strategies in this program are pure gold. I wish I had found this years ago!",
-            author: "Mike Chen",
-            role: "Business Owner",
-            company: "Growth Solutions",
-            avatar: "https://source.unsplash.com/100x100/?portrait,professional,man",
-            rating: 5
+      return {
+        id: `step-${i + 1}`,
+        type: stepType as FunnelStep['type'],
+        title: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
+        description: `High-converting ${stepType} page with AI-generated content`,
+        url: `/funnel/${funnelData.name.toLowerCase().replace(/\s+/g, '-')}/${stepType}`,
+        content: {
+          ...copyContent,
+          colors: colorScheme,
+          images: images,
+          testimonials: testimonials,
+          features: features,
+          fonts: {
+            heading: 'Inter, sans-serif',
+            body: 'System-ui, sans-serif'
           }
-        ] : [];
+        },
+        isComplete: true,
+        analytics: {
+          visitors: Math.floor(Math.random() * 1000) + 100,
+          conversions: Math.floor(Math.random() * 50) + 10,
+          revenue: Math.floor(Math.random() * 5000) + 1000
+        }
+      };
+    });
 
-        // Add features/benefits
-        const features = [
-          `Step-by-step ${funnelData.productName} implementation guide`,
-          `Proven strategies that work for ${funnelData.targetAudience}`,
-          `Done-for-you templates and frameworks`,
-          `Private community access with 1000+ members`,
-          `Weekly live Q&A and coaching calls`,
-          `60-day money-back guarantee`
-        ];
+    setFunnelData(prev => ({ ...prev, steps }));
+    
+    toast({
+      title: "🎉 AI Funnel Generated Instantly!",
+      description: `Created ${steps.length} pages with human-like copy, professional images, and optimized conversion elements`,
+    });
 
-        const step: FunnelStep = {
-          id: `step-${i + 1}`,
-          type: stepType,
-          title: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
-          description: `High-converting ${stepType} page with AI-generated content`,
-          url: `/funnel/${funnelData.name.toLowerCase().replace(/\s+/g, '-')}/${stepType}`,
-          content: {
-            ...copyContent,
-            colors: colorScheme,
-            images: images,
-            testimonials: testimonials,
-            features: features,
-            fonts: {
-              heading: 'Inter, sans-serif',
-              body: 'System-ui, sans-serif'
-            }
-          },
-          isComplete: true,
-          analytics: {
-            visitors: Math.floor(Math.random() * 1000) + 100,
-            conversions: Math.floor(Math.random() * 50) + 10,
-            revenue: Math.floor(Math.random() * 5000) + 1000
-          }
-        };
+    speakText(`Your ${funnelData.productName} funnel is ready with ${steps.length} professionally designed pages!`);
 
-        steps.push(step);
-        await new Promise(resolve => setTimeout(resolve, 1200));
-      }
-
-      setFunnelData(prev => ({ ...prev, steps }));
-      setProgress(100);
-
-      toast({
-        title: "🎉 AI Funnel Generated Successfully!",
-        description: `Created ${steps.length} pages with human-like copy, professional images, and optimized conversion elements`,
-      });
-
-      speakText(`Your ${funnelData.productName} funnel is ready with ${steps.length} professionally designed pages!`);
-
-      // Immediate transition to review step after generation
-      setCurrentStep(2);
-
-    } catch (error) {
-      console.error('Funnel generation error:', error);
-      toast({
-        title: "Generation Failed",
-        description: "Unable to generate funnel. Please try again.",
-        variant: "destructive",
-      });
-      setProgress(0);
-    } finally {
-      setIsGenerating(false);
-    }
+    // Immediate transition to review step
+    setCurrentStep(2);
   };
 
   const editStep = (step: FunnelStep) => {
@@ -2235,11 +2200,11 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                 </Button>
                 <Button 
                   className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => setCurrentStep(1)}
+                  onClick={generateLiveFunnel}
                   disabled={!funnelData.name || !selectedTemplate || !funnelData.productName}
                 >
                   <Brain className="w-4 h-4 mr-2" />
-                  Generate AI Funnel
+                  Generate AI Funnel Instantly
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -2250,85 +2215,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     );
   }
 
-  if (currentStep === 1) {
-    return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Brain className="w-6 h-6 text-primary animate-pulse" />
-            <span>AI Generating Your Professional Funnel</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="text-center space-y-4">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
-              <Brain className="w-10 h-10 text-white animate-pulse" />
-            </div>
-
-            <div>
-              <h3 className="text-lg font-medium mb-2">Creating Your {funnelData.productName} Funnel</h3>
-              <p className="text-muted-foreground">
-                AI is generating human-like copywriting, professional images, and conversion-optimized layouts
-              </p>
-            </div>
-
-            <div className="w-full max-w-md mx-auto">
-              <Progress value={progress} className="h-3" />
-              <p className="text-sm text-muted-foreground mt-2">{progress}% Complete</p>
-            </div>
-
-            <div className="bg-muted/50 rounded-lg p-4 max-w-md mx-auto">
-              <div className="text-sm space-y-2">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Human-like copywriting with psychological triggers</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Professional images from premium sources</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Conversion-optimized page layouts</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>FunnelKit-style page connections</span>
-                </div>
-              </div>
-            </div>
-
-            {!isGenerating && progress === 0 && (
-              <Button onClick={generateLiveFunnel} size="lg" className="mt-6 bg-gradient-to-r from-primary to-accent">
-                <Brain className="w-5 h-5 mr-2" />
-                Generate Professional Funnel
-              </Button>
-            )}
-
-            {progress === 100 && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-center space-x-2 text-green-600">
-                  <CheckCircle className="w-6 h-6" />
-                  <span className="font-medium">Professional Funnel Generated Successfully!</span>
-                </div>
-                <Button 
-                  onClick={() => {
-                    console.log('Moving to review step with funnel data:', funnelData);
-                    setCurrentStep(2);
-                  }} 
-                  size="lg" 
-                  className="bg-gradient-to-r from-green-500 to-green-600"
-                >
-                  Review Your Professional Funnel
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  
 
   if (currentStep === 2) {
     // Safety check - ensure we have funnel data before rendering review
