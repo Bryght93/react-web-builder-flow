@@ -740,7 +740,7 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                     <h3 className="font-medium mb-2">{content.title}</h3>
                     <p className="text-sm text-gray-600 line-clamp-2">
                       {content.type === 'funnel' ? 'Complete sales funnel with multiple steps' : 
-                       content.content.substring(0, 100) + '...'}
+                       typeof content.content === 'string' ? content.content.substring(0, 100) + '...' : 'Generated content'}
                     </p>
                     <div className="flex justify-between items-center mt-3">
                       <div className="flex space-x-1">
@@ -827,14 +827,22 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                   <div>
                     <h3 className="font-medium mb-2">Funnel Structure:</h3>
                     <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
-                      {JSON.stringify(JSON.parse(selectedContent.content), null, 2)}
+                      {typeof selectedContent.content === 'string' 
+                        ? JSON.stringify(JSON.parse(selectedContent.content), null, 2)
+                        : JSON.stringify(selectedContent.content, null, 2)
+                      }
                     </pre>
                   </div>
                 ) : (
                   <div>
                     <h3 className="font-medium mb-2">Content:</h3>
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <pre className="whitespace-pre-wrap text-sm">{selectedContent.content}</pre>
+                      <pre className="whitespace-pre-wrap text-sm">
+                        {typeof selectedContent.content === 'string' 
+                          ? selectedContent.content 
+                          : JSON.stringify(selectedContent.content, null, 2)
+                        }
+                      </pre>
                     </div>
                   </div>
                 )}
