@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   Zap,
   Target,
@@ -41,9 +41,10 @@ import {
   Palette,
   Globe,
   Settings,
-  Star
+  Star,
+  BarChart3
 } from "lucide-react";
-import PageBuilder from "./PageBuilder";
+import AdvancedPageBuilder from "./AdvancedPageBuilder";
 import AIPageAssistant from "./AIPageAssistant";
 
 interface FunnelStep {
@@ -350,7 +351,7 @@ const industryTemplates = [
   }
 ];
 
-// Page Builder Component for Funnel Steps with AI Integration
+// Enhanced Page Builder Component for Funnel Steps with Voice AI Integration
 function PageBuilderForStep({ step, onSave, onClose }: { 
   step: FunnelStep; 
   onSave: (step: FunnelStep) => void;
@@ -358,9 +359,59 @@ function PageBuilderForStep({ step, onSave, onClose }: {
 }) {
   const [currentStep, setCurrentStep] = useState(step);
   const [isAIProcessing, setIsAIProcessing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [recognition, setRecognition] = useState<any>(null);
+  const { toast } = useToast();
+
+  // Initialize speech recognition
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0])
+          .map((result: any) => result.transcript)
+          .join('');
+        setTranscript(transcript);
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+        if (transcript) {
+          handleAIContentUpdate(transcript);
+        }
+      };
+      
+      setRecognition(recognition);
+    }
+  }, []);
+
+  const startListening = () => {
+    if (recognition) {
+      setIsListening(true);
+      setTranscript('');
+      recognition.start();
+      toast({ title: "🎤 Listening for your voice command..." });
+    }
+  };
+
+  const stopListening = () => {
+    if (recognition) {
+      recognition.stop();
+      setIsListening(false);
+    }
+  };
 
   const handleAIContentUpdate = async (prompt: string) => {
     setIsAIProcessing(true);
+    toast({ title: "🧠 AI processing your request..." });
+    
     try {
       // Simulate AI processing
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -380,8 +431,11 @@ function PageBuilderForStep({ step, onSave, onClose }: {
           images: generateHighQualityImages(step.type, { productName: prompt }, 3)
         }
       }));
+      
+      toast({ title: "✅ Content updated with AI", description: "Your page has been enhanced!" });
     } catch (error) {
       console.error('AI update failed:', error);
+      toast({ title: "❌ AI update failed", description: "Please try again or type your request." });
     } finally {
       setIsAIProcessing(false);
     }
@@ -530,91 +584,140 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   };
 
   return (
-    <div className="h-screen flex">
-      {/* AI Assistant Sidebar */}
-      <div className="w-80 border-r bg-muted/30 overflow-y-auto">
-        <div className="p-4">
-          <div className="mb-4">
-            <h3 className="font-semibold mb-2 flex items-center">
-              <Brain className="w-4 h-4 mr-2 text-primary" />
-              AI Content Assistant
-            </h3>
-            <p className="text-xs text-muted-foreground mb-3">
-              Describe what you want and AI will generate professional copy and images
-            </p>
-            <div className="space-y-3">
-              <Textarea
-                placeholder="e.g., Create compelling copy for a fitness course landing page that converts busy professionals..."
-                rows={3}
-                className="text-sm"
-              />
-              <Button 
-                className="w-full" 
-                size="sm"
-                onClick={() => handleAIContentUpdate("fitness course for busy professionals")}
-                disabled={isAIProcessing}
-              >
-                {isAIProcessing ? (
-                  <>
-                    <Brain className="w-3 h-3 mr-2 animate-pulse" />
-                    AI Processing...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-3 h-3 mr-2" />
-                    Generate with AI
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-          <AIPageAssistant
-            onContentUpdate={(content) => setCurrentStep(prev => ({ ...prev, content }))}
-            currentContent={currentStep.content}
-            pageType={currentStep.type}
-          />
+    <div className="h-screen flex flex-col">
+      {/* Enhanced Header with Voice AI */}
+      <div className="h-16 border-b bg-background px-4 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="font-semibold">Editing: {currentStep.title}</h1>
+          <Badge variant="outline">{currentStep.type}</Badge>
+          <Badge variant="secondary">{currentStep.url}</Badge>
+        </div>
+        <div className="flex items-center space-x-2">
+          {/* Voice AI Button */}
+          <Button 
+            variant={isListening ? "default" : "outline"} 
+            size="sm" 
+            onClick={isListening ? stopListening : startListening}
+            disabled={isAIProcessing}
+          >
+            {isListening ? (
+              <>
+                <Pause className="w-4 h-4 mr-1" />
+                Stop Listening
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-4 h-4 mr-1" />
+                Voice AI
+              </>
+            )}
+          </Button>
+          
+          {/* Enhanced Live Preview */}
+          <Button variant="outline" size="sm" onClick={() => {
+            const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+            if (previewWindow) {
+              previewWindow.document.write(generatePreviewHTML(currentStep));
+              previewWindow.document.close();
+            }
+          }}>
+            <Eye className="w-4 h-4 mr-1" />
+            Live Preview
+          </Button>
+          
+          <Button variant="outline" onClick={onClose}>
+            <X className="w-4 h-4 mr-2" />
+            Close Editor
+          </Button>
+          
+          <Button onClick={() => {
+            onSave(currentStep);
+            onClose();
+          }}>
+            <Save className="w-4 h-4 mr-2" />
+            Save Page
+          </Button>
         </div>
       </div>
 
-      {/* Main Editor */}
-      <div className="flex-1 flex flex-col">
-        <div className="h-16 border-b bg-background px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="font-semibold">Editing: {currentStep.title}</h1>
-            <Badge variant="outline">{currentStep.type}</Badge>
-            <Badge variant="secondary">{currentStep.url}</Badge>
-          </div>
+      {/* Voice Command Feedback */}
+      {isListening && (
+        <div className="bg-blue-50 border-b px-4 py-2">
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={() => {
-              // Live preview functionality
-              const previewWindow = window.open('', '_blank', 'width=1200,height=800');
-              if (previewWindow) {
-                previewWindow.document.write(generatePreviewHTML(currentStep));
-                previewWindow.document.close();
-              }
-            }}>
-              <Eye className="w-4 h-4 mr-1" />
-              Live Preview
-            </Button>
-            <Button variant="outline" onClick={onClose}>
-              <X className="w-4 h-4 mr-2" />
-              Close Editor
-            </Button>
-            <Button onClick={() => {
-              onSave(currentStep);
-              onClose();
-            }}>
-              <Save className="w-4 h-4 mr-2" />
-              Save Page
-            </Button>
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            <span className="text-sm text-blue-600">Listening... {transcript}</span>
           </div>
         </div>
-        <div className="flex-1">
-          <PageBuilder
+      )}
+
+      {/* AI Processing Indicator */}
+      {isAIProcessing && (
+        <div className="bg-purple-50 border-b px-4 py-2">
+          <div className="flex items-center space-x-2">
+            <Brain className="w-4 h-4 text-purple-600 animate-pulse" />
+            <span className="text-sm text-purple-600">AI is processing your request...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced AI Assistant as Floating Panel */}
+      <div className="flex-1 relative">
+        <div className="absolute top-4 left-4 w-80 bg-white rounded-lg shadow-lg border z-10 max-h-96 overflow-y-auto">
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold flex items-center">
+                <Brain className="w-4 h-4 mr-2 text-primary" />
+                AI Assistant
+              </h3>
+            </div>
+            <div className="space-y-3">
+              <Textarea
+                placeholder="Type or speak your request: 'Add a heading', 'Change the colors', 'Add testimonials'..."
+                rows={3}
+                className="text-sm"
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+              />
+              <div className="flex gap-2">
+                <Button 
+                  className="flex-1" 
+                  size="sm"
+                  onClick={() => handleAIContentUpdate(transcript)}
+                  disabled={isAIProcessing || (!transcript.trim())}
+                >
+                  {isAIProcessing ? (
+                    <>
+                      <Brain className="w-3 h-3 mr-2 animate-pulse" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3 h-3 mr-2" />
+                      Generate
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={isListening ? stopListening : startListening}
+                  disabled={isAIProcessing}
+                >
+                  {isListening ? <Pause className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Advanced Page Builder */}
+        <div className="w-full h-full">
+          <AdvancedPageBuilder
             initialElements={getInitialElements(currentStep)}
-            onSave={(elements) => {
+            onSave={(elements: any[]) => {
               const updatedContent = convertElementsToContent(elements, currentStep);
               setCurrentStep(prev => ({ ...prev, content: updatedContent }));
+              handleSave(elements);
             }}
             onClose={onClose}
           />
@@ -810,19 +913,117 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     productName: initialFunnelData?.productName || "",
     pricePoint: initialFunnelData?.pricePoint || "",
     steps: initialFunnelData?.steps || [] as FunnelStep[],
-    aiDescription: initialFunnelData?.aiDescription || ""
+    aiDescription: initialFunnelData?.aiDescription || "",
+    id: initialFunnelData?.id || null
   });
   const [selectedTemplate, setSelectedTemplate] = useState(initialFunnelData?.industry || "");
   const [currentStepEdit, setCurrentStepEdit] = useState<FunnelStep | null>(null);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [recognition, setRecognition] = useState<any>(null);
+  const [isAIProcessing, setIsAIProcessing] = useState(false);
   const { toast } = useToast();
   const synthRef = useRef<SpeechSynthesis | null>(null);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize speech synthesis
+  // Initialize speech synthesis and recognition
   React.useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       synthRef.current = window.speechSynthesis;
     }
+    
+    // Initialize speech recognition
+    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0])
+          .map((result: any) => result.transcript)
+          .join('');
+        setTranscript(transcript);
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+        if (transcript) {
+          setFunnelData(prev => ({ ...prev, aiDescription: transcript }));
+        }
+      };
+      
+      setRecognition(recognition);
+    }
   }, []);
+
+  const startListening = () => {
+    if (recognition) {
+      setIsListening(true);
+      setTranscript('');
+      recognition.start();
+      toast({ title: "🎤 Listening for your voice command..." });
+    }
+  };
+
+  const stopListening = () => {
+    if (recognition) {
+      recognition.stop();
+      setIsListening(false);
+    }
+  };
+
+  // Auto-save functionality
+  const autoSaveFunnel = async () => {
+    if (!funnelData.name || funnelData.steps.length === 0) return;
+    
+    setIsAutoSaving(true);
+    try {
+      const funnelPayload = {
+        name: funnelData.name,
+        description: funnelData.aiDescription,
+        industry: funnelData.industry,
+        targetAudience: funnelData.targetAudience,
+        goal: funnelData.mainGoal,
+        data: JSON.stringify(funnelData)
+      };
+
+      if (funnelData.id) {
+        await apiRequest(`/api/funnels/${funnelData.id}`, 'PUT', funnelPayload);
+      } else {
+        const response = await apiRequest('/api/funnels', 'POST', funnelPayload);
+        setFunnelData(prev => ({ ...prev, id: response.id }));
+      }
+      
+      setLastSaved(new Date());
+      queryClient.invalidateQueries({ queryKey: ['/api/funnels'] });
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
+
+  // Auto-save on data changes
+  React.useEffect(() => {
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      autoSaveFunnel();
+    }, 3000); // Auto-save after 3 seconds of inactivity
+    
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [funnelData]);
 
   const speakText = (text: string) => {
     if (synthRef.current) {
@@ -1714,42 +1915,93 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <Textarea
-                    placeholder="Example: I want to sell my online course on confidence building for introverts. My target audience is shy professionals aged 25-40 who struggle with networking. I want a complete funnel with a free confidence checklist as lead magnet, email sequence, and main offer at $297. Include upsells for 1-on-1 coaching at $997..."
-                    rows={6}
-                    value={funnelData.aiDescription}
-                    onChange={(e) => setFunnelData(prev => ({ ...prev, aiDescription: e.target.value }))}
-                    className="resize-none"
-                  />
-                  <Button 
-                    className="mt-3 w-full" 
-                    onClick={() => {
-                      const description = funnelData.aiDescription || "";
-                      if (description) {
-                        const productName = description.match(/sell my ([^.]+)/)?.[1] || "Premium Course";
-                        const audience = description.match(/target audience is ([^.]+)/)?.[1] || "Professionals";
-                        const price = description.match(/\$(\d+)/)?.[0] || "$497";
-                        
-                        setFunnelData(prev => ({
-                          ...prev,
-                          name: productName + " Funnel",
-                          productName: productName,
-                          targetAudience: audience,
-                          pricePoint: price,
-                          mainGoal: `Generate leads and sales for ${productName}`
-                        }));
-                        
-                        toast({
-                          title: "🧠 AI Analysis Complete!",
-                          description: "Form auto-filled based on your description"
-                        });
-                      }
-                    }}
-                    disabled={!funnelData.aiDescription}
-                  >
-                    <Brain className="w-4 h-4 mr-2" />
-                    Auto-Fill From AI Description
-                  </Button>
+                  <div className="relative">
+                    <Textarea
+                      placeholder="Example: I want to sell my online course on confidence building for introverts. My target audience is shy professionals aged 25-40 who struggle with networking. I want a complete funnel with a free confidence checklist as lead magnet, email sequence, and main offer at $297. Include upsells for 1-on-1 coaching at $997..."
+                      rows={6}
+                      value={funnelData.aiDescription}
+                      onChange={(e) => setFunnelData(prev => ({ ...prev, aiDescription: e.target.value }))}
+                      className="resize-none pr-12"
+                    />
+                    
+                    {/* Voice Input Button */}
+                    <Button
+                      variant={isListening ? "default" : "outline"}
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={isListening ? stopListening : startListening}
+                      disabled={isAIProcessing}
+                    >
+                      {isListening ? (
+                        <Pause className="w-4 h-4" />
+                      ) : (
+                        <Volume2 className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                  
+                  {/* Voice feedback */}
+                  {isListening && (
+                    <div className="mt-2 p-2 bg-blue-50 rounded-md">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-blue-600">Listening... Speak your funnel vision</span>
+                      </div>
+                      {transcript && (
+                        <p className="text-sm mt-1 text-gray-600">{transcript}</p>
+                      )}
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-2 mt-3">
+                    <Button 
+                      className="flex-1" 
+                      onClick={() => {
+                        const description = funnelData.aiDescription || "";
+                        if (description) {
+                          const productName = description.match(/sell my ([^.]+)/)?.[1] || "Premium Course";
+                          const audience = description.match(/target audience is ([^.]+)/)?.[1] || "Professionals";
+                          const price = description.match(/\$(\d+)/)?.[0] || "$497";
+                          
+                          setFunnelData(prev => ({
+                            ...prev,
+                            name: productName + " Funnel",
+                            productName: productName,
+                            targetAudience: audience,
+                            pricePoint: price,
+                            mainGoal: `Generate leads and sales for ${productName}`
+                          }));
+                          
+                          toast({
+                            title: "🧠 AI Analysis Complete!",
+                            description: "Form auto-filled based on your description"
+                          });
+                        }
+                      }}
+                      disabled={!funnelData.aiDescription}
+                    >
+                      <Brain className="w-4 h-4 mr-2" />
+                      Auto-Fill From AI Description
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={isListening ? stopListening : startListening}
+                      disabled={isAIProcessing}
+                    >
+                      {isListening ? (
+                        <>
+                          <Pause className="w-4 h-4 mr-2" />
+                          Stop Voice
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-4 h-4 mr-2" />
+                          Voice Input
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -1978,10 +2230,37 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Eye className="w-6 h-6 text-primary" />
-                <span>Review & Edit Your AI-Generated Funnel</span>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Eye className="w-6 h-6 text-primary" />
+                  <span>Review & Edit Your AI-Generated Funnel</span>
+                </div>
+                
+                {/* Auto-Save Status */}
+                <div className="flex items-center space-x-2 text-sm">
+                  {isAutoSaving ? (
+                    <>
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                      <span className="text-yellow-600">Saving...</span>
+                    </>
+                  ) : lastSaved ? (
+                    <>
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-green-600">
+                        Saved {new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+                          Math.round((lastSaved.getTime() - Date.now()) / 60000), 'minute'
+                        )}
+                      </span>
+                    </>
+                  ) : funnelData.id ? (
+                    <>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-blue-600">Loaded from library</span>
+                    </>
+                  ) : null}
+                </div>
               </div>
+              
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
@@ -2020,25 +2299,76 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   <div className="flex items-center space-x-1">
                     <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
                       <Eye className="w-4 h-4 mr-1" />
-                      Live Preview
+                      Preview
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => editStep(step)}>
                       <Edit className="w-4 h-4 mr-1" />
-                      Edit Page
+                      🚀 Advanced Builder
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => {
-                      const stepData = JSON.stringify(step, null, 2);
-                      const blob = new Blob([stepData], { type: 'application/json' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `${step.title.toLowerCase().replace(/\s+/g, '-')}.json`;
-                      a.click();
-                      URL.revokeObjectURL(url);
-                      toast({ title: "📥 Page Exported", description: `${step.title} exported successfully` });
+                      const duplicateStep = {
+                        ...step,
+                        id: `step-${Date.now()}`,
+                        title: `${step.title} (Copy)`,
+                        url: `${step.url}-copy`
+                      };
+                      setFunnelData(prev => ({
+                        ...prev,
+                        steps: [...prev.steps, duplicateStep]
+                      }));
+                      toast({ title: "📄 Page Duplicated", description: `${step.title} duplicated successfully` });
                     }}>
-                      <Download className="w-4 h-4" />
+                      <Copy className="w-4 h-4" />
                     </Button>
+                    
+                    {/* Dropdown for more actions */}
+                    <div className="relative group">
+                      <Button variant="outline" size="sm" className="px-2">
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                      <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-md shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                        <div className="py-1">
+                          <button
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center space-x-2"
+                            onClick={() => {
+                              const stepData = JSON.stringify(step, null, 2);
+                              const blob = new Blob([stepData], { type: 'application/json' });
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement('a');
+                              a.href = url;
+                              a.download = `${step.title.toLowerCase().replace(/\s+/g, '-')}.json`;
+                              a.click();
+                              URL.revokeObjectURL(url);
+                              toast({ title: "📥 Page Exported", description: `${step.title} exported successfully` });
+                            }}
+                          >
+                            <Download className="w-4 h-4" />
+                            <span>Export Page</span>
+                          </button>
+                          <button
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center space-x-2"
+                            onClick={() => toast({ title: "📊 Analytics", description: `Analytics for ${step.title}: ${step.analytics?.visitors || 0} visitors, ${step.analytics?.conversions || 0} conversions` })}
+                          >
+                            <BarChart3 className="w-4 h-4" />
+                            <span>View Analytics</span>
+                          </button>
+                          <button
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center space-x-2"
+                            onClick={() => toast({ title: "🤖 Automation", description: `Setting up automation for ${step.title}` })}
+                          >
+                            <Zap className="w-4 h-4" />
+                            <span>Automation</span>
+                          </button>
+                          <button
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center space-x-2"
+                            onClick={() => toast({ title: "🧪 Split Test", description: `Creating split test for ${step.title}` })}
+                          >
+                            <Target className="w-4 h-4" />
+                            <span>Split Test</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
