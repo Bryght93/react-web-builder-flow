@@ -1,6 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { 
+  insertFunnelSchema, 
+  insertPageSchema, 
+  insertLeadMagnetSchema, 
+  insertLeadSchema, 
+  insertTemplateSchema 
+} from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Voice AI API endpoints
@@ -457,6 +464,283 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
     }
   }
+
+  // Database-backed API endpoints
+  
+  // Funnel API endpoints
+  app.get("/api/funnels", async (req, res) => {
+    try {
+      const userId = 1; // TODO: Get from session/auth
+      const funnels = await storage.getFunnels(userId);
+      res.json(funnels);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch funnels" });
+    }
+  });
+
+  app.get("/api/funnels/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const funnel = await storage.getFunnel(id);
+      if (!funnel) {
+        return res.status(404).json({ error: "Funnel not found" });
+      }
+      res.json(funnel);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch funnel" });
+    }
+  });
+
+  app.post("/api/funnels", async (req, res) => {
+    try {
+      const funnelData = insertFunnelSchema.parse(req.body);
+      const funnel = await storage.createFunnel(funnelData);
+      res.status(201).json(funnel);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid funnel data" });
+    }
+  });
+
+  app.put("/api/funnels/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const funnel = await storage.updateFunnel(id, updates);
+      res.json(funnel);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update funnel" });
+    }
+  });
+
+  app.delete("/api/funnels/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteFunnel(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete funnel" });
+    }
+  });
+
+  // Page API endpoints
+  app.get("/api/funnels/:funnelId/pages", async (req, res) => {
+    try {
+      const funnelId = parseInt(req.params.funnelId);
+      const pages = await storage.getPages(funnelId);
+      res.json(pages);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch pages" });
+    }
+  });
+
+  app.get("/api/pages/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const page = await storage.getPage(id);
+      if (!page) {
+        return res.status(404).json({ error: "Page not found" });
+      }
+      res.json(page);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch page" });
+    }
+  });
+
+  app.post("/api/pages", async (req, res) => {
+    try {
+      const pageData = insertPageSchema.parse(req.body);
+      const page = await storage.createPage(pageData);
+      res.status(201).json(page);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid page data" });
+    }
+  });
+
+  app.put("/api/pages/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const page = await storage.updatePage(id, updates);
+      res.json(page);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update page" });
+    }
+  });
+
+  app.delete("/api/pages/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deletePage(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete page" });
+    }
+  });
+
+  // Lead Magnet API endpoints
+  app.get("/api/lead-magnets", async (req, res) => {
+    try {
+      const userId = 1; // TODO: Get from session/auth
+      const leadMagnets = await storage.getLeadMagnets(userId);
+      res.json(leadMagnets);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch lead magnets" });
+    }
+  });
+
+  app.get("/api/lead-magnets/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const leadMagnet = await storage.getLeadMagnet(id);
+      if (!leadMagnet) {
+        return res.status(404).json({ error: "Lead magnet not found" });
+      }
+      res.json(leadMagnet);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch lead magnet" });
+    }
+  });
+
+  app.post("/api/lead-magnets", async (req, res) => {
+    try {
+      const leadMagnetData = insertLeadMagnetSchema.parse(req.body);
+      const leadMagnet = await storage.createLeadMagnet(leadMagnetData);
+      res.status(201).json(leadMagnet);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid lead magnet data" });
+    }
+  });
+
+  app.put("/api/lead-magnets/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const leadMagnet = await storage.updateLeadMagnet(id, updates);
+      res.json(leadMagnet);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update lead magnet" });
+    }
+  });
+
+  app.delete("/api/lead-magnets/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteLeadMagnet(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete lead magnet" });
+    }
+  });
+
+  // Lead API endpoints
+  app.get("/api/leads", async (req, res) => {
+    try {
+      const userId = 1; // TODO: Get from session/auth
+      const leads = await storage.getLeads(userId);
+      res.json(leads);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch leads" });
+    }
+  });
+
+  app.get("/api/leads/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const lead = await storage.getLead(id);
+      if (!lead) {
+        return res.status(404).json({ error: "Lead not found" });
+      }
+      res.json(lead);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch lead" });
+    }
+  });
+
+  app.post("/api/leads", async (req, res) => {
+    try {
+      const leadData = insertLeadSchema.parse(req.body);
+      const lead = await storage.createLead(leadData);
+      res.status(201).json(lead);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid lead data" });
+    }
+  });
+
+  app.put("/api/leads/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const lead = await storage.updateLead(id, updates);
+      res.json(lead);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update lead" });
+    }
+  });
+
+  app.delete("/api/leads/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteLead(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete lead" });
+    }
+  });
+
+  // Template API endpoints
+  app.get("/api/templates", async (req, res) => {
+    try {
+      const category = req.query.category as string;
+      const templates = await storage.getTemplates(category);
+      res.json(templates);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch templates" });
+    }
+  });
+
+  app.get("/api/templates/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const template = await storage.getTemplate(id);
+      if (!template) {
+        return res.status(404).json({ error: "Template not found" });
+      }
+      res.json(template);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch template" });
+    }
+  });
+
+  app.post("/api/templates", async (req, res) => {
+    try {
+      const templateData = insertTemplateSchema.parse(req.body);
+      const template = await storage.createTemplate(templateData);
+      res.status(201).json(template);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid template data" });
+    }
+  });
+
+  app.put("/api/templates/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const template = await storage.updateTemplate(id, updates);
+      res.json(template);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update template" });
+    }
+  });
+
+  app.delete("/api/templates/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteTemplate(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete template" });
+    }
+  });
 
   const httpServer = createServer(app);
 
