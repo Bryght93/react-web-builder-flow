@@ -1260,6 +1260,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   };
 
   const editStep = (step: FunnelStep) => {
+    console.log('Opening Advanced Builder for step:', step.title);
     setEditingStepData(step);
     setShowAdvancedEditor(true);
   };
@@ -1276,7 +1277,13 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   };
 
   const saveAdvancedEdit = (elements: any[]) => {
-    if (!editingStepData) return;
+    if (!editingStepData) {
+      console.log('No editing step data available');
+      return;
+    }
+    
+    console.log('Saving advanced edit for:', editingStepData.title);
+    console.log('Elements received:', elements);
     
     // Convert advanced builder elements back to funnel step content
     const updatedContent = convertElementsToContent(elements, editingStepData);
@@ -1286,7 +1293,8 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
       content: {
         ...editingStepData.content,
         ...updatedContent
-      }
+      },
+      isComplete: true
     };
     
     setFunnelData(prev => ({
@@ -1298,7 +1306,10 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     
     setShowAdvancedEditor(false);
     setEditingStepData(null);
-    toast({ title: "✅ Funnel page updated with advanced editor" });
+    toast({ 
+      title: "✅ Page Updated!", 
+      description: `${updatedStep.title} has been successfully updated with your changes.`
+    });
   };
 
   const convertElementsToContent = (elements: any[], step: FunnelStep) => {
@@ -2485,7 +2496,15 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                       <Eye className="w-4 h-4 mr-1" />
                       Preview
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => editStep(step)}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => {
+                        console.log('Advanced Builder clicked for:', step.title);
+                        editStep(step);
+                      }}
+                      className="bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600"
+                    >
                       <Edit className="w-4 h-4 mr-1" />
                       🚀 Advanced Builder
                     </Button>
