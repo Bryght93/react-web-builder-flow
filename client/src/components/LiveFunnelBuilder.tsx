@@ -357,18 +357,6 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   onSave: (step: FunnelStep) => void;
   onClose: () => void;
 }) {
-  if (!step || !step.id) {
-    console.error('PageBuilderForStep: Invalid step provided');
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Error Loading Page Builder</h2>
-          <p className="text-gray-600 mb-4">Invalid step data provided</p>
-          <Button onClick={onClose}>Close</Button>
-        </div>
-      </div>
-    );
-  }
   const [currentStep, setCurrentStep] = useState(step);
   const [isAIProcessing, setIsAIProcessing] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -573,47 +561,26 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   };
 
   const handleSave = (elements: any[]) => {
-    try {
-      const updatedContent = { ...step.content };
+    const updatedContent = { ...step.content };
 
-      if (Array.isArray(elements)) {
-        elements.forEach(element => {
-          if (element && element.type && element.content) {
-            if (element.type === 'heading' && element.content.level === 'h1') {
-              updatedContent.headline = element.content.text || '';
-            } else if (element.type === 'heading' && element.content.level === 'h2') {
-              updatedContent.subheadline = element.content.text || '';
-            } else if (element.type === 'text') {
-              updatedContent.bodyText = element.content.text || '';
-            } else if (element.type === 'button') {
-              updatedContent.ctaText = element.content.text || '';
-            } else if (element.type === 'form') {
-              updatedContent.ctaText = element.content.button || '';
-            }
-          }
-        });
+    elements.forEach(element => {
+      if (element.type === 'heading' && element.content.level === 'h1') {
+        updatedContent.headline = element.content.text;
+      } else if (element.type === 'heading' && element.content.level === 'h2') {
+        updatedContent.subheadline = element.content.text;
+      } else if (element.type === 'text') {
+        updatedContent.bodyText = element.content.text;
+      } else if (element.type === 'button') {
+        updatedContent.ctaText = element.content.text;
+      } else if (element.type === 'form') {
+        updatedContent.ctaText = element.content.button;
       }
+    });
 
-      const updatedStep = {
-        ...step,
-        content: updatedContent,
-        isComplete: true
-      };
-
-      onSave(updatedStep);
-      
-      toast({
-        title: "✅ Page Saved",
-        description: "Your page has been updated successfully"
-      });
-    } catch (error) {
-      console.error('Error saving page:', error);
-      toast({
-        title: "❌ Save Failed",
-        description: "Unable to save page changes. Please try again.",
-        variant: "destructive"
-      });
-    }
+    onSave({
+      ...step,
+      content: updatedContent
+    });
   };
 
   return (
@@ -748,24 +715,11 @@ function PageBuilderForStep({ step, onSave, onClose }: {
           <AdvancedPageBuilder
             initialElements={getInitialElements(currentStep)}
             onSave={(elements: any[]) => {
-              console.log('Page builder save called with elements:', elements);
-              try {
-                const updatedContent = convertElementsToContent(elements, currentStep);
-                setCurrentStep(prev => ({ ...prev, content: updatedContent }));
-                handleSave(elements);
-              } catch (error) {
-                console.error('Error in page builder save:', error);
-                toast({
-                  title: "❌ Save Error",
-                  description: "Failed to save page changes",
-                  variant: "destructive"
-                });
-              }
+              const updatedContent = convertElementsToContent(elements, currentStep);
+              setCurrentStep(prev => ({ ...prev, content: updatedContent }));
+              handleSave(elements);
             }}
-            onClose={() => {
-              console.log('Page builder close called');
-              onClose();
-            }}
+            onClose={onClose}
           />
         </div>
       </div>
@@ -1082,95 +1036,121 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     }
   };
 
-  const generateLiveFunnel = () => {
-    // Generate sample funnel instantly
-    const template = industryTemplates.find(t => t.id === selectedTemplate);
-    const stepTypes = template?.defaultSteps || ["landing", "optin", "email", "offer"];
+  const generateLiveFunnel = async () => {
+    setIsGenerating(true);
+    setProgress(0);
 
-    const steps: FunnelStep[] = stepTypes.map((stepType, i) => {
-      const copyContent = generateHumanLikeCopy(stepType as FunnelStep['type'], funnelData);
-      const colorScheme = getAdvancedColorScheme(stepType as FunnelStep['type'], selectedTemplate);
-      const images = generateHighQualityImages(stepType as FunnelStep['type'], funnelData, 3);
+    try {
+      const template = industryTemplates.find(t => t.id === selectedTemplate);
+      const stepTypes = template?.defaultSteps || ["landing", "optin", "email", "offer"];
 
-      // Add testimonials for offer pages
-      const testimonials = stepType === 'offer' ? [
-        {
-          quote: "This system completely transformed my business. I went from struggling to making $50K+ per month!",
-          author: "Sarah Johnson",
-          role: "Entrepreneur",
-          company: "SJ Consulting",
-          avatar: "https://source.unsplash.com/100x100/?portrait,professional,woman",
-          rating: 5
-        },
-        {
-          quote: "The strategies in this program are pure gold. I wish I had found this years ago!",
-          author: "Mike Chen",
-          role: "Business Owner",
-          company: "Growth Solutions",
-          avatar: "https://source.unsplash.com/100x100/?portrait,professional,man",
-          rating: 5
-        }
-      ] : [];
+      const steps: FunnelStep[] = [];
+      const stepProgress = 60 / stepTypes.length;
 
-      // Add features/benefits
-      const features = [
-        `Step-by-step ${funnelData.productName} implementation guide`,
-        `Proven strategies that work for ${funnelData.targetAudience}`,
-        `Done-for-you templates and frameworks`,
-        `Private community access with 1000+ members`,
-        `Weekly live Q&A and coaching calls`,
-        `60-day money-back guarantee`
-      ];
+      setProgress(20);
+      toast({ title: "🧠 AI analyzing your business requirements..." });
 
-      return {
-        id: `step-${i + 1}`,
-        type: stepType as FunnelStep['type'],
-        title: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
-        description: `High-converting ${stepType} page with AI-generated content`,
-        url: `/funnel/${funnelData.name.toLowerCase().replace(/\s+/g, '-')}/${stepType}`,
-        content: {
-          ...copyContent,
-          colors: colorScheme,
-          images: images,
-          testimonials: testimonials,
-          features: features,
-          fonts: {
-            heading: 'Inter, sans-serif',
-            body: 'System-ui, sans-serif'
+      for (let i = 0; i < stepTypes.length; i++) {
+        const stepType = stepTypes[i] as FunnelStep['type'];
+        const currentProgress = 20 + (i + 1) * stepProgress;
+        setProgress(currentProgress);
+        
+        toast({ 
+          title: `🎨 Creating ${stepType} page with AI copywriting...`,
+          description: "Generating human-like content and professional images"
+        });
+
+        // Generate enhanced content with human-like copywriting
+        const copyContent = generateHumanLikeCopy(stepType, funnelData);
+        const colorScheme = getAdvancedColorScheme(stepType, selectedTemplate);
+        const images = generateHighQualityImages(stepType, funnelData, 3);
+
+        // Add testimonials for offer pages
+        const testimonials = stepType === 'offer' ? [
+          {
+            quote: "This system completely transformed my business. I went from struggling to making $50K+ per month!",
+            author: "Sarah Johnson",
+            role: "Entrepreneur",
+            company: "SJ Consulting",
+            avatar: "https://source.unsplash.com/100x100/?portrait,professional,woman",
+            rating: 5
+          },
+          {
+            quote: "The strategies in this program are pure gold. I wish I had found this years ago!",
+            author: "Mike Chen",
+            role: "Business Owner",
+            company: "Growth Solutions",
+            avatar: "https://source.unsplash.com/100x100/?portrait,professional,man",
+            rating: 5
           }
-        },
-        isComplete: true,
-        analytics: {
-          visitors: Math.floor(Math.random() * 1000) + 100,
-          conversions: Math.floor(Math.random() * 50) + 10,
-          revenue: Math.floor(Math.random() * 5000) + 1000
-        }
-      };
-    });
+        ] : [];
 
-    setFunnelData(prev => ({ ...prev, steps }));
-    
-    toast({
-      title: "🎉 AI Funnel Generated Instantly!",
-      description: `Created ${steps.length} pages with human-like copy, professional images, and optimized conversion elements`,
-    });
+        // Add features/benefits
+        const features = [
+          `Step-by-step ${funnelData.productName} implementation guide`,
+          `Proven strategies that work for ${funnelData.targetAudience}`,
+          `Done-for-you templates and frameworks`,
+          `Private community access with 1000+ members`,
+          `Weekly live Q&A and coaching calls`,
+          `60-day money-back guarantee`
+        ];
 
-    speakText(`Your ${funnelData.productName} funnel is ready with ${steps.length} professionally designed pages!`);
+        const step: FunnelStep = {
+          id: `step-${i + 1}`,
+          type: stepType,
+          title: `${stepType.charAt(0).toUpperCase() + stepType.slice(1)} Page`,
+          description: `High-converting ${stepType} page with AI-generated content`,
+          url: `/funnel/${funnelData.name.toLowerCase().replace(/\s+/g, '-')}/${stepType}`,
+          content: {
+            ...copyContent,
+            colors: colorScheme,
+            images: images,
+            testimonials: testimonials,
+            features: features,
+            fonts: {
+              heading: 'Inter, sans-serif',
+              body: 'System-ui, sans-serif'
+            }
+          },
+          isComplete: true,
+          analytics: {
+            visitors: Math.floor(Math.random() * 1000) + 100,
+            conversions: Math.floor(Math.random() * 50) + 10,
+            revenue: Math.floor(Math.random() * 5000) + 1000
+          }
+        };
 
-    // Immediate transition to review step
-    setCurrentStep(2);
+        steps.push(step);
+        await new Promise(resolve => setTimeout(resolve, 1200));
+      }
+
+      setFunnelData(prev => ({ ...prev, steps }));
+      setProgress(100);
+
+      toast({
+        title: "🎉 AI Funnel Generated Successfully!",
+        description: `Created ${steps.length} pages with human-like copy, professional images, and optimized conversion elements`,
+      });
+
+      speakText(`Your ${funnelData.productName} funnel is ready with ${steps.length} professionally designed pages!`);
+
+      // Immediate transition to review step after generation
+      setCurrentStep(2);
+
+    } catch (error) {
+      console.error('Funnel generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate funnel. Please try again.",
+        variant: "destructive",
+      });
+      setProgress(0);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const editStep = (step: FunnelStep) => {
-    console.log('Editing step:', step);
-    if (!step || !step.id) {
-      toast({ 
-        title: "❌ Edit Error", 
-        description: "Invalid step data. Please try again.",
-        variant: "destructive"
-      });
-      return;
-    }
     setCurrentStepEdit(step);
   };
 
@@ -1186,97 +1166,27 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   };
 
   const previewStep = (step: FunnelStep) => {
-    try {
-      if (!step || !step.title || !step.content) {
-        toast({ 
-          title: "❌ Preview Error", 
-          description: "Invalid step data. Cannot generate preview.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const previewWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-      if (previewWindow) {
-        try {
-          const html = generateFullPreviewHTML(step);
-          previewWindow.document.write(html);
-          previewWindow.document.close();
-          toast({ 
-            title: `👀 Previewing ${step.title}`, 
-            description: "Opening live preview in new tab..." 
-          });
-        } catch (htmlError) {
-          console.error('HTML generation error:', htmlError);
-          previewWindow.close();
-          toast({ 
-            title: "❌ Preview Generation Failed", 
-            description: "Error generating preview content.",
-            variant: "destructive"
-          });
-        }
-      } else {
-        toast({ 
-          title: "❌ Preview Failed", 
-          description: "Please allow popups for this site to view previews.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Preview error:', error);
-      toast({ 
-        title: "❌ Preview Error", 
-        description: "Unable to open preview. Please try again.",
-        variant: "destructive"
-      });
+    const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (previewWindow) {
+      previewWindow.document.write(generateFullPreviewHTML(step));
+      previewWindow.document.close();
     }
+    toast({ 
+      title: `👀 Previewing ${step.title}`, 
+      description: "Opening live preview in new tab..." 
+    });
   };
 
   const viewLiveFunnel = () => {
-    try {
-      if (!funnelData.steps || funnelData.steps.length === 0) {
-        toast({ 
-          title: "❌ Funnel Error", 
-          description: "No funnel steps available to preview.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const funnelWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-      if (funnelWindow) {
-        try {
-          const html = generateFunnelIndexHTML();
-          funnelWindow.document.write(html);
-          funnelWindow.document.close();
-          toast({ 
-            title: "🚀 Opening Live Funnel", 
-            description: "Your complete funnel is opening in a new tab" 
-          });
-        } catch (htmlError) {
-          console.error('Funnel HTML generation error:', htmlError);
-          funnelWindow.close();
-          toast({ 
-            title: "❌ Funnel Generation Failed", 
-            description: "Error generating funnel preview.",
-            variant: "destructive"
-          });
-        }
-      } else {
-        toast({ 
-          title: "❌ Funnel Preview Failed", 
-          description: "Please allow popups for this site to view the live funnel.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Live funnel error:', error);
-      toast({ 
-        title: "❌ Funnel Error", 
-        description: "Unable to open live funnel. Please try again.",
-        variant: "destructive"
-      });
+    const funnelWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (funnelWindow) {
+      funnelWindow.document.write(generateFunnelIndexHTML());
+      funnelWindow.document.close();
     }
+    toast({ 
+      title: "🚀 Opening Live Funnel", 
+      description: "Your complete funnel is opening in a new tab" 
+    });
   };
 
   const exportFunnel = () => {
@@ -2200,11 +2110,11 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                 </Button>
                 <Button 
                   className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={generateLiveFunnel}
+                  onClick={() => setCurrentStep(1)}
                   disabled={!funnelData.name || !selectedTemplate || !funnelData.productName}
                 >
                   <Brain className="w-4 h-4 mr-2" />
-                  Generate AI Funnel Instantly
+                  Generate AI Funnel
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -2215,7 +2125,85 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     );
   }
 
-  
+  if (currentStep === 1) {
+    return (
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Brain className="w-6 h-6 text-primary animate-pulse" />
+            <span>AI Generating Your Professional Funnel</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="text-center space-y-4">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+              <Brain className="w-10 h-10 text-white animate-pulse" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Creating Your {funnelData.productName} Funnel</h3>
+              <p className="text-muted-foreground">
+                AI is generating human-like copywriting, professional images, and conversion-optimized layouts
+              </p>
+            </div>
+
+            <div className="w-full max-w-md mx-auto">
+              <Progress value={progress} className="h-3" />
+              <p className="text-sm text-muted-foreground mt-2">{progress}% Complete</p>
+            </div>
+
+            <div className="bg-muted/50 rounded-lg p-4 max-w-md mx-auto">
+              <div className="text-sm space-y-2">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Human-like copywriting with psychological triggers</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Professional images from premium sources</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Conversion-optimized page layouts</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>FunnelKit-style page connections</span>
+                </div>
+              </div>
+            </div>
+
+            {!isGenerating && progress === 0 && (
+              <Button onClick={generateLiveFunnel} size="lg" className="mt-6 bg-gradient-to-r from-primary to-accent">
+                <Brain className="w-5 h-5 mr-2" />
+                Generate Professional Funnel
+              </Button>
+            )}
+
+            {progress === 100 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-center space-x-2 text-green-600">
+                  <CheckCircle className="w-6 h-6" />
+                  <span className="font-medium">Professional Funnel Generated Successfully!</span>
+                </div>
+                <Button 
+                  onClick={() => {
+                    console.log('Moving to review step with funnel data:', funnelData);
+                    setCurrentStep(2);
+                  }} 
+                  size="lg" 
+                  className="bg-gradient-to-r from-green-500 to-green-600"
+                >
+                  Review Your Professional Funnel
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (currentStep === 2) {
     // Safety check - ensure we have funnel data before rendering review
@@ -2281,15 +2269,7 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                   <Volume2 className="w-4 h-4 mr-2" />
                   Read Summary
                 </Button>
-                <Button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('View Live Funnel clicked');
-                    viewLiveFunnel();
-                  }} 
-                  className="bg-gradient-to-r from-primary to-accent"
-                >
+                <Button onClick={viewLiveFunnel} className="bg-gradient-to-r from-primary to-accent">
                   <Globe className="w-4 h-4 mr-2" />
                   View Live Funnel
                 </Button>
@@ -2317,29 +2297,11 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                     </div>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Preview button clicked for step:', step.id);
-                        previewStep(step);
-                      }}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => previewStep(step)}>
                       <Eye className="w-4 h-4 mr-1" />
                       Preview
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Edit button clicked for step:', step.id);
-                        editStep(step);
-                      }}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => editStep(step)}>
                       <Edit className="w-4 h-4 mr-1" />
                       🚀 Advanced Builder
                     </Button>
@@ -2443,11 +2405,9 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                       {step.content.bodyText && (
                         <div className="max-w-3xl mx-auto">
                           <div className="text-lg leading-relaxed">
-                            {step.content.bodyText.split('\n').map((paragraph, idx) => 
-                              paragraph.trim() ? (
-                                <p key={idx} className="mb-4">{paragraph}</p>
-                              ) : null
-                            )}
+                            {step.content.bodyText.split('\n').map((paragraph, idx) => (
+                              paragraph.trim() && <p key={idx} className="mb-4">{paragraph}</p>
+                            ))}
                           </div>
                         </div>
                       )}
@@ -2573,20 +2533,12 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         </div>
 
         {currentStepEdit && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div className="w-full h-full bg-white">
-              <PageBuilderForStep 
-                step={currentStepEdit}
-                onSave={(updatedStep) => {
-                  console.log('Saving step from page builder:', updatedStep);
-                  saveStepEdit(updatedStep);
-                }}
-                onClose={() => {
-                  console.log('Closing page builder');
-                  setCurrentStepEdit(null);
-                }}
-              />
-            </div>
+          <div className="fixed inset-0 bg-background z-50">
+            <PageBuilderForStep 
+              step={currentStepEdit}
+              onSave={saveStepEdit}
+              onClose={() => setCurrentStepEdit(null)}
+            />
           </div>
         )}
       </div>
