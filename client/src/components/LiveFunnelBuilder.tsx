@@ -357,6 +357,18 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   onSave: (step: FunnelStep) => void;
   onClose: () => void;
 }) {
+  if (!step || !step.id) {
+    console.error('PageBuilderForStep: Invalid step provided');
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Error Loading Page Builder</h2>
+          <p className="text-gray-600 mb-4">Invalid step data provided</p>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+      </div>
+    );
+  }
   const [currentStep, setCurrentStep] = useState(step);
   const [isAIProcessing, setIsAIProcessing] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -561,26 +573,47 @@ function PageBuilderForStep({ step, onSave, onClose }: {
   };
 
   const handleSave = (elements: any[]) => {
-    const updatedContent = { ...step.content };
+    try {
+      const updatedContent = { ...step.content };
 
-    elements.forEach(element => {
-      if (element.type === 'heading' && element.content.level === 'h1') {
-        updatedContent.headline = element.content.text;
-      } else if (element.type === 'heading' && element.content.level === 'h2') {
-        updatedContent.subheadline = element.content.text;
-      } else if (element.type === 'text') {
-        updatedContent.bodyText = element.content.text;
-      } else if (element.type === 'button') {
-        updatedContent.ctaText = element.content.text;
-      } else if (element.type === 'form') {
-        updatedContent.ctaText = element.content.button;
+      if (Array.isArray(elements)) {
+        elements.forEach(element => {
+          if (element && element.type && element.content) {
+            if (element.type === 'heading' && element.content.level === 'h1') {
+              updatedContent.headline = element.content.text || '';
+            } else if (element.type === 'heading' && element.content.level === 'h2') {
+              updatedContent.subheadline = element.content.text || '';
+            } else if (element.type === 'text') {
+              updatedContent.bodyText = element.content.text || '';
+            } else if (element.type === 'button') {
+              updatedContent.ctaText = element.content.text || '';
+            } else if (element.type === 'form') {
+              updatedContent.ctaText = element.content.button || '';
+            }
+          }
+        });
       }
-    });
 
-    onSave({
-      ...step,
-      content: updatedContent
-    });
+      const updatedStep = {
+        ...step,
+        content: updatedContent,
+        isComplete: true
+      };
+
+      onSave(updatedStep);
+      
+      toast({
+        title: "✅ Page Saved",
+        description: "Your page has been updated successfully"
+      });
+    } catch (error) {
+      console.error('Error saving page:', error);
+      toast({
+        title: "❌ Save Failed",
+        description: "Unable to save page changes. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -715,11 +748,24 @@ function PageBuilderForStep({ step, onSave, onClose }: {
           <AdvancedPageBuilder
             initialElements={getInitialElements(currentStep)}
             onSave={(elements: any[]) => {
-              const updatedContent = convertElementsToContent(elements, currentStep);
-              setCurrentStep(prev => ({ ...prev, content: updatedContent }));
-              handleSave(elements);
+              console.log('Page builder save called with elements:', elements);
+              try {
+                const updatedContent = convertElementsToContent(elements, currentStep);
+                setCurrentStep(prev => ({ ...prev, content: updatedContent }));
+                handleSave(elements);
+              } catch (error) {
+                console.error('Error in page builder save:', error);
+                toast({
+                  title: "❌ Save Error",
+                  description: "Failed to save page changes",
+                  variant: "destructive"
+                });
+              }
             }}
-            onClose={onClose}
+            onClose={() => {
+              console.log('Page builder close called');
+              onClose();
+            }}
           />
         </div>
       </div>
@@ -1152,6 +1198,14 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
   const editStep = (step: FunnelStep) => {
     console.log('Editing step:', step);
+    if (!step || !step.id) {
+      toast({ 
+        title: "❌ Edit Error", 
+        description: "Invalid step data. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
     setCurrentStepEdit(step);
   };
 
@@ -1168,15 +1222,34 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
   const previewStep = (step: FunnelStep) => {
     try {
+      if (!step || !step.title || !step.content) {
+        toast({ 
+          title: "❌ Preview Error", 
+          description: "Invalid step data. Cannot generate preview.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const previewWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
       if (previewWindow) {
-        const html = generateFullPreviewHTML(step);
-        previewWindow.document.write(html);
-        previewWindow.document.close();
-        toast({ 
-          title: `👀 Previewing ${step.title}`, 
-          description: "Opening live preview in new tab..." 
-        });
+        try {
+          const html = generateFullPreviewHTML(step);
+          previewWindow.document.write(html);
+          previewWindow.document.close();
+          toast({ 
+            title: `👀 Previewing ${step.title}`, 
+            description: "Opening live preview in new tab..." 
+          });
+        } catch (htmlError) {
+          console.error('HTML generation error:', htmlError);
+          previewWindow.close();
+          toast({ 
+            title: "❌ Preview Generation Failed", 
+            description: "Error generating preview content.",
+            variant: "destructive"
+          });
+        }
       } else {
         toast({ 
           title: "❌ Preview Failed", 
@@ -1196,15 +1269,34 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
 
   const viewLiveFunnel = () => {
     try {
+      if (!funnelData.steps || funnelData.steps.length === 0) {
+        toast({ 
+          title: "❌ Funnel Error", 
+          description: "No funnel steps available to preview.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const funnelWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
       if (funnelWindow) {
-        const html = generateFunnelIndexHTML();
-        funnelWindow.document.write(html);
-        funnelWindow.document.close();
-        toast({ 
-          title: "🚀 Opening Live Funnel", 
-          description: "Your complete funnel is opening in a new tab" 
-        });
+        try {
+          const html = generateFunnelIndexHTML();
+          funnelWindow.document.write(html);
+          funnelWindow.document.close();
+          toast({ 
+            title: "🚀 Opening Live Funnel", 
+            description: "Your complete funnel is opening in a new tab" 
+          });
+        } catch (htmlError) {
+          console.error('Funnel HTML generation error:', htmlError);
+          funnelWindow.close();
+          toast({ 
+            title: "❌ Funnel Generation Failed", 
+            description: "Error generating funnel preview.",
+            variant: "destructive"
+          });
+        }
       } else {
         toast({ 
           title: "❌ Funnel Preview Failed", 
@@ -2464,9 +2556,11 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                       {step.content.bodyText && (
                         <div className="max-w-3xl mx-auto">
                           <div className="text-lg leading-relaxed">
-                            {step.content.bodyText.split('\n').map((paragraph, idx) => (
-                              paragraph.trim() && <p key={idx} className="mb-4">{paragraph}</p>
-                            ))}
+                            {step.content.bodyText.split('\n').map((paragraph, idx) => 
+                              paragraph.trim() ? (
+                                <p key={idx} className="mb-4">{paragraph}</p>
+                              ) : null
+                            )}
                           </div>
                         </div>
                       )}
@@ -2592,15 +2686,20 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         </div>
 
         {currentStepEdit && (
-          <div className="fixed inset-0 bg-background z-50 overflow-auto">
-            <PageBuilderForStep 
-              step={currentStepEdit}
-              onSave={saveStepEdit}
-              onClose={() => {
-                console.log('Closing page builder');
-                setCurrentStepEdit(null);
-              }}
-            />
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div className="w-full h-full bg-white">
+              <PageBuilderForStep 
+                step={currentStepEdit}
+                onSave={(updatedStep) => {
+                  console.log('Saving step from page builder:', updatedStep);
+                  saveStepEdit(updatedStep);
+                }}
+                onClose={() => {
+                  console.log('Closing page builder');
+                  setCurrentStepEdit(null);
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

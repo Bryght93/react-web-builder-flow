@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -85,7 +84,7 @@ export default function VoiceFunnelsAI() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<AIGeneratedContent[]>([]);
   const [selectedContent, setSelectedContent] = useState<AIGeneratedContent | null>(null);
-  
+
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const { toast } = useToast();
@@ -102,7 +101,7 @@ export default function VoiceFunnelsAI() {
       if ('webkitSpeechRecognition' in window) {
         const SpeechRecognition = (window as any).webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
-        
+
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = 'en-US';
@@ -122,7 +121,7 @@ export default function VoiceFunnelsAI() {
           }
 
           setTranscript(finalTranscript || interimTranscript);
-          
+
           if (finalTranscript) {
             setCurrentCommand(finalTranscript);
             handleVoiceCommand(finalTranscript);
@@ -154,7 +153,7 @@ export default function VoiceFunnelsAI() {
       setTranscript('');
       setCurrentCommand('');
       recognitionRef.current.start();
-      
+
       toast({
         title: "🎤 Voice AI Activated",
         description: "Listening for your marketing commands..."
@@ -179,20 +178,20 @@ export default function VoiceFunnelsAI() {
     if (synthRef.current && 'speechSynthesis' in window) {
       setIsSpeaking(true);
       synthRef.current.cancel(); // Cancel any ongoing speech
-      
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
       utterance.volume = 1;
-      
+
       utterance.onend = () => {
         setIsSpeaking(false);
       };
-      
+
       utterance.onerror = () => {
         setIsSpeaking(false);
       };
-      
+
       synthRef.current.speak(utterance);
     }
   };
@@ -206,7 +205,7 @@ export default function VoiceFunnelsAI() {
 
   const handleVoiceCommand = async (command: string) => {
     const lowerCommand = command.toLowerCase().trim();
-    
+
     const newCommand: VoiceCommand = {
       id: Date.now().toString(),
       timestamp: new Date(),
@@ -229,41 +228,41 @@ export default function VoiceFunnelsAI() {
         const result = await generateEbook(command);
         response = result.response;
         action = 'Generated eBook';
-        
+
       } else if (lowerCommand.includes('create funnel') || lowerCommand.includes('generate funnel')) {
         const result = await generateFunnel(command);
         response = result.response;
         action = 'Generated Funnel';
-        
+
       } else if (lowerCommand.includes('create landing page') || lowerCommand.includes('generate landing')) {
         const result = await generateLandingPage(command);
         response = result.response;
         action = 'Generated Landing Page';
-        
+
       } else if (lowerCommand.includes('write email') || lowerCommand.includes('create email')) {
         const result = await generateEmail(command);
         response = result.response;
         action = 'Generated Email';
-        
+
       } else if (lowerCommand.includes('create lead magnet') || lowerCommand.includes('generate lead magnet')) {
         const result = await generateLeadMagnet(command);
         response = result.response;
         action = 'Generated Lead Magnet';
-        
+
       } else if (lowerCommand.includes('analyze leads') || lowerCommand.includes('lead report')) {
         const result = await analyzeLeads();
         response = result.response;
         action = 'Analyzed Leads';
-        
+
       } else if (lowerCommand.includes('marketing strategy') || lowerCommand.includes('create strategy')) {
         const result = await generateMarketingStrategy(command);
         response = result.response;
         action = 'Generated Marketing Strategy';
-        
+
       } else if (lowerCommand.includes('help') || lowerCommand.includes('what can you do')) {
         response = getHelpText();
         action = 'Provided Help';
-        
+
       } else {
         response = "I didn't understand that command. Try saying 'help' to see what I can do, or try commands like 'generate ebook about fitness' or 'create funnel for coaching business'.";
         action = 'Unknown Command';
@@ -291,9 +290,9 @@ export default function VoiceFunnelsAI() {
 
     } catch (error) {
       console.error('Voice command error:', error);
-      
+
       const errorResponse = "Sorry, I encountered an error processing your request. Please try again.";
-      
+
       setCommandHistory(prev => 
         prev.map(cmd => 
           cmd.id === newCommand.id 
@@ -303,7 +302,7 @@ export default function VoiceFunnelsAI() {
       );
 
       speakResponse(errorResponse);
-      
+
       toast({
         title: "❌ Command Failed",
         description: "Please try again or rephrase your request.",
@@ -317,10 +316,10 @@ export default function VoiceFunnelsAI() {
   const generateEbook = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     // Extract topic from command
     const topic = extractTopic(command, ['ebook', 'book']);
-    
+
     // Simulate AI generation
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     const content: AIGeneratedContent = {
       type: 'ebook',
       title: `${topic} Complete Guide`,
@@ -333,9 +332,9 @@ export default function VoiceFunnelsAI() {
       },
       timestamp: new Date()
     };
-    
+
     setGeneratedContent(prev => [content, ...prev]);
-    
+
     return {
       response: `I've generated a comprehensive ${topic} eBook with 8 chapters and 25 pages. It's ready for download and can be used as a lead magnet.`,
       content
@@ -344,9 +343,9 @@ export default function VoiceFunnelsAI() {
 
   const generateFunnel = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['funnel', 'sales funnel']);
-    
+
     await new Promise(resolve => setTimeout(resolve, 3000));
-    
+
     const content: AIGeneratedContent = {
       type: 'funnel',
       title: `${topic} Sales Funnel`,
@@ -369,9 +368,9 @@ export default function VoiceFunnelsAI() {
       },
       timestamp: new Date()
     };
-    
+
     setGeneratedContent(prev => [content, ...prev]);
-    
+
     return {
       response: `I've created a complete ${topic} sales funnel with 5 high-converting pages, including landing page, opt-in, email sequence, main offer, and upsell. Estimated conversion rate: 8-15%.`
     };
@@ -379,9 +378,9 @@ export default function VoiceFunnelsAI() {
 
   const generateLandingPage = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['landing page', 'landing', 'page']);
-    
+
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     const content: AIGeneratedContent = {
       type: 'landing-page',
       title: `${topic} Landing Page`,
@@ -393,9 +392,9 @@ export default function VoiceFunnelsAI() {
       },
       timestamp: new Date()
     };
-    
+
     setGeneratedContent(prev => [content, ...prev]);
-    
+
     return {
       response: `I've created a high-converting ${topic} landing page with proven psychological triggers, social proof, and mobile optimization. Ready to drive conversions!`
     };
@@ -403,9 +402,9 @@ export default function VoiceFunnelsAI() {
 
   const generateEmail = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['email', 'message']);
-    
+
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     const content: AIGeneratedContent = {
       type: 'email',
       title: `${topic} Email Campaign`,
@@ -418,9 +417,9 @@ export default function VoiceFunnelsAI() {
       },
       timestamp: new Date()
     };
-    
+
     setGeneratedContent(prev => [content, ...prev]);
-    
+
     return {
       response: `I've written a compelling ${topic} email with psychological triggers and storytelling elements. Expected open rate: 25-35%.`
     };
@@ -428,9 +427,9 @@ export default function VoiceFunnelsAI() {
 
   const generateLeadMagnet = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['lead magnet', 'freebie', 'free']);
-    
+
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     const content: AIGeneratedContent = {
       type: 'lead-magnet',
       title: `Free ${topic} Toolkit`,
@@ -442,9 +441,9 @@ export default function VoiceFunnelsAI() {
       },
       timestamp: new Date()
     };
-    
+
     setGeneratedContent(prev => [content, ...prev]);
-    
+
     return {
       response: `I've created an irresistible ${topic} lead magnet bundle with 5 high-value components. This should convert at 35-50%!`
     };
@@ -452,7 +451,7 @@ export default function VoiceFunnelsAI() {
 
   const analyzeLeads = async (): Promise<{ response: string }> => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // Simulate lead analysis
     const analysis = {
       totalLeads: 1247,
@@ -462,7 +461,7 @@ export default function VoiceFunnelsAI() {
       bestPerforming: 'Fitness eBook',
       revenue: '$15,420'
     };
-    
+
     return {
       response: `Lead Analysis Complete: You have ${analysis.totalLeads} total leads with ${analysis.thisMonth} new leads this month. Your conversion rate is ${analysis.conversionRate}. Top source: ${analysis.topSource}. Best performing lead magnet: ${analysis.bestPerforming}. Revenue generated: ${analysis.revenue}.`
     };
@@ -470,9 +469,9 @@ export default function VoiceFunnelsAI() {
 
   const generateMarketingStrategy = async (command: string): Promise<{ response: string; content?: AIGeneratedContent }> => {
     const topic = extractTopic(command, ['strategy', 'plan', 'marketing']);
-    
+
     await new Promise(resolve => setTimeout(resolve, 2500));
-    
+
     const content: AIGeneratedContent = {
       type: 'funnel',
       title: `${topic} Marketing Strategy`,
@@ -485,9 +484,9 @@ export default function VoiceFunnelsAI() {
       },
       timestamp: new Date()
     };
-    
+
     setGeneratedContent(prev => [content, ...prev]);
-    
+
     return {
       response: `I've created a comprehensive 90-day ${topic} marketing strategy with 3 phases, multiple channels, and an expected ROI of 300-500%. Ready to scale your business!`
     };
@@ -495,24 +494,24 @@ export default function VoiceFunnelsAI() {
 
   const extractTopic = (command: string, keywords: string[]): string => {
     let topic = command.toLowerCase();
-    
+
     // Remove command keywords
     keywords.forEach(keyword => {
       topic = topic.replace(keyword, '');
     });
-    
+
     // Remove common words
     const commonWords = ['generate', 'create', 'make', 'build', 'about', 'for', 'on', 'the', 'a', 'an'];
     commonWords.forEach(word => {
       topic = topic.replace(new RegExp(`\\b${word}\\b`, 'g'), '');
     });
-    
+
     // Clean and capitalize
     topic = topic.trim().replace(/\s+/g, ' ');
     if (topic) {
       return topic.charAt(0).toUpperCase() + topic.slice(1);
     }
-    
+
     return 'Business Success';
   };
 
@@ -602,7 +601,7 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                   </>
                 )}
               </Button>
-              
+
               <Button
                 variant="outline"
                 onClick={isSpeaking ? stopSpeaking : () => speakResponse("Voice AI is ready to help you build your marketing empire!")}
@@ -676,7 +675,7 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                   <div className="text-sm">Generate eBook</div>
                 </div>
               </Button>
-              
+
               <Button 
                 variant="outline" 
                 onClick={() => handleVoiceCommand("Create funnel for coaching business")}
@@ -688,7 +687,7 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                   <div className="text-sm">Create Funnel</div>
                 </div>
               </Button>
-              
+
               <Button 
                 variant="outline" 
                 onClick={() => handleVoiceCommand("Create landing page for fitness program")}
@@ -700,7 +699,7 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                   <div className="text-sm">Landing Page</div>
                 </div>
               </Button>
-              
+
               <Button 
                 variant="outline" 
                 onClick={() => handleVoiceCommand("Analyze leads performance")}
@@ -827,23 +826,42 @@ Just speak naturally! For example: "Generate an ebook about fitness for busy pro
                   <div>
                     <h3 className="font-medium mb-2">Funnel Structure:</h3>
                     <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
-                      {typeof selectedContent.content === 'string' 
-                        ? JSON.stringify(JSON.parse(selectedContent.content), null, 2)
-                        : JSON.stringify(selectedContent.content, null, 2)
-                      }
-                    </pre>
+                        {(() => {
+                          try {
+                            if (typeof selectedContent.content === 'string') {
+                              const parsed = JSON.parse(selectedContent.content);
+                              return JSON.stringify(parsed, null, 2);
+                            } else if (selectedContent.content && typeof selectedContent.content === 'object') {
+                              return JSON.stringify(selectedContent.content, null, 2);
+                            } else {
+                              return 'No funnel structure available';
+                            }
+                          } catch (error) {
+                            return 'Error parsing funnel structure';
+                          }
+                        })()}
+                      </pre>
                   </div>
                 ) : (
                   <div>
                     <h3 className="font-medium mb-2">Content:</h3>
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <pre className="whitespace-pre-wrap text-sm">
-                        {typeof selectedContent.content === 'string' 
-                          ? selectedContent.content 
-                          : JSON.stringify(selectedContent.content, null, 2)
-                        }
-                      </pre>
-                    </div>
+                        <pre className="whitespace-pre-wrap text-sm">
+                          {(() => {
+                            try {
+                              if (typeof selectedContent.content === 'string') {
+                                return selectedContent.content;
+                              } else if (selectedContent.content && typeof selectedContent.content === 'object') {
+                                return JSON.stringify(selectedContent.content, null, 2);
+                              } else {
+                                return 'No content available';
+                              }
+                            } catch (error) {
+                              return 'Error displaying content';
+                            }
+                          })()}
+                        </pre>
+                      </div>
                   </div>
                 )}
                 <div className="flex space-x-2">
