@@ -42,7 +42,9 @@ import {
   Globe,
   Settings,
   Star,
-  BarChart3
+  BarChart3,
+  Mic,
+  MicOff
 } from "lucide-react";
 import AdvancedPageBuilder from "./AdvancedPageBuilder";
 import AIPageAssistant from "./AIPageAssistant";
@@ -918,6 +920,8 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   });
   const [selectedTemplate, setSelectedTemplate] = useState(initialFunnelData?.industry || "");
   const [currentStepEdit, setCurrentStepEdit] = useState<FunnelStep | null>(null);
+  const [showAdvancedEditor, setShowAdvancedEditor] = useState(false);
+  const [editingStepData, setEditingStepData] = useState<FunnelStep | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isListening, setIsListening] = useState(false);
@@ -954,6 +958,10 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
         setIsListening(false);
         if (transcript) {
           setFunnelData(prev => ({ ...prev, aiDescription: transcript }));
+          // Auto-process voice description after it's captured
+          setTimeout(() => {
+            processVoiceDescription();
+          }, 500);
         }
       };
       
@@ -1033,6 +1041,113 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
       utterance.pitch = 1;
       utterance.volume = 1;
       synthRef.current.speak(utterance);
+    }
+  };
+
+  // AI-powered voice processing function
+  const processVoiceDescription = async () => {
+    if (!funnelData.aiDescription.trim()) return;
+    
+    setIsAIProcessing(true);
+    try {
+      // Parse the voice description using AI to extract structured data
+      const description = funnelData.aiDescription.toLowerCase();
+      const updates: any = {};
+      
+      // Extract product/service name
+      const productMatch = description.match(/(?:sell|selling|offer|offering|promote|product|service|course|program|ebook|guide|training|coaching|consulting|software|app|tool|system|method|strategy|blueprint|framework|plan|solution)\s+(?:called|named|about|for|on|in)?\s*([a-zA-Z0-9\s]+?)(?:\s|,|\.|\?|!|$)/i);
+      if (productMatch && !funnelData.productName) {
+        updates.productName = productMatch[1].trim();
+      }
+      
+      // Extract target audience
+      const audiencePatterns = [
+        /(?:for|targeting|target|help|helping|assist|assisting)\s+([a-zA-Z0-9\s,]+?)(?:\s+who|\s+that|\s+to|\s|,|\.|\?|!|$)/i,
+        /(?:entrepreneurs|business owners|professionals|freelancers|coaches|consultants|marketers|developers|designers|writers|photographers|artists|musicians|students|parents|women|men|seniors|millennials|gen z|beginners|experts)/i
+      ];
+      
+      for (const pattern of audiencePatterns) {
+        const match = description.match(pattern);
+        if (match && !funnelData.targetAudience) {
+          updates.targetAudience = match[0].replace(/^(for|targeting|target|help|helping|assist|assisting)\s+/i, '').trim();
+          break;
+        }
+      }
+      
+      // Extract price point
+      const priceMatch = description.match(/(?:\$|dollar|price|cost|charge|fee|rate)\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/i);
+      if (priceMatch && !funnelData.pricePoint) {
+        updates.pricePoint = `$${priceMatch[1]}`;
+      }
+      
+      // Extract main goal
+      const goalPatterns = [
+        /(?:want to|goal is to|trying to|help them|helping to|aim to|objective is to|purpose is to)\s+([^\.!?]+)/i,
+        /(?:generate|get|increase|boost|improve|achieve|reach|build|create|grow|scale)\s+([^\.!?]+)/i
+      ];
+      
+      for (const pattern of goalPatterns) {
+        const match = description.match(pattern);
+        if (match && !funnelData.mainGoal) {
+          updates.mainGoal = match[1].trim();
+          break;
+        }
+      }
+      
+      // Extract industry
+      const industries = [
+        'fitness', 'health', 'wellness', 'nutrition', 'weight loss', 'bodybuilding',
+        'business', 'entrepreneurship', 'marketing', 'sales', 'consulting',
+        'education', 'training', 'coaching', 'course', 'online learning',
+        'finance', 'investment', 'real estate', 'cryptocurrency', 'trading',
+        'technology', 'software', 'app development', 'web design', 'programming',
+        'lifestyle', 'personal development', 'productivity', 'mindset',
+        'relationships', 'dating', 'marriage', 'parenting',
+        'travel', 'adventure', 'tourism',
+        'food', 'cooking', 'recipes', 'restaurant',
+        'fashion', 'beauty', 'skincare', 'makeup'
+      ];
+      
+      for (const industry of industries) {
+        if (description.includes(industry) && !funnelData.industry) {
+          updates.industry = industry.charAt(0).toUpperCase() + industry.slice(1);
+          break;
+        }
+      }
+      
+      // Auto-generate funnel name if not set
+      if (!funnelData.name && (updates.productName || updates.mainGoal)) {
+        const baseName = updates.productName || updates.mainGoal || 'Business';
+        updates.name = `${baseName} Funnel`;
+      }
+      
+      // Update the funnel data with extracted information
+      setFunnelData(prev => ({ ...prev, ...updates }));
+      
+      // Provide feedback to user
+      const extractedFields = Object.keys(updates);
+      if (extractedFields.length > 0) {
+        toast({ 
+          title: "🎤 Voice processing complete!", 
+          description: `Extracted: ${extractedFields.join(', ')}` 
+        });
+        speakText(`I've extracted ${extractedFields.length} pieces of information from your description. Please review and complete any missing fields.`);
+      } else {
+        toast({ 
+          title: "🤔 Need more details", 
+          description: "Try describing your product, target audience, and main goal more specifically." 
+        });
+        speakText("I need more specific details about your product, target audience, and goals. Please try again with more information.");
+      }
+      
+    } catch (error) {
+      console.error('Voice processing failed:', error);
+      toast({ 
+        title: "❌ Processing failed", 
+        description: "Unable to process voice input. Please fill manually." 
+      });
+    } finally {
+      setIsAIProcessing(false);
     }
   };
 
@@ -1151,7 +1266,8 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   };
 
   const editStep = (step: FunnelStep) => {
-    setCurrentStepEdit(step);
+    setEditingStepData(step);
+    setShowAdvancedEditor(true);
   };
 
   const saveStepEdit = (updatedStep: FunnelStep) => {
@@ -1163,6 +1279,63 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     }));
     setCurrentStepEdit(null);
     toast({ title: "✅ Page updated successfully" });
+  };
+
+  const saveAdvancedEdit = (elements: any[]) => {
+    if (!editingStepData) return;
+    
+    // Convert advanced builder elements back to funnel step content
+    const updatedContent = convertElementsToContent(elements, editingStepData);
+    
+    const updatedStep: FunnelStep = {
+      ...editingStepData,
+      content: {
+        ...editingStepData.content,
+        ...updatedContent
+      }
+    };
+    
+    setFunnelData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step => 
+        step.id === updatedStep.id ? updatedStep : step
+      )
+    }));
+    
+    setShowAdvancedEditor(false);
+    setEditingStepData(null);
+    toast({ title: "✅ Funnel page updated with advanced editor" });
+  };
+
+  const convertElementsToContent = (elements: any[], step: FunnelStep) => {
+    const content: any = {};
+    
+    elements.forEach(element => {
+      switch (element.type) {
+        case 'heading':
+          if (element.content.level === 'h1') {
+            content.headline = element.content.text;
+          } else if (element.content.level === 'h2') {
+            content.subheadline = element.content.text;
+          }
+          break;
+        case 'text':
+        case 'paragraph':
+          content.bodyText = element.content.text;
+          break;
+        case 'button':
+          content.ctaText = element.content.text;
+          break;
+        case 'image':
+          content.images = content.images || [];
+          if (!content.images.includes(element.content.src)) {
+            content.images.push(element.content.src);
+          }
+          break;
+      }
+    });
+    
+    return content;
   };
 
   const previewStep = (step: FunnelStep) => {
@@ -1991,12 +2164,12 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
                     >
                       {isListening ? (
                         <>
-                          <Pause className="w-4 h-4 mr-2" />
+                          <MicOff className="w-4 h-4 mr-2" />
                           Stop Voice
                         </>
                       ) : (
                         <>
-                          <Volume2 className="w-4 h-4 mr-2" />
+                          <Mic className="w-4 h-4 mr-2" />
                           Voice Input
                         </>
                       )}
@@ -2542,6 +2715,20 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
           </div>
         )}
       </div>
+    );
+  }
+
+  // Show AdvancedPageBuilder for editing
+  if (showAdvancedEditor && editingStepData) {
+    return (
+      <AdvancedPageBuilder
+        initialElements={getInitialElements(editingStepData)}
+        onSave={saveAdvancedEdit}
+        onClose={() => {
+          setShowAdvancedEditor(false);
+          setEditingStepData(null);
+        }}
+      />
     );
   }
 

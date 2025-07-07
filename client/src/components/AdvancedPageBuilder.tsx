@@ -339,7 +339,7 @@ function SortableElement({ element, onEdit, onDelete, onDuplicate, isSelected, o
   } = useSortable({ id: element.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: transform ? CSS.Transform.toString(transform) : undefined,
     transition,
   };
 
