@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LiveFunnelBuilder from '@/components/LiveFunnelBuilder';
-import AdvancedPageBuilder from '@/components/AdvancedPageBuilder';
+import AdvancedFunnelBuilder from '@/components/AdvancedFunnelBuilder';
 import { toast } from 'sonner';
 
 const Funnels = () => {
@@ -143,13 +143,13 @@ const Funnels = () => {
 
   if (showAdvancedBuilder) {
     return (
-      <AdvancedPageBuilder 
-        onSave={(elements) => {
-          console.log('Funnel elements saved:', elements);
+      <AdvancedFunnelBuilder 
+        onBack={() => setShowAdvancedBuilder(false)}
+        onComplete={(funnelData) => {
+          console.log('Advanced funnel created:', funnelData);
           setShowAdvancedBuilder(false);
-          toast.success('Funnel created successfully!');
+          toast.success('Advanced funnel created successfully!');
         }}
-        onClose={() => setShowAdvancedBuilder(false)}
       />
     );
   }
