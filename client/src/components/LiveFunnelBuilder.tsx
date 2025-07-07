@@ -932,6 +932,85 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Voice Control Functions
+  const stopListening = () => {
+    if (recognition) {
+      recognition.stop();
+      setIsListening(false);
+      toast({ title: "Voice input stopped" });
+    }
+  };
+
+  const handleAIContentUpdate = async (request: string) => {
+    if (!request.trim()) return;
+    
+    setIsAIProcessing(true);
+    try {
+      // Process the user's request to update the current step
+      const step = editingStepData || funnelData.steps[0];
+      if (!step) return;
+
+      // Simple AI-like processing based on keywords
+      const lowerRequest = request.toLowerCase();
+      const updatedContent = { ...step.content };
+
+      if (lowerRequest.includes('headline') || lowerRequest.includes('title')) {
+        const headlineMatch = request.match(/['"]([^'"]+)['"]/) || request.match(/to (.+)/);
+        if (headlineMatch) {
+          updatedContent.headline = headlineMatch[1];
+        }
+      }
+
+      if (lowerRequest.includes('subheadline') || lowerRequest.includes('subtitle')) {
+        const subheadlineMatch = request.match(/['"]([^'"]+)['"]/) || request.match(/to (.+)/);
+        if (subheadlineMatch) {
+          updatedContent.subheadline = subheadlineMatch[1];
+        }
+      }
+
+      if (lowerRequest.includes('button') || lowerRequest.includes('cta')) {
+        const ctaMatch = request.match(/['"]([^'"]+)['"]/) || request.match(/to (.+)/);
+        if (ctaMatch) {
+          updatedContent.ctaText = ctaMatch[1];
+        }
+      }
+
+      if (lowerRequest.includes('text') || lowerRequest.includes('body') || lowerRequest.includes('content')) {
+        const textMatch = request.match(/['"]([^'"]+)['"]/) || request.match(/to (.+)/);
+        if (textMatch) {
+          updatedContent.bodyText = textMatch[1];
+        }
+      }
+
+      // Update the step
+      const updatedStep = { ...step, content: updatedContent };
+      
+      if (editingStepData) {
+        setEditingStepData(updatedStep);
+        setFunnelData(prev => ({
+          ...prev,
+          steps: prev.steps.map(s => s.id === updatedStep.id ? updatedStep : s)
+        }));
+      }
+
+      setTranscript('');
+      toast({ 
+        title: "Content Updated!", 
+        description: "Your AI request has been processed"
+      });
+      
+    } catch (error) {
+      console.error('AI content update error:', error);
+      toast({ 
+        title: "Update Failed", 
+        description: "Please try rephrasing your request",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAIProcessing(false);
+    }
+  };
+
   // Initialize speech synthesis and recognition
   React.useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -975,13 +1054,6 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
       setTranscript('');
       recognition.start();
       toast({ title: "🎤 Listening for your voice command..." });
-    }
-  };
-
-  const stopListening = () => {
-    if (recognition) {
-      recognition.stop();
-      setIsListening(false);
     }
   };
 
@@ -1263,6 +1335,10 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
     console.log('Opening Advanced Builder for step:', step.title);
     setEditingStepData(step);
     setShowAdvancedEditor(true);
+    toast({ 
+      title: "🎨 Opening Advanced Builder", 
+      description: `Now editing: ${step.title}` 
+    });
   };
 
   const saveStepEdit = (updatedStep: FunnelStep) => {
@@ -1279,37 +1355,59 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
   const saveAdvancedEdit = (elements: any[]) => {
     if (!editingStepData) {
       console.log('No editing step data available');
+      toast({ 
+        title: "❌ Error", 
+        description: "No page data to save",
+        variant: "destructive"
+      });
       return;
     }
     
     console.log('Saving advanced edit for:', editingStepData.title);
     console.log('Elements received:', elements);
     
-    // Convert advanced builder elements back to funnel step content
-    const updatedContent = convertElementsToContent(elements, editingStepData);
-    
-    const updatedStep: FunnelStep = {
-      ...editingStepData,
-      content: {
-        ...editingStepData.content,
-        ...updatedContent
-      },
-      isComplete: true
-    };
-    
-    setFunnelData(prev => ({
-      ...prev,
-      steps: prev.steps.map(step => 
-        step.id === updatedStep.id ? updatedStep : step
-      )
-    }));
-    
-    setShowAdvancedEditor(false);
-    setEditingStepData(null);
-    toast({ 
-      title: "✅ Page Updated!", 
-      description: `${updatedStep.title} has been successfully updated with your changes.`
-    });
+    try {
+      // Convert advanced builder elements back to funnel step content
+      const updatedContent = convertElementsToContent(elements, editingStepData);
+      
+      const updatedStep: FunnelStep = {
+        ...editingStepData,
+        content: {
+          ...editingStepData.content,
+          ...updatedContent
+        },
+        isComplete: true
+      };
+      
+      setFunnelData(prev => ({
+        ...prev,
+        steps: prev.steps.map(step => 
+          step.id === updatedStep.id ? updatedStep : step
+        )
+      }));
+      
+      setShowAdvancedEditor(false);
+      setEditingStepData(null);
+      
+      // Auto-save the changes
+      setIsAutoSaving(true);
+      setTimeout(() => {
+        setIsAutoSaving(false);
+        setLastSaved(new Date());
+      }, 1000);
+      
+      toast({ 
+        title: "✅ Page Updated!", 
+        description: `${editingStepData.title} has been successfully updated and auto-saved` 
+      });
+    } catch (error) {
+      console.error('Error saving advanced edit:', error);
+      toast({ 
+        title: "❌ Save Error", 
+        description: "There was an error saving your changes. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const convertElementsToContent = (elements: any[], step: FunnelStep) => {
@@ -1337,10 +1435,143 @@ export default function LiveFunnelBuilder({ onComplete, onBack, initialFunnelDat
             content.images.push(element.content.src);
           }
           break;
+        case 'form':
+          content.ctaText = element.content.button || 'Submit';
+          break;
+        case 'testimonial':
+          content.testimonials = content.testimonials || [];
+          content.testimonials.push({
+            quote: element.content.quote,
+            author: element.content.author,
+            role: element.content.role,
+            company: element.content.company,
+            avatar: element.content.avatar,
+            rating: element.content.rating || 5
+          });
+          break;
       }
     });
     
     return content;
+  };
+
+  const getInitialElements = (step: FunnelStep) => {
+    const elements = [];
+
+    if (step.content.headline) {
+      elements.push({
+        id: `headline-${Date.now()}`,
+        type: 'heading',
+        content: {
+          text: step.content.headline,
+          level: 'h1',
+          align: 'center',
+          color: step.content.colors?.primary || '#000000'
+        }
+      });
+    }
+
+    if (step.content.subheadline) {
+      elements.push({
+        id: `subheadline-${Date.now()}`,
+        type: 'heading',
+        content: {
+          text: step.content.subheadline,
+          level: 'h2',
+          align: 'center',
+          color: '#666666'
+        }
+      });
+    }
+
+    if (step.content.images && step.content.images.length > 0) {
+      elements.push({
+        id: `hero-image-${Date.now()}`,
+        type: 'image',
+        content: {
+          src: step.content.images[0],
+          alt: `${step.title} Hero Image`,
+          width: '100%',
+          height: 'auto',
+          align: 'center'
+        }
+      });
+    }
+
+    if (step.content.bodyText) {
+      elements.push({
+        id: `body-${Date.now()}`,
+        type: 'text',
+        content: {
+          text: step.content.bodyText,
+          align: 'left',
+          color: '#444444'
+        }
+      });
+    }
+
+    // Add features/benefits if available
+    if (step.content.features && step.content.features.length > 0) {
+      step.content.features.forEach((feature, index) => {
+        elements.push({
+          id: `feature-${index}-${Date.now()}`,
+          type: 'text',
+          content: {
+            text: `✓ ${feature}`,
+            align: 'left',
+            color: '#10b981'
+          }
+        });
+      });
+    }
+
+    // Add testimonials for offer pages
+    if (step.type === 'offer' && step.content.testimonials) {
+      step.content.testimonials.forEach((testimonial, index) => {
+        elements.push({
+          id: `testimonial-${index}-${Date.now()}`,
+          type: 'testimonial',
+          content: {
+            quote: testimonial.quote,
+            author: testimonial.author,
+            role: testimonial.role,
+            company: testimonial.company,
+            avatar: testimonial.avatar,
+            rating: testimonial.rating || 5
+          }
+        });
+      });
+    }
+
+    // Add form for opt-in pages
+    if (step.type === 'optin') {
+      elements.push({
+        id: `form-${Date.now()}`,
+        type: 'form',
+        content: {
+          title: 'Get Your Free Access',
+          fields: ['name', 'email'],
+          button: step.content.ctaText || 'Download Now'
+        }
+      });
+    }
+
+    // Add CTA button for other pages
+    if (step.content.ctaText && step.type !== 'optin') {
+      elements.push({
+        id: `cta-${Date.now()}`,
+        type: 'button',
+        content: {
+          text: step.content.ctaText,
+          variant: 'primary',
+          size: 'large',
+          align: 'center',
+          link: '#'
+        }
+      });
+    }
+
+    return elements;
   };
 
   const previewStep = (step: FunnelStep) => {
