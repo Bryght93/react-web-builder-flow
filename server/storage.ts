@@ -5,6 +5,11 @@ import {
   leadMagnets, 
   leads, 
   templates,
+  emailCampaigns,
+  emailTemplates,
+  emailContacts,
+  emailAutomations,
+  emailSends,
   type User, 
   type InsertUser,
   type Funnel,
@@ -16,10 +21,19 @@ import {
   type Lead,
   type InsertLead,
   type Template,
-  type InsertTemplate
+  type InsertTemplate,
+  type EmailCampaign,
+  type InsertEmailCampaign,
+  type EmailTemplate,
+  type InsertEmailTemplate,
+  type EmailContact,
+  type InsertEmailContact,
+  type EmailAutomation,
+  type InsertEmailAutomation,
+  type EmailSend
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, or } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -61,6 +75,34 @@ export interface IStorage {
   createTemplate(template: InsertTemplate): Promise<Template>;
   updateTemplate(id: number, template: Partial<InsertTemplate>): Promise<Template>;
   deleteTemplate(id: number): Promise<void>;
+  
+  // Email Campaign methods
+  getEmailCampaigns(userId: number): Promise<EmailCampaign[]>;
+  getEmailCampaign(id: number): Promise<EmailCampaign | undefined>;
+  createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign>;
+  updateEmailCampaign(id: number, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign>;
+  deleteEmailCampaign(id: number): Promise<void>;
+  
+  // Email Template methods
+  getEmailTemplates(userId?: number): Promise<EmailTemplate[]>;
+  getEmailTemplate(id: number): Promise<EmailTemplate | undefined>;
+  createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate>;
+  updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate>;
+  deleteEmailTemplate(id: number): Promise<void>;
+  
+  // Email Contact methods
+  getEmailContacts(userId: number): Promise<EmailContact[]>;
+  getEmailContact(id: number): Promise<EmailContact | undefined>;
+  createEmailContact(contact: InsertEmailContact): Promise<EmailContact>;
+  updateEmailContact(id: number, contact: Partial<InsertEmailContact>): Promise<EmailContact>;
+  deleteEmailContact(id: number): Promise<void>;
+  
+  // Email Automation methods
+  getEmailAutomations(userId: number): Promise<EmailAutomation[]>;
+  getEmailAutomation(id: number): Promise<EmailAutomation | undefined>;
+  createEmailAutomation(automation: InsertEmailAutomation): Promise<EmailAutomation>;
+  updateEmailAutomation(id: number, automation: Partial<InsertEmailAutomation>): Promise<EmailAutomation>;
+  deleteEmailAutomation(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -258,6 +300,123 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTemplate(id: number): Promise<void> {
     await db.delete(templates).where(eq(templates.id, id));
+  }
+
+  // Email Campaign methods
+  async getEmailCampaigns(userId: number): Promise<EmailCampaign[]> {
+    return db.select().from(emailCampaigns).where(eq(emailCampaigns.userId, userId));
+  }
+
+  async getEmailCampaign(id: number): Promise<EmailCampaign | undefined> {
+    const [campaign] = await db.select().from(emailCampaigns).where(eq(emailCampaigns.id, id));
+    return campaign || undefined;
+  }
+
+  async createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign> {
+    const [newCampaign] = await db.insert(emailCampaigns).values(campaign).returning();
+    return newCampaign;
+  }
+
+  async updateEmailCampaign(id: number, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign> {
+    const [updatedCampaign] = await db
+      .update(emailCampaigns)
+      .set({ ...campaign, updatedAt: new Date() })
+      .where(eq(emailCampaigns.id, id))
+      .returning();
+    return updatedCampaign;
+  }
+
+  async deleteEmailCampaign(id: number): Promise<void> {
+    await db.delete(emailCampaigns).where(eq(emailCampaigns.id, id));
+  }
+
+  // Email Template methods
+  async getEmailTemplates(userId?: number): Promise<EmailTemplate[]> {
+    if (userId) {
+      return db.select().from(emailTemplates).where(
+        or(eq(emailTemplates.userId, userId), eq(emailTemplates.isPublic, true))
+      );
+    }
+    return db.select().from(emailTemplates).where(eq(emailTemplates.isPublic, true));
+  }
+
+  async getEmailTemplate(id: number): Promise<EmailTemplate | undefined> {
+    const [template] = await db.select().from(emailTemplates).where(eq(emailTemplates.id, id));
+    return template || undefined;
+  }
+
+  async createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate> {
+    const [newTemplate] = await db.insert(emailTemplates).values(template).returning();
+    return newTemplate;
+  }
+
+  async updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
+    const [updatedTemplate] = await db
+      .update(emailTemplates)
+      .set({ ...template, updatedAt: new Date() })
+      .where(eq(emailTemplates.id, id))
+      .returning();
+    return updatedTemplate;
+  }
+
+  async deleteEmailTemplate(id: number): Promise<void> {
+    await db.delete(emailTemplates).where(eq(emailTemplates.id, id));
+  }
+
+  // Email Contact methods
+  async getEmailContacts(userId: number): Promise<EmailContact[]> {
+    return db.select().from(emailContacts).where(eq(emailContacts.userId, userId));
+  }
+
+  async getEmailContact(id: number): Promise<EmailContact | undefined> {
+    const [contact] = await db.select().from(emailContacts).where(eq(emailContacts.id, id));
+    return contact || undefined;
+  }
+
+  async createEmailContact(contact: InsertEmailContact): Promise<EmailContact> {
+    const [newContact] = await db.insert(emailContacts).values(contact).returning();
+    return newContact;
+  }
+
+  async updateEmailContact(id: number, contact: Partial<InsertEmailContact>): Promise<EmailContact> {
+    const [updatedContact] = await db
+      .update(emailContacts)
+      .set({ ...contact, updatedAt: new Date() })
+      .where(eq(emailContacts.id, id))
+      .returning();
+    return updatedContact;
+  }
+
+  async deleteEmailContact(id: number): Promise<void> {
+    await db.delete(emailContacts).where(eq(emailContacts.id, id));
+  }
+
+  // Email Automation methods
+  async getEmailAutomations(userId: number): Promise<EmailAutomation[]> {
+    return db.select().from(emailAutomations).where(eq(emailAutomations.userId, userId));
+  }
+
+  async getEmailAutomation(id: number): Promise<EmailAutomation | undefined> {
+    const [automation] = await db.select().from(emailAutomations).where(eq(emailAutomations.id, id));
+    return automation || undefined;
+  }
+
+  async createEmailAutomation(automation: InsertEmailAutomation): Promise<EmailAutomation> {
+    const [newAutomation] = await db.insert(emailAutomations).values(automation).returning();
+    return newAutomation;
+  }
+
+  async updateEmailAutomation(id: number, automation: Partial<InsertEmailAutomation>): Promise<EmailAutomation> {
+    const [updatedAutomation] = await db
+      .update(emailAutomations)
+      .set({ ...automation, updatedAt: new Date() })
+      .where(eq(emailAutomations.id, id))
+      .returning();
+    return updatedAutomation;
+  }
+
+  async deleteEmailAutomation(id: number): Promise<void> {
+    await db.delete(emailAutomations).where(eq(emailAutomations.id, id));
   }
 }
 

@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import LeadMagnets from "./pages/LeadMagnets";
 import Funnels from "./pages/Funnels";
 import Leads from "./pages/Leads";
+import EmailMarketing from "./pages/EmailMarketing";
 import NotFound from "./pages/NotFound";
 import PageBuilder from "./components/PageBuilder";
 import AdvancedPageBuilderPage from "./pages/AdvancedPageBuilder";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/lead-magnets" element={<LeadMagnets />} />
             <Route path="/funnels" element={<Funnels />} />
             <Route path="/leads" element={<Leads />} />
+            <Route path="/email-marketing" element={<EmailMarketing />} />
             <Route path="/crm" element={<CRMDashboard />} />
             <Route path="/channels" element={<MultiChannelSync />} />
             <Route path="/page-builder" element={<PageBuilder />} />

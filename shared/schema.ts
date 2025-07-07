@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, json, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, json, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -77,6 +77,80 @@ export const templates = pgTable("templates", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Email Marketing Tables
+export const emailCampaigns = pgTable("email_campaigns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  name: text("name").notNull(),
+  subject: text("subject").notNull(),
+  preheader: text("preheader"),
+  content: json("content").notNull(),
+  type: text("type").notNull(), // 'broadcast', 'automation', 'sequence'
+  status: text("status").notNull().default('draft'), // 'draft', 'scheduled', 'sent', 'active', 'paused'
+  scheduledAt: timestamp("scheduled_at"),
+  sentAt: timestamp("sent_at"),
+  settings: json("settings"),
+  stats: json("stats"), // open rate, click rate, etc.
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const emailTemplates = pgTable("email_templates", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  subject: text("subject"),
+  preheader: text("preheader"),
+  content: json("content").notNull(),
+  thumbnail: text("thumbnail"),
+  isPublic: boolean("is_public").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const emailContacts = pgTable("email_contacts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  email: text("email").notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  tags: text("tags").array(),
+  customFields: json("custom_fields"),
+  status: text("status").notNull().default('subscribed'), // 'subscribed', 'unsubscribed', 'bounced'
+  source: text("source"), // where they came from
+  subscribedAt: timestamp("subscribed_at").defaultNow(),
+  unsubscribedAt: timestamp("unsubscribed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const emailAutomations = pgTable("email_automations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  name: text("name").notNull(),
+  trigger: text("trigger").notNull(), // 'signup', 'purchase', 'tag_added', etc.
+  conditions: json("conditions"),
+  emails: json("emails").notNull(), // array of email sequences
+  status: text("status").notNull().default('draft'), // 'draft', 'active', 'paused'
+  stats: json("stats"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const emailSends = pgTable("email_sends", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => emailCampaigns.id),
+  contactId: integer("contact_id").references(() => emailContacts.id),
+  status: text("status").notNull(), // 'sent', 'delivered', 'opened', 'clicked', 'bounced'
+  sentAt: timestamp("sent_at").defaultNow(),
+  openedAt: timestamp("opened_at"),
+  clickedAt: timestamp("clicked_at"),
+  bouncedAt: timestamp("bounced_at"),
+  unsubscribedAt: timestamp("unsubscribed_at"),
+  metadata: json("metadata")
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   funnels: many(funnels),
@@ -152,3 +226,40 @@ export type InsertLead = z.infer<typeof insertLeadSchema>;
 export type Lead = typeof leads.$inferSelect;
 export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
 export type Template = typeof templates.$inferSelect;
+
+// Email Marketing Types
+export const insertEmailCampaignSchema = createInsertSchema(emailCampaigns).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertEmailTemplateSchema = createInsertSchema(emailTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertEmailContactSchema = createInsertSchema(emailContacts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  subscribedAt: true,
+  unsubscribedAt: true
+});
+
+export const insertEmailAutomationSchema = createInsertSchema(emailAutomations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type InsertEmailCampaign = z.infer<typeof insertEmailCampaignSchema>;
+export type EmailCampaign = typeof emailCampaigns.$inferSelect;
+export type InsertEmailTemplate = z.infer<typeof insertEmailTemplateSchema>;
+export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailContact = z.infer<typeof insertEmailContactSchema>;
+export type EmailContact = typeof emailContacts.$inferSelect;
+export type InsertEmailAutomation = z.infer<typeof insertEmailAutomationSchema>;
+export type EmailAutomation = typeof emailAutomations.$inferSelect;
+export type EmailSend = typeof emailSends.$inferSelect;
