@@ -20,6 +20,7 @@ import CRMDashboard from "./components/CRMDashboard";
 import MultiChannelSync from "./components/MultiChannelSync";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Analytics from "./pages/Analytics";
 import CallBookingCloser from "./components/CallBookingCloser";
 import AdLaunchTracker from "./components/AdLaunchTracker";
 import AISalesCoach from "./components/AISalesCoach";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/integrations" element={<IntegrationsHub />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
