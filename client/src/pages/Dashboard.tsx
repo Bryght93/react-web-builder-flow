@@ -163,6 +163,15 @@ export default function Dashboard() {
                 <CardTitle className="text-lg font-semibold">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:from-purple-100 hover:to-pink-100" 
+                  size="sm"
+                  onClick={() => window.location.href = '/advanced-builder'}
+                >
+                  <Zap className="w-4 h-4 mr-3 text-purple-600" />
+                  🚀 Advanced Page Builder
+                </Button>
                 <Button variant="outline" className="w-full justify-start" size="sm">
                   <Target className="w-4 h-4 mr-3" />
                   Create Lead Magnet

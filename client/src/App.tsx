@@ -13,6 +13,7 @@ import Funnels from "./pages/Funnels";
 import Leads from "./pages/Leads";
 import NotFound from "./pages/NotFound";
 import PageBuilder from "./components/PageBuilder";
+import AdvancedPageBuilderPage from "./pages/AdvancedPageBuilder";
 import AILeadMagnetBuilder from "./components/AILeadMagnetBuilder";
 import CRMDashboard from "./components/CRMDashboard";
 import MultiChannelSync from "./components/MultiChannelSync";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/crm" element={<CRMDashboard />} />
             <Route path="/channels" element={<MultiChannelSync />} />
             <Route path="/page-builder" element={<PageBuilder />} />
+            <Route path="/advanced-builder" element={<AdvancedPageBuilderPage />} />
             <Route path="/ai-builder" element={<AILeadMagnetBuilder />} />
             <Route path="/call-booking" element={<CallBookingCloser />} />
             <Route path="/ads" element={<AdLaunchTracker />} />

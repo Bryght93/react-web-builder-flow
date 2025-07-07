@@ -120,24 +120,76 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
     }
   };
 
+  const extractElementType = (command: string): string => {
+    const elementTypes = [
+      'heading', 'paragraph', 'button', 'image', 'video', 'form', 'divider',
+      'card', 'gallery', 'chart', 'table', 'testimonial', 'pricing'
+    ];
+    
+    for (const type of elementTypes) {
+      if (command.toLowerCase().includes(type)) {
+        return type;
+      }
+    }
+    return 'paragraph'; // default
+  };
+
   const routeVoiceCommand = async (command: string): Promise<VoiceCommand> => {
     const lowerCommand = command.toLowerCase();
     
-    // Route commands based on keywords and patterns
-    if (lowerCommand.includes("create") && (lowerCommand.includes("ebook") || lowerCommand.includes("book"))) {
-      const topic = extractTopic(command, ["ebook", "book"]);
-      return { tool: "generate_ebook", topic };
+    // Advanced Page Builder Commands
+    if (lowerCommand.includes("open") && (lowerCommand.includes("advanced") || lowerCommand.includes("page builder"))) {
+      return { tool: "open_advanced_builder" };
     }
     
+    if (lowerCommand.includes("add") && lowerCommand.includes("element")) {
+      const elementType = extractElementType(command);
+      return { tool: "add_page_element", element_type: elementType };
+    }
+    
+    if (lowerCommand.includes("edit") && lowerCommand.includes("page")) {
+      return { tool: "edit_current_page" };
+    }
+    
+    if (lowerCommand.includes("save") && lowerCommand.includes("page")) {
+      return { tool: "save_current_page" };
+    }
+    
+    // Funnel Management Commands
     if (lowerCommand.includes("create") && lowerCommand.includes("funnel")) {
       const product = extractTopic(command, ["funnel"]);
       return { tool: "generate_funnel", product_description: product, goal: "Generate leads" };
     }
     
-    if (lowerCommand.includes("add") && (lowerCommand.includes("subscriber") || lowerCommand.includes("contact"))) {
+    if (lowerCommand.includes("edit") && lowerCommand.includes("funnel")) {
+      return { tool: "edit_funnel" };
+    }
+    
+    if (lowerCommand.includes("analytics") || lowerCommand.includes("stats")) {
+      return { tool: "show_analytics" };
+    }
+    
+    // Lead Magnet Commands
+    if (lowerCommand.includes("create") && (lowerCommand.includes("ebook") || lowerCommand.includes("book"))) {
+      const topic = extractTopic(command, ["ebook", "book"]);
+      return { tool: "generate_ebook", topic };
+    }
+    
+    if (lowerCommand.includes("create") && lowerCommand.includes("lead magnet")) {
+      const topic = extractTopic(command, ["lead magnet", "magnet"]);
+      return { tool: "generate_lead_magnet", topic, type: "ebook" };
+    }
+    
+    // CRM and Lead Management
+    if (lowerCommand.includes("add") && (lowerCommand.includes("subscriber") || lowerCommand.includes("contact") || lowerCommand.includes("lead"))) {
       return { tool: "add_subscriber", name: "Voice Contact", source: "voice" };
     }
     
+    if (lowerCommand.includes("show") && lowerCommand.includes("leads")) {
+      return { tool: "show_leads" };
+    }
+    
+    // Email Marketing Commands
     if (lowerCommand.includes("send") && lowerCommand.includes("email")) {
       return { tool: "send_email_campaign", list_name: "default", goal: "engage" };
     }
@@ -147,6 +199,7 @@ export default function VoiceFunnelsAI({ className }: VoiceFunnelsAIProps) {
       return { tool: "create_email_list", list_name: listName };
     }
     
+    // Page Creation Commands
     if (lowerCommand.includes("create") && (lowerCommand.includes("landing") || lowerCommand.includes("page"))) {
       const topic = extractTopic(command, ["landing", "page"]);
       return { tool: "create_landing_page", topic, goal: "Generate leads" };

@@ -37,6 +37,7 @@ import {
   Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AdvancedPageBuilder from "./AdvancedPageBuilder";
 
 interface FunnelStep {
   id: string;
@@ -167,6 +168,7 @@ export default function FunnelBuilder({ magnet, funnel, onBack, onSave }: Funnel
   const [steps, setSteps] = useState<FunnelStep[]>([]);
   const [selectedStep, setSelectedStep] = useState<FunnelStep | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [useAdvancedBuilder, setUseAdvancedBuilder] = useState(false);
   const { toast } = useToast();
 
   const sensors = useSensors(
@@ -263,6 +265,35 @@ export default function FunnelBuilder({ magnet, funnel, onBack, onSave }: Funnel
   };
 
   if (selectedStep) {
+    if (useAdvancedBuilder) {
+      return (
+        <AdvancedPageBuilder
+          initialElements={selectedStep.components.map(comp => ({
+            id: comp.id,
+            type: comp.type,
+            content: comp.content,
+            styles: comp.properties
+          }))}
+          onSave={(elements) => {
+            const updatedStep = {
+              ...selectedStep,
+              components: elements.map(el => ({
+                id: el.id,
+                type: el.type as any,
+                content: el.content,
+                properties: el.styles || {}
+              }))
+            };
+            saveStep(updatedStep);
+            setUseAdvancedBuilder(false);
+          }}
+          onClose={() => {
+            setUseAdvancedBuilder(false);
+          }}
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen bg-background p-6">
         <div className="max-w-6xl mx-auto">
@@ -272,6 +303,13 @@ export default function FunnelBuilder({ magnet, funnel, onBack, onSave }: Funnel
               <p className="text-muted-foreground">Editing: {selectedStep.title}</p>
             </div>
             <div className="space-x-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setUseAdvancedBuilder(true)}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:from-purple-600 hover:to-pink-600"
+              >
+                🚀 Advanced Builder
+              </Button>
               <Button variant="outline" onClick={() => setSelectedStep(null)}>
                 ← Back to Funnel
               </Button>

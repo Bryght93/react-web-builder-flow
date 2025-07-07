@@ -36,6 +36,7 @@ const navigation = [
     name: "Marketing Tools",
     items: [
       { name: "Page Builder", href: "/page-builder", icon: PenTool },
+      { name: "🚀 Advanced Builder", href: "/advanced-builder", icon: Zap },
       { name: "Email Marketing", href: "/email-marketing", icon: Mail },
       { name: "Multi-Channel", href: "/channels", icon: MessageSquare },
       { name: "Analytics", href: "/analytics", icon: TrendingUp },
