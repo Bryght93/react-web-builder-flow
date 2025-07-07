@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LiveFunnelBuilder from '@/components/LiveFunnelBuilder';
+import AdvancedPageBuilder from '@/components/AdvancedPageBuilder';
 import { toast } from 'sonner';
 
 const Funnels = () => {
   const [showBuilder, setShowBuilder] = useState(false);
+  const [showAdvancedBuilder, setShowAdvancedBuilder] = useState(false);
   const [editingFunnel, setEditingFunnel] = useState(null);
   const [selectedTab, setSelectedTab] = useState('all');
 
@@ -77,6 +79,11 @@ const Funnels = () => {
 
   const handleCreateNew = () => {
     setEditingFunnel(null);
+    setShowAdvancedBuilder(true);
+  };
+
+  const handleCreateAIFunnel = () => {
+    setEditingFunnel(null);
     setShowBuilder(true);
   };
 
@@ -124,12 +131,25 @@ const Funnels = () => {
     return (
       <LiveFunnelBuilder 
         onComplete={(newFunnel) => {
-          console.log('Funnel completed:', newFunnel);
+          console.log('AI Funnel completed:', newFunnel);
           setShowBuilder(false);
-          toast.success('Funnel created successfully!');
+          toast.success('AI Funnel created successfully!');
         }}
         onBack={() => setShowBuilder(false)}
         initialFunnelData={editingFunnel}
+      />
+    );
+  }
+
+  if (showAdvancedBuilder) {
+    return (
+      <AdvancedPageBuilder 
+        onSave={(elements) => {
+          console.log('Funnel elements saved:', elements);
+          setShowAdvancedBuilder(false);
+          toast.success('Funnel created successfully!');
+        }}
+        onClose={() => setShowAdvancedBuilder(false)}
       />
     );
   }
@@ -151,7 +171,10 @@ const Funnels = () => {
             <Plus className="w-4 h-4 mr-2" />
             Create Funnel
           </Button>
-          <Button variant="gradient" onClick={handleCreateNew}>
+          <Button 
+            onClick={handleCreateAIFunnel}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+          >
             <Zap className="w-4 h-4 mr-2" />
             Create AI Funnel
           </Button>
@@ -178,7 +201,10 @@ const Funnels = () => {
                     : `No ${selectedTab} funnels available`
                   }
                 </p>
-                <Button variant="gradient" onClick={handleCreateNew}>
+                <Button 
+                  onClick={handleCreateAIFunnel}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                >
                   <Zap className="w-4 h-4 mr-2" />
                   Create Your First AI Funnel
                 </Button>
