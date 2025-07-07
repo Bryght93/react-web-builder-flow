@@ -18,6 +18,7 @@ import AdvancedPageBuilderPage from "./pages/AdvancedPageBuilder";
 import AILeadMagnetBuilder from "./components/AILeadMagnetBuilder";
 import CRMDashboard from "./components/CRMDashboard";
 import MultiChannelSync from "./components/MultiChannelSync";
+import Profile from "./pages/Profile";
 import CallBookingCloser from "./components/CallBookingCloser";
 import AdLaunchTracker from "./components/AdLaunchTracker";
 import AISalesCoach from "./components/AISalesCoach";
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/ads" element={<AdLaunchTracker />} />
             <Route path="/ai-coach" element={<AISalesCoach />} />
             <Route path="/integrations" element={<IntegrationsHub />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

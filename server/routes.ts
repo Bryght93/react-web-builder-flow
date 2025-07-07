@@ -742,6 +742,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Profile Routes
+  app.get('/api/profile', async (req, res) => {
+    try {
+      const userId = 1; // Mock user ID for now
+      const user = await storage.getUser(userId);
+      const profile = await storage.getUserProfile(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Combine user and profile data
+      const profileData = {
+        id: user.id,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phoneNumber: user.phoneNumber || '',
+        profileImageUrl: user.profileImageUrl || '',
+        accountType: user.accountType || 'Free',
+        businessName: profile?.businessName || '',
+        industry: profile?.industry || '',
+        targetAudience: profile?.targetAudience || '',
+        mainGoal: profile?.mainGoal || '',
+        productServiceDescription: profile?.productServiceDescription || '',
+        funnelObjective: profile?.funnelObjective || '',
+        preferredFunnelStyle: profile?.preferredFunnelStyle || '',
+        leadMagnetType: profile?.leadMagnetType || '',
+        preferredPlatform: profile?.preferredPlatform || '',
+        crmIntegration: profile?.crmIntegration || '',
+        funnelsCreated: profile?.funnelsCreated || 0,
+        leadsCollected: profile?.leadsCollected || 0,
+        emailsSent: profile?.emailsSent || 0,
+        openRate: profile?.openRate ? parseFloat(profile.openRate) : 0,
+        clickRate: profile?.clickRate ? parseFloat(profile.clickRate) : 0,
+        currentPlan: profile?.currentPlan || 'Starter',
+        customDomain: profile?.customDomain || '',
+        referralCode: profile?.referralCode || '',
+        createdAt: user.createdAt?.toISOString() || new Date().toISOString(),
+      };
+
+      res.json(profileData);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      res.status(500).json({ message: 'Failed to fetch profile' });
+    }
+  });
+
+  app.put('/api/profile', async (req, res) => {
+    try {
+      const userId = 1; // Mock user ID for now
+      const {
+        firstName, lastName, email, phoneNumber,
+        businessName, industry, targetAudience, mainGoal, productServiceDescription,
+        funnelObjective, preferredFunnelStyle, leadMagnetType, preferredPlatform, crmIntegration,
+        customDomain, referralCode
+      } = req.body;
+
+      // Check if profile exists
+      let profile = await storage.getUserProfile(userId);
+      
+      if (!profile) {
+        // Create new profile
+        profile = await storage.createUserProfile({
+          userId,
+          businessName,
+          industry,
+          targetAudience,
+          mainGoal,
+          productServiceDescription,
+          funnelObjective,
+          preferredFunnelStyle,
+          leadMagnetType,
+          preferredPlatform,
+          crmIntegration,
+          customDomain,
+          referralCode,
+        });
+      } else {
+        // Update existing profile
+        profile = await storage.updateUserProfile(userId, {
+          businessName,
+          industry,
+          targetAudience,
+          mainGoal,
+          productServiceDescription,
+          funnelObjective,
+          preferredFunnelStyle,
+          leadMagnetType,
+          preferredPlatform,
+          crmIntegration,
+          customDomain,
+          referralCode,
+        });
+      }
+
+      res.json({ message: 'Profile updated successfully', profile });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      res.status(500).json({ message: 'Failed to update profile' });
+    }
+  });
+
+  app.get('/api/profile/stats', async (req, res) => {
+    try {
+      const userId = 1; // Mock user ID for now
+      const profile = await storage.getUserProfile(userId);
+      const funnels = await storage.getFunnels(userId);
+      const leads = await storage.getLeads(userId);
+      const teamMembers = await storage.getTeamMembers(userId);
+
+      const stats = {
+        funnelsCreated: funnels.length,
+        leadsCollected: leads.length,
+        emailsSent: profile?.emailsSent || 0,
+        openRate: profile?.openRate ? parseFloat(profile.openRate) : 0,
+        clickRate: profile?.clickRate ? parseFloat(profile.clickRate) : 0,
+        conversionRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === 'converted').length / leads.length) * 100) : 0,
+        totalRevenue: 0,
+        activeTeamMembers: teamMembers.length,
+      };
+
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      res.status(500).json({ message: 'Failed to fetch stats' });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

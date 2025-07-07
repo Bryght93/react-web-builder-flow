@@ -10,8 +10,17 @@ import {
   emailContacts,
   emailAutomations,
   emailSends,
+  userProfiles,
+  billingHistory,
+  teamMembers,
   type User, 
   type InsertUser,
+  type UserProfile,
+  type InsertUserProfile,
+  type BillingHistory,
+  type InsertBillingHistory,
+  type TeamMember,
+  type InsertTeamMember,
   type Funnel,
   type InsertFunnel,
   type Page,
@@ -103,6 +112,21 @@ export interface IStorage {
   createEmailAutomation(automation: InsertEmailAutomation): Promise<EmailAutomation>;
   updateEmailAutomation(id: number, automation: Partial<InsertEmailAutomation>): Promise<EmailAutomation>;
   deleteEmailAutomation(id: number): Promise<void>;
+  
+  // User Profile methods
+  getUserProfile(userId: number): Promise<UserProfile | undefined>;
+  createUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  updateUserProfile(userId: number, profile: Partial<InsertUserProfile>): Promise<UserProfile>;
+  
+  // Billing History methods
+  getBillingHistory(userId: number): Promise<BillingHistory[]>;
+  createBillingRecord(billing: InsertBillingHistory): Promise<BillingHistory>;
+  
+  // Team Member methods
+  getTeamMembers(userId: number): Promise<TeamMember[]>;
+  addTeamMember(member: InsertTeamMember): Promise<TeamMember>;
+  updateTeamMember(id: number, member: Partial<InsertTeamMember>): Promise<TeamMember>;
+  removeTeamMember(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -417,6 +441,68 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEmailAutomation(id: number): Promise<void> {
     await db.delete(emailAutomations).where(eq(emailAutomations.id, id));
+  }
+  
+  // User Profile methods
+  async getUserProfile(userId: number): Promise<UserProfile | undefined> {
+    const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
+    return profile || undefined;
+  }
+
+  async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    const [newProfile] = await db
+      .insert(userProfiles)
+      .values(profile)
+      .returning();
+    return newProfile;
+  }
+
+  async updateUserProfile(userId: number, profile: Partial<InsertUserProfile>): Promise<UserProfile> {
+    const [updatedProfile] = await db
+      .update(userProfiles)
+      .set({ ...profile, updatedAt: new Date() })
+      .where(eq(userProfiles.userId, userId))
+      .returning();
+    return updatedProfile;
+  }
+  
+  // Billing History methods
+  async getBillingHistory(userId: number): Promise<BillingHistory[]> {
+    return await db.select().from(billingHistory).where(eq(billingHistory.userId, userId)).orderBy(desc(billingHistory.billingDate));
+  }
+
+  async createBillingRecord(billing: InsertBillingHistory): Promise<BillingHistory> {
+    const [newBilling] = await db
+      .insert(billingHistory)
+      .values(billing)
+      .returning();
+    return newBilling;
+  }
+  
+  // Team Member methods
+  async getTeamMembers(userId: number): Promise<TeamMember[]> {
+    return await db.select().from(teamMembers).where(eq(teamMembers.userId, userId));
+  }
+
+  async addTeamMember(member: InsertTeamMember): Promise<TeamMember> {
+    const [newMember] = await db
+      .insert(teamMembers)
+      .values(member)
+      .returning();
+    return newMember;
+  }
+
+  async updateTeamMember(id: number, member: Partial<InsertTeamMember>): Promise<TeamMember> {
+    const [updatedMember] = await db
+      .update(teamMembers)
+      .set(member)
+      .where(eq(teamMembers.id, id))
+      .returning();
+    return updatedMember;
+  }
+
+  async removeTeamMember(id: number): Promise<void> {
+    await db.delete(teamMembers).where(eq(teamMembers.id, id));
   }
 }
 

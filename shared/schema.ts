@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, json, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, json, jsonb, timestamp, varchar, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -7,7 +7,78 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  phoneNumber: varchar("phone_number"),
+  accountType: varchar("account_type").default("Free"),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const userProfiles = pgTable("user_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Business & Marketing Context
+  businessName: varchar("business_name"),
+  industry: varchar("industry"),
+  targetAudience: text("target_audience"),
+  mainGoal: text("main_goal"),
+  productServiceDescription: text("product_service_description"),
+  
+  // AI Funnel Customization
+  funnelObjective: text("funnel_objective"),
+  preferredFunnelStyle: varchar("preferred_funnel_style"),
+  leadMagnetType: varchar("lead_magnet_type"),
+  preferredPlatform: varchar("preferred_platform"),
+  crmIntegration: text("crm_integration"),
+  
+  // Performance & Usage Tracking
+  funnelsCreated: integer("funnels_created").default(0),
+  lastActive: timestamp("last_active"),
+  leadsCollected: integer("leads_collected").default(0),
+  emailsSent: integer("emails_sent").default(0),
+  openRate: decimal("open_rate", { precision: 5, scale: 2 }),
+  clickRate: decimal("click_rate", { precision: 5, scale: 2 }),
+  
+  // Tools & Features Access
+  hasAccessTo: text("has_access_to").array(),
+  currentPlan: varchar("current_plan").default("Starter"),
+  
+  // Optional Advanced Fields
+  customDomain: varchar("custom_domain"),
+  aiPromptHistory: jsonb("ai_prompt_history"),
+  zapierWebhooks: text("zapier_webhooks").array(),
+  referralCode: varchar("referral_code"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const billingHistory = pgTable("billing_history", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  subscriptionType: varchar("subscription_type").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency").default("USD"),
+  paymentMethod: varchar("payment_method"),
+  invoiceUrl: varchar("invoice_url"),
+  status: varchar("status").default("pending"),
+  billingDate: timestamp("billing_date").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const teamMembers = pgTable("team_members", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  memberEmail: varchar("member_email").notNull(),
+  role: varchar("role").default("member"),
+  permissions: text("permissions").array(),
+  invitedAt: timestamp("invited_at").defaultNow(),
+  joinedAt: timestamp("joined_at"),
+  status: varchar("status").default("pending"),
 });
 
 export const funnels = pgTable("funnels", {
@@ -152,10 +223,34 @@ export const emailSends = pgTable("email_sends", {
 });
 
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
+  profile: one(userProfiles),
   funnels: many(funnels),
   leadMagnets: many(leadMagnets),
   leads: many(leads),
+  billingHistory: many(billingHistory),
+  teamMembers: many(teamMembers),
+}));
+
+export const userProfilesRelations = relations(userProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [userProfiles.userId],
+    references: [users.id],
+  }),
+}));
+
+export const billingHistoryRelations = relations(billingHistory, ({ one }) => ({
+  user: one(users, {
+    fields: [billingHistory.userId],
+    references: [users.id],
+  }),
+}));
+
+export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
+  user: one(users, {
+    fields: [teamMembers.userId],
+    references: [users.id],
+  }),
 }));
 
 export const funnelsRelations = relations(funnels, ({ one, many }) => ({
@@ -263,3 +358,28 @@ export type EmailContact = typeof emailContacts.$inferSelect;
 export type InsertEmailAutomation = z.infer<typeof insertEmailAutomationSchema>;
 export type EmailAutomation = typeof emailAutomations.$inferSelect;
 export type EmailSend = typeof emailSends.$inferSelect;
+
+// User Profile Types
+export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertBillingHistorySchema = createInsertSchema(billingHistory).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
+  id: true,
+  invitedAt: true,
+  joinedAt: true,
+});
+
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertBillingHistory = z.infer<typeof insertBillingHistorySchema>;
+export type BillingHistory = typeof billingHistory.$inferSelect;
+export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
+export type TeamMember = typeof teamMembers.$inferSelect;

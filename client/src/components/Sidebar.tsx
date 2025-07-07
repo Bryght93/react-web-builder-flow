@@ -19,7 +19,8 @@ import {
   TrendingUp,
   Layers,
   Globe,
-  Bot
+  Bot,
+  User
 } from "lucide-react";
 
 const navigation = [
@@ -48,6 +49,7 @@ const navigation = [
       { name: "CRM", href: "/crm", icon: Users },
       { name: "AI Coach", href: "/ai-coach", icon: Bot },
       { name: "Integrations", href: "/integrations", icon: Layers },
+      { name: "Profile", href: "/profile", icon: User },
       { name: "Settings", href: "/settings", icon: Settings },
     ]
   }
