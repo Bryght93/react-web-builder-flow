@@ -114,8 +114,11 @@ export default function AIEmailSMSEngine() {
           <Mail className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold">AI Email & SMS Engine</h1>
-          <p className="text-muted-foreground">Intelligent automation with smart segmentation</p>
+          <h1 className="text-3xl font-bold">Campaign Automation Engine</h1>
+          <p className="text-muted-foreground">Intelligent email & SMS automation with smart segmentation</p>
+          <div className="mt-2 text-sm text-muted-foreground">
+            💡 Create beautiful emails in the <strong>Email Designer</strong>, then automate campaigns here
+          </div>
         </div>
       </div>
 
@@ -198,10 +201,16 @@ export default function AIEmailSMSEngine() {
         <TabsContent value="templates" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold">Email Templates</h2>
-            <Button>
-              <Zap className="w-4 h-4 mr-2" />
-              Generate with AI
-            </Button>
+            <div className="flex space-x-2">
+              <Button>
+                <Zap className="w-4 h-4 mr-2" />
+                Generate with AI
+              </Button>
+              <Button variant="outline" onClick={() => window.location.href = '/email-marketing'}>
+                <Mail className="w-4 h-4 mr-2" />
+                Open Email Designer
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

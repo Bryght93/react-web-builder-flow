@@ -28,7 +28,7 @@ const navigation = [
     name: "AI Features",
     items: [
       { name: "🚀 Launch Assistant", href: "/ai-launch", icon: Zap },
-      { name: "📧 Email & SMS Engine", href: "/ai-email-sms", icon: Mail },
+      { name: "🤖 Campaign Automation", href: "/ai-email-sms", icon: Zap },
       { name: "🎯 Ad Launcher", href: "/ai-ads", icon: Target },
       { name: "📞 Call & Booking", href: "/call-booking", icon: Phone },
     ]
@@ -47,7 +47,7 @@ const navigation = [
     items: [
       { name: "Page Builder", href: "/page-builder", icon: PenTool },
       { name: "🚀 Advanced Builder", href: "/advanced-builder", icon: Zap },
-      { name: "Email Marketing", href: "/email-marketing", icon: Mail },
+      { name: "📧 Email Designer", href: "/email-marketing", icon: Mail },
       { name: "Multi-Channel", href: "/channels", icon: MessageSquare },
       { name: "Analytics", href: "/analytics", icon: TrendingUp },
     ]
