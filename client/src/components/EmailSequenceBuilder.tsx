@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 import { 
   Mail, 
   Plus, 
@@ -50,7 +52,41 @@ import {
   Loader2,
   Sparkles,
   Monitor,
-  Smartphone
+  Smartphone,
+  Mic,
+  MessageSquare,
+  Wand2,
+  Lightbulb,
+  Shield,
+  CheckCircle2,
+  AlertTriangle,
+  FileText,
+  Video,
+  Headphones,
+  Camera,
+  Brush,
+  TrendingUp,
+  BarChart,
+  Users2,
+  Globe,
+  Star,
+  Award,
+  BookOpen,
+  HelpCircle,
+  Volume2,
+  VolumeX,
+  RefreshCw,
+  Download,
+  Upload,
+  Share2,
+  Code,
+  Layers,
+  PaintBucket,
+  Sliders,
+  Move,
+  RotateCcw,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 
 interface EmailStep {
@@ -96,6 +132,12 @@ export default function EmailSequenceBuilder() {
   const [selectedElement, setSelectedElement] = useState<EmailElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAIDialog, setShowAIDialog] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [aiAssistantMode, setAIAssistantMode] = useState<'content' | 'edit' | 'strategy' | 'compliance'>('content');
+  const [voiceListening, setVoiceListening] = useState(false);
+  const [aiResponse, setAIResponse] = useState('');
+  const [userPrompt, setUserPrompt] = useState('');
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const { toast } = useToast();
 
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([
@@ -359,6 +401,115 @@ export default function EmailSequenceBuilder() {
     return elements;
   };
 
+  // AI Assistant Functions
+  const processAIRequest = async (prompt: string, mode: string) => {
+    setIsProcessingAI(true);
+    try {
+      const response = await fetch('/api/ai/process-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          mode,
+          context: {
+            emailStep: selectedEmailStep,
+            element: selectedElement,
+            campaign: selectedCampaign
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process AI request');
+      }
+
+      const data = await response.json();
+      setAIResponse(data.response);
+      
+      // Apply suggestions if available
+      if (data.suggestions) {
+        applySuggestions(data.suggestions);
+      }
+      
+    } catch (error) {
+      console.error('AI Processing Error:', error);
+      setAIResponse('Sorry, I encountered an error processing your request. Please try again.');
+    } finally {
+      setIsProcessingAI(false);
+    }
+  };
+
+  const applySuggestions = (suggestions: any) => {
+    if (suggestions.elementUpdates && selectedElement) {
+      updateElement(selectedElement.id, suggestions.elementUpdates);
+    }
+    if (suggestions.stepUpdates && selectedEmailStep) {
+      updateEmailStep(suggestions.stepUpdates);
+    }
+  };
+
+  const generateAIContent = async (contentType: 'subject' | 'headline' | 'body' | 'cta') => {
+    const prompts = {
+      subject: `Generate an engaging email subject line for ${selectedCampaign?.type || 'email'} campaign targeting ${selectedCampaign?.description || 'subscribers'}`,
+      headline: 'Create a compelling headline for this email that grabs attention',
+      body: `Write engaging email body content for ${selectedCampaign?.type || 'email'} campaign`,
+      cta: 'Generate a strong call-to-action button text that drives conversions'
+    };
+    
+    await processAIRequest(prompts[contentType], 'content');
+  };
+
+  const checkCompliance = async () => {
+    const compliancePrompt = `Check this email for marketing compliance (GDPR, CAN-SPAM, etc.): 
+    Subject: ${selectedEmailStep?.subject}
+    Content: ${selectedEmailStep?.content.map(el => el.properties.text).join(' ')}`;
+    
+    await processAIRequest(compliancePrompt, 'compliance');
+  };
+
+  const getMarketingStrategy = async () => {
+    const strategyPrompt = `Provide marketing strategy advice for this ${selectedCampaign?.type} campaign: ${selectedCampaign?.description}`;
+    await processAIRequest(strategyPrompt, 'strategy');
+  };
+
+  const startVoiceListening = () => {
+    setVoiceListening(true);
+    // Voice recognition would be implemented here
+    setTimeout(() => {
+      setVoiceListening(false);
+      setUserPrompt("Generate a compelling email subject line about productivity tips");
+    }, 3000);
+  };
+
+  const createFromScratch = () => {
+    const scratchCampaign: EmailCampaign = {
+      id: campaigns.length + 1,
+      name: 'New Campaign',
+      description: 'Created from scratch with AI assistance',
+      status: 'draft',
+      type: 'nurture',
+      subscribers: 0,
+      stats: { opens: "0%", clicks: "0%", revenue: "$0" },
+      emailSequence: [{
+        id: 1,
+        name: 'Email 1',
+        subject: 'Your compelling subject line here',
+        delay: 0,
+        delayUnit: 'minutes',
+        content: [],
+        settings: { list: "all-subscribers", sendTime: "immediate" }
+      }]
+    };
+    
+    setCampaigns([...campaigns, scratchCampaign]);
+    setSelectedCampaign(scratchCampaign);
+    setSelectedEmailStep(scratchCampaign.emailSequence[0]);
+    setShowAIAssistant(true);
+    setView('builder');
+  };
+
   const addEmailStep = () => {
     if (!selectedCampaign) return;
     
@@ -453,6 +604,261 @@ export default function EmailSequenceBuilder() {
     const updatedContent = selectedEmailStep.content.filter(element => element.id !== elementId);
     updateEmailStep({ content: updatedContent });
     setSelectedElement(null);
+  };
+
+  // AI Assistant Panel Component
+  const AIAssistantPanel = () => {
+    return (
+      <div className="w-80 border-l bg-gradient-to-b from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 overflow-y-auto">
+        <div className="p-4 space-y-4">
+          {/* AI Assistant Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="font-semibold text-sm">AI Marketing Assistant</h3>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAIAssistant(false)}
+            >
+              <Minimize2 className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* AI Mode Selector */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Assistant Mode</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant={aiAssistantMode === 'content' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setAIAssistantMode('content')}
+                className="text-xs"
+              >
+                <PenTool className="w-3 h-3 mr-1" />
+                Content
+              </Button>
+              <Button
+                variant={aiAssistantMode === 'edit' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setAIAssistantMode('edit')}
+                className="text-xs"
+              >
+                <Edit3 className="w-3 h-3 mr-1" />
+                Edit
+              </Button>
+              <Button
+                variant={aiAssistantMode === 'strategy' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setAIAssistantMode('strategy')}
+                className="text-xs"
+              >
+                <TrendingUp className="w-3 h-3 mr-1" />
+                Strategy
+              </Button>
+              <Button
+                variant={aiAssistantMode === 'compliance' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setAIAssistantMode('compliance')}
+                className="text-xs"
+              >
+                <Shield className="w-3 h-3 mr-1" />
+                Compliance
+              </Button>
+            </div>
+          </div>
+
+          {/* Voice Input */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Voice Command</Label>
+            <div className="flex space-x-2">
+              <Button
+                variant={voiceListening ? 'default' : 'outline'}
+                size="sm"
+                onClick={startVoiceListening}
+                className="flex-1"
+              >
+                {voiceListening ? (
+                  <Volume2 className="w-4 h-4 mr-2 animate-pulse" />
+                ) : (
+                  <Mic className="w-4 h-4 mr-2" />
+                )}
+                {voiceListening ? 'Listening...' : 'Voice Input'}
+              </Button>
+            </div>
+          </div>
+
+          {/* Text Input */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Text Prompt</Label>
+            <div className="space-y-2">
+              <Textarea
+                placeholder="Ask me anything about your email campaign..."
+                value={userPrompt}
+                onChange={(e) => setUserPrompt(e.target.value)}
+                className="h-20 text-xs"
+                rows={3}
+              />
+              <Button
+                size="sm"
+                onClick={() => processAIRequest(userPrompt, aiAssistantMode)}
+                disabled={isProcessingAI || !userPrompt.trim()}
+                className="w-full"
+              >
+                {isProcessingAI ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                )}
+                {isProcessingAI ? 'Processing...' : 'Ask AI'}
+              </Button>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Quick Actions</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => generateAIContent('subject')}
+                className="text-xs"
+              >
+                <FileText className="w-3 h-3 mr-1" />
+                Subject
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => generateAIContent('headline')}
+                className="text-xs"
+              >
+                <Type className="w-3 h-3 mr-1" />
+                Headline
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => generateAIContent('body')}
+                className="text-xs"
+              >
+                <PenTool className="w-3 h-3 mr-1" />
+                Body
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => generateAIContent('cta')}
+                className="text-xs"
+              >
+                <Target className="w-3 h-3 mr-1" />
+                CTA
+              </Button>
+            </div>
+          </div>
+
+          {/* AI Response Area */}
+          {aiResponse && (
+            <div className="space-y-2">
+              <Label className="text-xs font-medium">AI Response</Label>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border">
+                <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                  {aiResponse}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Marketing Tools */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Marketing Tools</Label>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={checkCompliance}
+                className="w-full text-xs"
+              >
+                <Shield className="w-3 h-3 mr-2" />
+                Check Compliance
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={getMarketingStrategy}
+                className="w-full text-xs"
+              >
+                <TrendingUp className="w-3 h-3 mr-2" />
+                Strategy Tips
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => processAIRequest('Suggest improvements for better email deliverability', 'strategy')}
+                className="w-full text-xs"
+              >
+                <BarChart className="w-3 h-3 mr-2" />
+                Deliverability
+              </Button>
+            </div>
+          </div>
+
+          {/* Content Generation */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Content Generation</Label>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => processAIRequest('Generate an image for this email campaign', 'content')}
+                className="w-full text-xs"
+              >
+                <Camera className="w-3 h-3 mr-2" />
+                Generate Image
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => processAIRequest('Suggest video content ideas for this campaign', 'content')}
+                className="w-full text-xs"
+              >
+                <Video className="w-3 h-3 mr-2" />
+                Video Ideas
+              </Button>
+            </div>
+          </div>
+
+          {/* Help & Guidelines */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Help & Guidelines</Label>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => processAIRequest('Show me best practices for email marketing', 'strategy')}
+                className="w-full text-xs"
+              >
+                <BookOpen className="w-3 h-3 mr-2" />
+                Best Practices
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => processAIRequest('What are the legal requirements for email marketing?', 'compliance')}
+                className="w-full text-xs"
+              >
+                <HelpCircle className="w-3 h-3 mr-2" />
+                Legal Guide
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // AI Generation Dialog Component
@@ -613,9 +1019,13 @@ export default function EmailSequenceBuilder() {
               <Sparkles className="w-4 h-4 mr-2" />
               AI Generator
             </Button>
+            <Button onClick={() => createFromScratch()} className="bg-gradient-to-r from-green-600 to-teal-600">
+              <Wand2 className="w-4 h-4 mr-2" />
+              Create from Scratch
+            </Button>
             <Button variant="outline" onClick={() => setView('builder')}>
               <Plus className="w-4 h-4 mr-2" />
-              Create Campaign
+              Templates
             </Button>
           </div>
         </div>
@@ -777,6 +1187,14 @@ export default function EmailSequenceBuilder() {
             <Button variant="outline" size="sm" onClick={() => setPreviewMode(previewMode === 'desktop' ? 'mobile' : 'desktop')}>
               {previewMode === 'desktop' ? <Monitor className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
             </Button>
+            <Button 
+              variant={showAIAssistant ? 'default' : 'outline'} 
+              size="sm" 
+              onClick={() => setShowAIAssistant(!showAIAssistant)}
+            >
+              <Sparkles className="w-4 h-4 mr-1" />
+              AI Assistant
+            </Button>
             <Button variant="outline" size="sm">
               <Eye className="w-4 h-4 mr-1" />
               Preview
@@ -854,7 +1272,21 @@ export default function EmailSequenceBuilder() {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs">Subject Line</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Subject Line</Label>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setAIAssistantMode('content');
+                        setShowAIAssistant(true);
+                        setUserPrompt(`Generate an engaging subject line for this ${selectedCampaign?.type} email campaign about ${selectedCampaign?.description}`);
+                      }}
+                      className="h-6 px-2"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                    </Button>
+                  </div>
                   <Input 
                     value={selectedEmailStep.subject}
                     onChange={(e) => updateEmailStep({ subject: e.target.value })}
@@ -909,6 +1341,63 @@ export default function EmailSequenceBuilder() {
               <Button variant="outline" size="sm" onClick={() => addElement('divider')}>
                 <Trash2 className="w-4 h-4 mr-1" />
                 Divider
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => addElement('spacer')}>
+                <Move className="w-4 h-4 mr-1" />
+                Spacer
+              </Button>
+            </div>
+            
+            {/* AI Quick Actions */}
+            <div className="flex flex-wrap items-center gap-1 border-t pt-2 mt-2">
+              <span className="text-xs font-medium mr-2">AI:</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setAIAssistantMode('content');
+                  setShowAIAssistant(true);
+                  setUserPrompt('Generate engaging email content for this section');
+                }}
+              >
+                <Wand2 className="w-3 h-3 mr-1" />
+                Generate
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setAIAssistantMode('edit');
+                  setShowAIAssistant(true);
+                  setUserPrompt('Review and improve this email content');
+                }}
+              >
+                <Edit3 className="w-3 h-3 mr-1" />
+                Improve
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setAIAssistantMode('compliance');
+                  setShowAIAssistant(true);
+                  setUserPrompt('Check this email for compliance and legal requirements');
+                }}
+              >
+                <Shield className="w-3 h-3 mr-1" />
+                Compliance
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setAIAssistantMode('strategy');
+                  setShowAIAssistant(true);
+                  setUserPrompt('Provide marketing strategy advice for this email');
+                }}
+              >
+                <TrendingUp className="w-3 h-3 mr-1" />
+                Strategy
               </Button>
             </div>
           </div>
@@ -1015,116 +1504,181 @@ export default function EmailSequenceBuilder() {
           </div>
         </div>
 
-        {/* Right Panel - Element Properties - Responsive */}
-        <div className="w-60 lg:w-72 border-l bg-background overflow-y-auto shrink-0">
-          <div className="p-3">
-            {selectedElement ? (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-sm">Properties</h3>
+        {/* Right Panel - Element Properties or AI Assistant - Responsive */}
+        {showAIAssistant ? (
+          <AIAssistantPanel />
+        ) : (
+          <div className="w-60 lg:w-72 border-l bg-background overflow-y-auto shrink-0">
+            <div className="p-3">
+              {selectedElement ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-sm">Properties</h3>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowAIAssistant(true)}
+                        title="Get AI help with this element"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteElement(selectedElement.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {(selectedElement.type === 'heading' || selectedElement.type === 'text') && (
+                    <>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs">Text Content</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setAIAssistantMode('content');
+                              setShowAIAssistant(true);
+                              setUserPrompt(`Improve this ${selectedElement.type} text: "${selectedElement.properties.text}"`);
+                            }}
+                            className="h-6 px-2"
+                          >
+                            <Wand2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                        <Textarea
+                          value={selectedElement.properties.text}
+                          onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
+                          className="mt-1 h-20"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Font Size</Label>
+                        <Input
+                          value={selectedElement.properties.fontSize}
+                          onChange={(e) => updateElement(selectedElement.id, { fontSize: e.target.value })}
+                          className="mt-1 h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Text Align</Label>
+                        <Select value={selectedElement.properties.textAlign} onValueChange={(value) => updateElement(selectedElement.id, { textAlign: value })}>
+                          <SelectTrigger className="mt-1 h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="left">Left</SelectItem>
+                            <SelectItem value="center">Center</SelectItem>
+                            <SelectItem value="right">Right</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+
+                  {selectedElement.type === 'button' && (
+                    <>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs">Button Text</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setAIAssistantMode('content');
+                              setShowAIAssistant(true);
+                              setUserPrompt(`Improve this call-to-action button text: "${selectedElement.properties.text}"`);
+                            }}
+                            className="h-6 px-2"
+                          >
+                            <Wand2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                        <Input
+                          value={selectedElement.properties.text}
+                          onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
+                          className="mt-1 h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Link URL</Label>
+                        <Input
+                          value={selectedElement.properties.link}
+                          onChange={(e) => updateElement(selectedElement.id, { link: e.target.value })}
+                          className="mt-1 h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Background Color</Label>
+                        <Input
+                          type="color"
+                          value={selectedElement.properties.backgroundColor}
+                          onChange={(e) => updateElement(selectedElement.id, { backgroundColor: e.target.value })}
+                          className="mt-1 h-8"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {selectedElement.type === 'image' && (
+                    <>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs">Image URL</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setAIAssistantMode('content');
+                              setShowAIAssistant(true);
+                              setUserPrompt('Generate an image for this email campaign');
+                            }}
+                            className="h-6 px-2"
+                          >
+                            <Camera className="w-3 h-3" />
+                          </Button>
+                        </div>
+                        <Input
+                          value={selectedElement.properties.src}
+                          onChange={(e) => updateElement(selectedElement.id, { src: e.target.value })}
+                          className="mt-1 h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Alt Text</Label>
+                        <Input
+                          value={selectedElement.properties.alt}
+                          onChange={(e) => updateElement(selectedElement.id, { alt: e.target.value })}
+                          className="mt-1 h-8"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Select an element to edit its properties</p>
                   <Button
-                    variant="destructive"
+                    variant="outline"
                     size="sm"
-                    onClick={() => deleteElement(selectedElement.id)}
+                    onClick={() => setShowAIAssistant(true)}
+                    className="mt-4"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Open AI Assistant
                   </Button>
                 </div>
-
-                {(selectedElement.type === 'heading' || selectedElement.type === 'text') && (
-                  <>
-                    <div>
-                      <Label className="text-xs">Text Content</Label>
-                      <Textarea
-                        value={selectedElement.properties.text}
-                        onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
-                        className="mt-1 h-20"
-                        rows={3}
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Font Size</Label>
-                      <Input
-                        value={selectedElement.properties.fontSize}
-                        onChange={(e) => updateElement(selectedElement.id, { fontSize: e.target.value })}
-                        className="mt-1 h-8"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Text Align</Label>
-                      <Select value={selectedElement.properties.textAlign} onValueChange={(value) => updateElement(selectedElement.id, { textAlign: value })}>
-                        <SelectTrigger className="mt-1 h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="left">Left</SelectItem>
-                          <SelectItem value="center">Center</SelectItem>
-                          <SelectItem value="right">Right</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                )}
-
-                {selectedElement.type === 'button' && (
-                  <>
-                    <div>
-                      <Label className="text-xs">Button Text</Label>
-                      <Input
-                        value={selectedElement.properties.text}
-                        onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
-                        className="mt-1 h-8"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Link URL</Label>
-                      <Input
-                        value={selectedElement.properties.link}
-                        onChange={(e) => updateElement(selectedElement.id, { link: e.target.value })}
-                        className="mt-1 h-8"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Background Color</Label>
-                      <Input
-                        type="color"
-                        value={selectedElement.properties.backgroundColor}
-                        onChange={(e) => updateElement(selectedElement.id, { backgroundColor: e.target.value })}
-                        className="mt-1 h-8"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {selectedElement.type === 'image' && (
-                  <>
-                    <div>
-                      <Label className="text-xs">Image URL</Label>
-                      <Input
-                        value={selectedElement.properties.src}
-                        onChange={(e) => updateElement(selectedElement.id, { src: e.target.value })}
-                        className="mt-1 h-8"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Alt Text</Label>
-                      <Input
-                        value={selectedElement.properties.alt}
-                        onChange={(e) => updateElement(selectedElement.id, { alt: e.target.value })}
-                        className="mt-1 h-8"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Select an element to edit its properties</p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

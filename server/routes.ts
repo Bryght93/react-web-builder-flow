@@ -400,6 +400,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Assistant Processing endpoint
+  app.post('/api/ai/process-request', async (req, res) => {
+    try {
+      const { aiEmailService } = await import('./ai-email-service.js');
+      const { prompt, mode, context } = req.body;
+      
+      const response = await aiEmailService.processAssistantRequest(prompt, mode, context);
+      res.json({ response: response.content, suggestions: response.suggestions });
+    } catch (error) {
+      console.error('AI Assistant Error:', error);
+      res.status(500).json({ error: 'Failed to process AI request' });
+    }
+  });
+
   function generateLeadMagnetContent(type: string, topic: string, targetAudience: string) {
     switch (type) {
       case 'ebook':

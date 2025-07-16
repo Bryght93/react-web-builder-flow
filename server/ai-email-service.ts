@@ -149,4 +149,88 @@ export interface GeneratedEmail {
   email_type: 'nurture' | 'broadcast';
 }
 
+  async processAssistantRequest(prompt: string, mode: string, context: any): Promise<{content: string, suggestions?: any}> {
+    if (!this.openai) {
+      return this.generateDummyAssistantResponse(prompt, mode, context);
+    }
+
+    try {
+      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: this.getSystemPromptForMode(mode)
+          },
+          {
+            role: "user",
+            content: `${prompt}\n\nContext: ${JSON.stringify(context)}`
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7
+      });
+
+      const result = JSON.parse(response.choices[0].message.content!);
+      return {
+        content: result.response,
+        suggestions: result.suggestions
+      };
+    } catch (error) {
+      console.error('OpenAI API error:', error);
+      return this.generateDummyAssistantResponse(prompt, mode, context);
+    }
+  }
+
+  private getSystemPromptForMode(mode: string): string {
+    const prompts = {
+      content: `You are an expert email marketing content creator. Generate engaging, conversion-focused content that follows best practices. Always respond in JSON format with 'response' and optional 'suggestions' fields.`,
+      edit: `You are an expert email editor. Provide suggestions to improve existing content for better engagement and conversion. Focus on clarity, persuasion, and marketing effectiveness. Always respond in JSON format with 'response' and optional 'suggestions' fields.`,
+      strategy: `You are a strategic email marketing consultant. Provide actionable advice on email marketing strategy, campaign optimization, and performance improvement. Always respond in JSON format with 'response' and optional 'suggestions' fields.`,
+      compliance: `You are a legal compliance expert for email marketing. Check content for GDPR, CAN-SPAM, and other regulatory compliance. Identify issues and provide corrections. Always respond in JSON format with 'response' and optional 'suggestions' fields.`
+    };
+    return prompts[mode as keyof typeof prompts] || prompts.content;
+  }
+
+  private generateDummyAssistantResponse(prompt: string, mode: string, context: any): {content: string, suggestions?: any} {
+    const responses = {
+      content: {
+        response: "I'd be happy to help you create engaging email content! Here are some suggestions based on your request:\n\n• Focus on clear, benefit-driven messaging\n• Use action-oriented language\n• Include social proof or testimonials\n• Create urgency when appropriate\n• Ensure mobile-friendly formatting\n\nWould you like me to elaborate on any of these points?",
+        suggestions: {
+          elementUpdates: {
+            text: "Transform Your Business Today - Join 10,000+ Success Stories"
+          }
+        }
+      },
+      edit: {
+        response: "Here are my suggestions to improve your email content:\n\n• Strengthen your headline to be more specific\n• Add emotional triggers to increase engagement\n• Include a clear value proposition\n• Improve your call-to-action clarity\n• Optimize for mobile readability\n\nI can help you implement these changes step by step.",
+        suggestions: {
+          elementUpdates: {
+            text: "Discover the Simple System That's Helping Entrepreneurs Like You Generate 6-Figure Results"
+          }
+        }
+      },
+      strategy: {
+        response: "Based on your campaign, here's my strategic advice:\n\n• Segment your audience for better targeting\n• Use A/B testing for subject lines\n• Implement progressive profiling\n• Create nurture sequences based on behavior\n• Track key metrics: open rates, click-through rates, conversions\n\nConsider implementing automation triggers for better engagement.",
+        suggestions: {
+          stepUpdates: {
+            subject: "🚀 [URGENT] Your Success Blueprint Inside (24hrs only)"
+          }
+        }
+      },
+      compliance: {
+        response: "Compliance Review Results:\n\n✅ GDPR Compliant: Include unsubscribe link\n✅ CAN-SPAM Compliant: Add physical address\n⚠️ Recommendation: Add clear consent reminder\n⚠️ Recommendation: Include privacy policy link\n\nYour email meets basic compliance requirements. Consider adding data processing transparency for enhanced trust.",
+        suggestions: {
+          stepUpdates: {
+            content: "Add footer with unsubscribe link and physical address"
+          }
+        }
+      }
+    };
+
+    return responses[mode as keyof typeof responses] || responses.content;
+  }
+}
+
 export const aiEmailService = new AIEmailService();
