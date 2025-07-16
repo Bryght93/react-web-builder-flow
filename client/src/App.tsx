@@ -25,6 +25,9 @@ import CallBookingCloser from "./components/CallBookingCloser";
 import AdLaunchTracker from "./components/AdLaunchTracker";
 import AISalesCoach from "./components/AISalesCoach";
 import IntegrationsHub from "./components/IntegrationsHub";
+import AILaunchAssistantPage from "./pages/AILaunchAssistant";
+import AIEmailSMSEnginePage from "./pages/AIEmailSMSEngine";
+import AIAdLauncherPage from "./pages/AIAdLauncher";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -45,6 +48,9 @@ const App = () => (
             <Route path="/page-builder" element={<PageBuilder />} />
             <Route path="/advanced-builder" element={<AdvancedPageBuilderPage />} />
             <Route path="/ai-builder" element={<AILeadMagnetBuilder />} />
+            <Route path="/ai-launch" element={<AILaunchAssistantPage />} />
+            <Route path="/ai-email-sms" element={<AIEmailSMSEnginePage />} />
+            <Route path="/ai-ads" element={<AIAdLauncherPage />} />
             <Route path="/call-booking" element={<CallBookingCloser />} />
             <Route path="/ads" element={<AdLaunchTracker />} />
             <Route path="/ai-coach" element={<AISalesCoach />} />

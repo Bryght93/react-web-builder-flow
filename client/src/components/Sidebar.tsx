@@ -25,6 +25,15 @@ import {
 
 const navigation = [
   {
+    name: "AI Features",
+    items: [
+      { name: "🚀 Launch Assistant", href: "/ai-launch", icon: Zap },
+      { name: "📧 Email & SMS Engine", href: "/ai-email-sms", icon: Mail },
+      { name: "🎯 Ad Launcher", href: "/ai-ads", icon: Target },
+      { name: "📞 Call & Booking", href: "/call-booking", icon: Phone },
+    ]
+  },
+  {
     name: "Core Features",
     items: [
       { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
