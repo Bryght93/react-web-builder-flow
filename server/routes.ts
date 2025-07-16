@@ -388,6 +388,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Email Generation endpoint
+  app.post('/api/ai/generate-emails', async (req, res) => {
+    try {
+      const { aiEmailService } = await import('./ai-email-service.js');
+      const emails = await aiEmailService.generateEmailSequence(req.body);
+      res.json({ emails });
+    } catch (error) {
+      console.error('AI Email Generation Error:', error);
+      res.status(500).json({ error: 'Failed to generate emails' });
+    }
+  });
+
   function generateLeadMagnetContent(type: string, topic: string, targetAudience: string) {
     switch (type) {
       case 'ebook':

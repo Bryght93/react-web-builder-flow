@@ -1,0 +1,152 @@
+import OpenAI from "openai";
+
+// AI Email Generation Service
+export class AIEmailService {
+  private openai: OpenAI | null = null;
+
+  constructor() {
+    // Initialize OpenAI only if API key is available
+    if (process.env.OPENAI_API_KEY) {
+      this.openai = new OpenAI({ 
+        apiKey: process.env.OPENAI_API_KEY 
+      });
+    }
+  }
+
+  async generateEmailSequence(params: {
+    campaignType: 'nurture' | 'broadcast';
+    industry: string;
+    targetAudience: string;
+    campaignGoal: string;
+    emailCount: number;
+    tone: 'professional' | 'friendly' | 'casual' | 'urgent';
+    brandName: string;
+  }): Promise<GeneratedEmail[]> {
+    
+    // If OpenAI is not available, return dummy content
+    if (!this.openai) {
+      return this.generateDummyEmailSequence(params);
+    }
+
+    try {
+      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert email marketing copywriter. Generate a ${params.campaignType} email sequence for ${params.brandName} targeting ${params.targetAudience} in the ${params.industry} industry. The goal is ${params.campaignGoal}. Use a ${params.tone} tone. Return JSON format with array of emails containing subject, content, and timing.`
+          },
+          {
+            role: "user",
+            content: `Generate ${params.emailCount} ${params.campaignType} emails for ${params.brandName}. Each email should have: subject, content (with HTML elements), send_delay (in days), and call_to_action.`
+          }
+        ],
+        response_format: { type: "json_object" },
+      });
+
+      const result = JSON.parse(response.choices[0].message.content);
+      return result.emails || [];
+    } catch (error) {
+      console.error('AI Email Generation Error:', error);
+      return this.generateDummyEmailSequence(params);
+    }
+  }
+
+  private generateDummyEmailSequence(params: {
+    campaignType: 'nurture' | 'broadcast';
+    industry: string;
+    targetAudience: string;
+    campaignGoal: string;
+    emailCount: number;
+    tone: 'professional' | 'friendly' | 'casual' | 'urgent';
+    brandName: string;
+  }): GeneratedEmail[] {
+    
+    const emails: GeneratedEmail[] = [];
+    
+    if (params.campaignType === 'nurture') {
+      // Generate nurture sequence
+      const nurtureTemplates = [
+        {
+          subject: `Welcome to ${params.brandName}! 🎉`,
+          content: `<h2>Welcome to Our Community!</h2><p>Hi there,</p><p>Thanks for joining ${params.brandName}! We're excited to have you as part of our ${params.targetAudience} community.</p><p>Over the next few days, I'll be sharing valuable insights about ${params.industry} that will help you achieve ${params.campaignGoal}.</p><p>Best regards,<br>The ${params.brandName} Team</p>`,
+          send_delay: 0,
+          call_to_action: 'Get Started'
+        },
+        {
+          subject: `Your ${params.industry} Journey Starts Here`,
+          content: `<h2>Getting Started Guide</h2><p>Hello again,</p><p>Yesterday you joined our community, and today I want to share the first steps to ${params.campaignGoal}.</p><p>Here's what successful ${params.targetAudience} do first:</p><ul><li>Step 1: Understand your current situation</li><li>Step 2: Set clear, measurable goals</li><li>Step 3: Create an action plan</li></ul><p>Ready to dive deeper?</p>`,
+          send_delay: 1,
+          call_to_action: 'Learn More'
+        },
+        {
+          subject: `The #1 Mistake Most ${params.targetAudience} Make`,
+          content: `<h2>Avoid This Common Mistake</h2><p>Hi,</p><p>I've worked with thousands of ${params.targetAudience} in the ${params.industry} space, and I've noticed a pattern...</p><p>The biggest mistake people make when trying to ${params.campaignGoal} is jumping straight into tactics without understanding the fundamentals.</p><p>Here's what you should do instead:</p><p>Focus on building a strong foundation first. This means understanding your audience, defining your value proposition, and creating systems that scale.</p>`,
+          send_delay: 3,
+          call_to_action: 'Get the Guide'
+        },
+        {
+          subject: `Case Study: How [Client] Achieved ${params.campaignGoal}`,
+          content: `<h2>Real Success Story</h2><p>Hi,</p><p>I want to share a quick case study about one of our clients who achieved amazing results...</p><p>Meet Sarah, a ${params.targetAudience} who was struggling with ${params.campaignGoal}. Within 90 days of implementing our strategy, she:</p><ul><li>Increased her results by 300%</li><li>Saved 10 hours per week</li><li>Built a sustainable system</li></ul><p>Want to know her exact strategy?</p>`,
+          send_delay: 5,
+          call_to_action: 'Read Full Case Study'
+        },
+        {
+          subject: `Ready to Take Action?`,
+          content: `<h2>Your Next Steps</h2><p>Hi,</p><p>Over the past week, I've shared valuable insights about ${params.industry} and ${params.campaignGoal}.</p><p>Now it's time to take action. Here's what I recommend:</p><p>1. Review the resources I've shared<br>2. Choose one strategy to implement this week<br>3. Schedule time to work on it consistently</p><p>Remember, knowledge without action is just entertainment. Are you ready to transform your ${params.industry} results?</p>`,
+          send_delay: 7,
+          call_to_action: 'Get Started Now'
+        }
+      ];
+      
+      return nurtureTemplates.slice(0, params.emailCount).map((template, index) => ({
+        subject: template.subject,
+        content: template.content,
+        send_delay: template.send_delay,
+        call_to_action: template.call_to_action,
+        email_type: 'nurture'
+      }));
+    } else {
+      // Generate broadcast emails
+      const broadcastTemplates = [
+        {
+          subject: `🔥 Limited Time: Special Offer for ${params.targetAudience}`,
+          content: `<h2>Exclusive Offer Just for You!</h2><p>Hi,</p><p>I have exciting news! For the next 48 hours only, we're offering an exclusive discount on our ${params.industry} solution.</p><p>This is perfect for ${params.targetAudience} who want to ${params.campaignGoal}.</p><p><strong>What you get:</strong></p><ul><li>Complete system and templates</li><li>Step-by-step implementation guide</li><li>30-day money-back guarantee</li></ul><p>But hurry - this offer expires soon!</p>`,
+          send_delay: 0,
+          call_to_action: 'Claim Your Discount'
+        },
+        {
+          subject: `New ${params.industry} Resource Available`,
+          content: `<h2>Fresh Content Just Released</h2><p>Hello,</p><p>I just published a comprehensive guide about ${params.campaignGoal} that I think you'll love.</p><p>This resource covers:</p><ul><li>Latest ${params.industry} trends</li><li>Proven strategies that work</li><li>Real-world examples</li><li>Action steps you can implement today</li></ul><p>Best part? It's completely free for our community members.</p>`,
+          send_delay: 0,
+          call_to_action: 'Download Now'
+        },
+        {
+          subject: `Quick Question About Your ${params.industry} Goals`,
+          content: `<h2>I'd Love to Help</h2><p>Hi,</p><p>I hope you're having a great week! I wanted to reach out because I've been thinking about our ${params.targetAudience} community.</p><p>I'm curious - what's your biggest challenge when it comes to ${params.campaignGoal}?</p><p>Hit reply and let me know. I read every email and often create content based on your feedback.</p><p>Looking forward to hearing from you!</p>`,
+          send_delay: 0,
+          call_to_action: 'Reply to This Email'
+        }
+      ];
+
+      return broadcastTemplates.slice(0, params.emailCount).map((template, index) => ({
+        subject: template.subject,
+        content: template.content,
+        send_delay: 0,
+        call_to_action: template.call_to_action,
+        email_type: 'broadcast'
+      }));
+    }
+  }
+}
+
+export interface GeneratedEmail {
+  subject: string;
+  content: string;
+  send_delay: number;
+  call_to_action: string;
+  email_type: 'nurture' | 'broadcast';
+}
+
+export const aiEmailService = new AIEmailService();
