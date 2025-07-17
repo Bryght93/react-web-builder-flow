@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { aiEmailService } from "./ai-email-service";
 import { 
   insertFunnelSchema, 
   insertPageSchema, 
@@ -10,6 +11,169 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // AI Email Generation endpoint
+  app.post("/api/ai/generate-emails", async (req, res) => {
+    try {
+      const { 
+        campaignType, 
+        industry, 
+        targetAudience, 
+        campaignGoal, 
+        emailCount, 
+        tone, 
+        brandName, 
+        template 
+      } = req.body;
+
+      // Generate email sequence using AI service
+      const emailSequence = await aiEmailService.generateEmailSequence({
+        campaignType,
+        industry,
+        targetAudience,
+        campaignGoal,
+        emailCount,
+        tone,
+        brandName,
+        template
+      });
+
+      res.json({
+        success: true,
+        campaign: {
+          name: `${brandName} ${campaignType === 'nurture' ? 'Nurture Sequence' : 'Broadcast Campaign'}`,
+          description: `AI-generated ${campaignType} campaign for ${targetAudience} in ${industry}`,
+          type: campaignType
+        },
+        emails: emailSequence
+      });
+    } catch (error) {
+      console.error('AI Email Generation Error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to generate emails. Please try again." 
+      });
+    }
+  });
+
+  // AI Processing endpoint for general AI requests
+  app.post("/api/ai/process-request", async (req, res) => {
+    try {
+      const { prompt, mode, context } = req.body;
+      
+      // Process different AI modes
+      let response = "";
+      let suggestions = null;
+
+      switch (mode) {
+        case 'content':
+          response = await generateContentSuggestion(prompt, context);
+          break;
+        case 'edit':
+          response = await generateEditSuggestion(prompt, context);
+          break;
+        case 'strategy':
+          response = await generateStrategySuggestion(prompt, context);
+          break;
+        case 'compliance':
+          response = await generateComplianceSuggestion(prompt, context);
+          break;
+        default:
+          response = "I can help with content generation, editing, strategy, and compliance. Please specify what you need help with.";
+      }
+
+      res.json({
+        success: true,
+        response,
+        suggestions
+      });
+    } catch (error) {
+      console.error('AI Processing Error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to process AI request. Please try again." 
+      });
+    }
+  });
+
+  // Helper functions for AI processing
+  async function generateContentSuggestion(prompt: string, context: any): Promise<string> {
+    // In a real implementation, this would use OpenAI API
+    // For now, return contextual suggestions based on the prompt
+    if (prompt.includes('subject line')) {
+      return "Here are some engaging subject line suggestions:\n\n" +
+             "• 🎯 Transform Your Business in 30 Days\n" +
+             "• The Secret Strategy That Doubled Our Revenue\n" +
+             "• Don't Miss This Limited-Time Opportunity\n" +
+             "• Your Free Guide is Ready for Download\n\n" +
+             "These subject lines use proven techniques like urgency, curiosity, and value proposition.";
+    }
+    
+    if (prompt.includes('headline')) {
+      return "Compelling headline suggestions:\n\n" +
+             "• Discover the Game-Changing Strategy That's Transforming Businesses\n" +
+             "• The Ultimate Guide to Achieving Your Goals Faster\n" +
+             "• Why Industry Leaders Choose Our Solution\n" +
+             "• Get Results in 30 Days or Less\n\n" +
+             "These headlines focus on benefits, social proof, and time-sensitive outcomes.";
+    }
+    
+    if (prompt.includes('body') || prompt.includes('content')) {
+      return "Here's engaging body content:\n\n" +
+             "Start with a personal story or relatable problem your audience faces. This creates immediate connection.\n\n" +
+             "Then introduce your solution with specific benefits:\n" +
+             "• Save 10+ hours per week\n" +
+             "• Increase conversion rates by 40%\n" +
+             "• Get step-by-step implementation guide\n\n" +
+             "Include social proof and end with a clear call-to-action.";
+    }
+    
+    return "I can help you create compelling email content. What specific element would you like me to focus on?";
+  }
+
+  async function generateEditSuggestion(prompt: string, context: any): Promise<string> {
+    return "Here are some editing suggestions:\n\n" +
+           "• Make your subject line more specific and benefit-focused\n" +
+           "• Add personalization tokens like {{firstName}}\n" +
+           "• Include more social proof and testimonials\n" +
+           "• Strengthen your call-to-action with urgency\n" +
+           "• Optimize for mobile readability with shorter paragraphs\n\n" +
+           "Would you like me to help you improve any specific section?";
+  }
+
+  async function generateStrategySuggestion(prompt: string, context: any): Promise<string> {
+    return "Marketing strategy recommendations:\n\n" +
+           "📈 **Campaign Optimization:**\n" +
+           "• A/B test subject lines and send times\n" +
+           "• Segment your audience for better targeting\n" +
+           "• Use behavioral triggers for automation\n\n" +
+           "🎯 **Conversion Tactics:**\n" +
+           "• Create urgency with limited-time offers\n" +
+           "• Add social proof and testimonials\n" +
+           "• Implement progressive profiling\n\n" +
+           "📊 **Performance Metrics:**\n" +
+           "• Track open rates, click rates, and conversions\n" +
+           "• Monitor unsubscribe rates and engagement\n" +
+           "• Analyze revenue attribution from campaigns";
+  }
+
+  async function generateComplianceSuggestion(prompt: string, context: any): Promise<string> {
+    return "Email compliance checklist:\n\n" +
+           "✅ **GDPR & CAN-SPAM Requirements:**\n" +
+           "• Include clear unsubscribe link\n" +
+           "• Add physical business address\n" +
+           "• Use accurate sender information\n" +
+           "• Honor opt-out requests within 10 days\n\n" +
+           "✅ **Best Practices:**\n" +
+           "• Get explicit consent for email collection\n" +
+           "• Provide clear privacy policy\n" +
+           "• Use double opt-in for subscriptions\n" +
+           "• Maintain clean email lists\n\n" +
+           "✅ **Technical Requirements:**\n" +
+           "• Authenticate with SPF, DKIM, and DMARC\n" +
+           "• Monitor reputation and deliverability\n" +
+           "• Use reputable email service provider";
+  }
+
   // Voice AI API endpoints
   
   // Generate eBook content

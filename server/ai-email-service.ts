@@ -21,6 +21,7 @@ export class AIEmailService {
     emailCount: number;
     tone: 'professional' | 'friendly' | 'casual' | 'urgent';
     brandName: string;
+    template?: any;
   }): Promise<GeneratedEmail[]> {
     
     // If OpenAI is not available, return dummy content
@@ -35,11 +36,11 @@ export class AIEmailService {
         messages: [
           {
             role: "system",
-            content: `You are an expert email marketing copywriter. Generate a ${params.campaignType} email sequence for ${params.brandName} targeting ${params.targetAudience} in the ${params.industry} industry. The goal is ${params.campaignGoal}. Use a ${params.tone} tone. Return JSON format with array of emails containing subject, content, and timing.`
+            content: `You are an expert email marketing copywriter. Generate a ${params.campaignType} email sequence for ${params.brandName} targeting ${params.targetAudience} in the ${params.industry} industry. The goal is ${params.campaignGoal}. Use a ${params.tone} tone. ${params.template ? `Base it on this template: ${params.template.name} - ${params.template.description}. Features to include: ${params.template.features.join(', ')}` : ''} Return JSON format with array of emails containing subject, content, and timing.`
           },
           {
             role: "user",
-            content: `Generate ${params.emailCount} ${params.campaignType} emails for ${params.brandName}. Each email should have: subject, content (with HTML elements), send_delay (in days), and call_to_action.`
+            content: `Generate ${params.emailCount} ${params.campaignType} emails for ${params.brandName}. Each email should have: subject, content (with HTML elements), send_delay (in days), and call_to_action. Make the content engaging and conversion-focused.`
           }
         ],
         response_format: { type: "json_object" },
@@ -139,15 +140,6 @@ export class AIEmailService {
       }));
     }
   }
-}
-
-export interface GeneratedEmail {
-  subject: string;
-  content: string;
-  send_delay: number;
-  call_to_action: string;
-  email_type: 'nurture' | 'broadcast';
-}
 
   async processAssistantRequest(prompt: string, mode: string, context: any): Promise<{content: string, suggestions?: any}> {
     if (!this.openai) {
@@ -231,6 +223,14 @@ export interface GeneratedEmail {
 
     return responses[mode as keyof typeof responses] || responses.content;
   }
+}
+
+export interface GeneratedEmail {
+  subject: string;
+  content: string;
+  send_delay: number;
+  call_to_action: string;
+  email_type: 'nurture' | 'broadcast';
 }
 
 export const aiEmailService = new AIEmailService();

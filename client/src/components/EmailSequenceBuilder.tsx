@@ -125,7 +125,7 @@ interface EmailCampaign {
 }
 
 export default function EmailSequenceBuilder() {
-  const [view, setView] = useState<'campaigns' | 'builder' | 'ai-generator'>('campaigns');
+  const [view, setView] = useState<'campaigns' | 'builder' | 'template-selection' | 'campaign-type'>('campaigns');
   const [selectedCampaign, setSelectedCampaign] = useState<EmailCampaign | null>(null);
   const [selectedEmailStep, setSelectedEmailStep] = useState<EmailStep | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
@@ -138,7 +138,85 @@ export default function EmailSequenceBuilder() {
   const [aiResponse, setAIResponse] = useState('');
   const [userPrompt, setUserPrompt] = useState('');
   const [isProcessingAI, setIsProcessingAI] = useState(false);
+  const [currentCreationFlow, setCurrentCreationFlow] = useState<'scratch' | 'template' | 'ai'>('scratch');
+  const [selectedCampaignType, setSelectedCampaignType] = useState<'nurture' | 'broadcast'>('nurture');
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [showTemplatePreview, setShowTemplatePreview] = useState(false);
   const { toast } = useToast();
+
+  // Navigation handlers
+  const handleCampaignTypeSelection = (type: 'nurture' | 'broadcast') => {
+    setSelectedCampaignType(type);
+    if (currentCreationFlow === 'scratch') {
+      // For scratch, go directly to builder
+      const newCampaign = createEmptyCampaign(type);
+      setCampaigns([...campaigns, newCampaign]);
+      setSelectedCampaign(newCampaign);
+      setSelectedEmailStep(newCampaign.emailSequence[0]);
+      setView('builder');
+    } else {
+      // For template and AI, show template selection
+      setView('template-selection');
+    }
+  };
+
+  const handleTemplateSelection = (template: any) => {
+    setSelectedTemplate(template);
+    if (currentCreationFlow === 'ai') {
+      // For AI, show AI generation dialog
+      setShowAIDialog(true);
+    } else {
+      // For template, create campaign and go to builder
+      const newCampaign = createCampaignFromTemplate(template);
+      setCampaigns([...campaigns, newCampaign]);
+      setSelectedCampaign(newCampaign);
+      setSelectedEmailStep(newCampaign.emailSequence[0]);
+      setView('builder');
+    }
+  };
+
+  // Helper functions
+  const createEmptyCampaign = (type: 'nurture' | 'broadcast'): EmailCampaign => {
+    return {
+      id: Date.now(),
+      name: `New ${type === 'nurture' ? 'Nurture Sequence' : 'Broadcast Campaign'}`,
+      description: `A new ${type} campaign`,
+      status: 'draft',
+      type,
+      subscribers: 0,
+      stats: { opens: "0%", clicks: "0%", revenue: "$0" },
+      emailSequence: [{
+        id: 1,
+        name: type === 'nurture' ? 'Email 1' : 'Broadcast Email',
+        subject: 'Your subject line here',
+        delay: 0,
+        delayUnit: 'minutes',
+        content: [],
+        settings: { list: "all-subscribers", sendTime: "immediate" }
+      }]
+    };
+  };
+
+  const createCampaignFromTemplate = (template: any): EmailCampaign => {
+    return {
+      id: Date.now(),
+      name: template.name,
+      description: template.description,
+      status: 'draft',
+      type: template.type,
+      subscribers: 0,
+      stats: { opens: "0%", clicks: "0%", revenue: "$0" },
+      emailSequence: Array.from({ length: template.emails }, (_, i) => ({
+        id: i + 1,
+        name: template.type === 'broadcast' ? template.name : `Email ${i + 1}`,
+        subject: `Subject for ${template.type === 'broadcast' ? template.name : `Email ${i + 1}`}`,
+        delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
+        delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
+        content: [],
+        settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
+      }))
+    };
+  };
 
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([
     {
@@ -202,66 +280,222 @@ export default function EmailSequenceBuilder() {
     }
   ]);
 
-  // Email sequence templates
+  // Comprehensive Email Templates
   const nurtureTemplates = [
+    // Basic Templates
     {
+      id: 1,
       name: "Welcome Series",
-      description: "3-email onboarding sequence",
+      description: "3-email onboarding sequence for new subscribers",
       emails: 3,
       category: "Onboarding",
-      type: "nurture"
+      type: "nurture",
+      difficulty: "basic",
+      industry: "General",
+      preview: "Welcome! → Getting Started → Resources",
+      features: ["Personal welcome", "Setup guide", "Resource library"],
+      estimatedTime: "15 min"
     },
     {
+      id: 2,
       name: "Product Launch",
-      description: "5-email launch campaign",
+      description: "5-email launch campaign with anticipation building",
       emails: 5,
       category: "Sales",
-      type: "nurture"
+      type: "nurture",
+      difficulty: "basic",
+      industry: "E-commerce",
+      preview: "Teaser → Features → Benefits → Social Proof → Launch",
+      features: ["Product teasers", "Feature highlights", "Customer testimonials"],
+      estimatedTime: "25 min"
     },
     {
+      id: 3,
       name: "Nurture Sequence",
-      description: "7-email nurture campaign",
+      description: "7-email nurture campaign for lead warming",
       emails: 7,
       category: "Nurture",
-      type: "nurture"
+      type: "nurture",
+      difficulty: "basic",
+      industry: "B2B",
+      preview: "Value → Tips → Case Study → More Tips → Success Story → Offer → Follow-up",
+      features: ["Educational content", "Case studies", "Soft pitch"],
+      estimatedTime: "35 min"
     },
     {
+      id: 4,
       name: "Abandoned Cart",
-      description: "3-email recovery sequence",
+      description: "3-email recovery sequence for lost sales",
       emails: 3,
       category: "Recovery",
-      type: "nurture"
+      type: "nurture",
+      difficulty: "basic",
+      industry: "E-commerce",
+      preview: "Reminder → Incentive → Final Call",
+      features: ["Cart reminders", "Discount offers", "Urgency tactics"],
+      estimatedTime: "20 min"
+    },
+    // Advanced Templates
+    {
+      id: 5,
+      name: "Authority Builder",
+      description: "10-email sequence to establish thought leadership",
+      emails: 10,
+      category: "Authority",
+      type: "nurture",
+      difficulty: "advanced",
+      industry: "Consulting",
+      preview: "Introduction → Industry Insight → Personal Story → Expertise → Framework → Case Study → Lesson → Behind Scenes → Community → Partnership",
+      features: ["Personal branding", "Industry insights", "Community building"],
+      estimatedTime: "60 min"
+    },
+    {
+      id: 6,
+      name: "Course Launch Sequence",
+      description: "12-email educational product launch",
+      emails: 12,
+      category: "Education",
+      type: "nurture",
+      difficulty: "advanced",
+      industry: "Education",
+      preview: "Problem → Solution → Preview → Testimonials → Curriculum → Bonus → Price → FAQ → Countdown → Last Chance → Closed → Bonus",
+      features: ["Educational content", "Progressive disclosure", "Countdown timers"],
+      estimatedTime: "90 min"
+    },
+    {
+      id: 7,
+      name: "Event Promotion",
+      description: "8-email webinar/event promotion sequence",
+      emails: 8,
+      category: "Event",
+      type: "nurture",
+      difficulty: "advanced",
+      industry: "Events",
+      preview: "Announce → Value → Speakers → Agenda → Registration → Reminder → Final Call → Follow-up",
+      features: ["Event details", "Speaker highlights", "Registration tracking"],
+      estimatedTime: "45 min"
+    },
+    {
+      id: 8,
+      name: "Re-engagement Campaign",
+      description: "6-email sequence to win back inactive subscribers",
+      emails: 6,
+      category: "Re-engagement",
+      type: "nurture",
+      difficulty: "advanced",
+      industry: "General",
+      preview: "We Miss You → What's New → Exclusive Offer → Final Attempt → Goodbye → Win-Back",
+      features: ["Personalized messaging", "Exclusive offers", "Feedback requests"],
+      estimatedTime: "40 min"
     }
   ];
 
   const broadcastTemplates = [
+    // Basic Templates
     {
+      id: 9,
       name: "Product Announcement",
       description: "Single email for product launches",
       emails: 1,
       category: "Announcement",
-      type: "broadcast"
+      type: "broadcast",
+      difficulty: "basic",
+      industry: "E-commerce",
+      preview: "Exciting News: New Product Launch!",
+      features: ["Product showcase", "Key benefits", "Clear CTA"],
+      estimatedTime: "10 min"
     },
     {
+      id: 10,
       name: "Newsletter",
-      description: "Regular newsletter broadcast",
+      description: "Regular newsletter broadcast template",
       emails: 1,
       category: "Newsletter",
-      type: "broadcast"
+      type: "broadcast",
+      difficulty: "basic",
+      industry: "General",
+      preview: "Monthly Update: Industry News & Tips",
+      features: ["Multiple sections", "Industry updates", "Personal touch"],
+      estimatedTime: "15 min"
     },
     {
+      id: 11,
       name: "Special Offer",
       description: "Promotional offer broadcast",
       emails: 1,
       category: "Promotion",
-      type: "broadcast"
+      type: "broadcast",
+      difficulty: "basic",
+      industry: "E-commerce",
+      preview: "Limited Time: 50% Off Everything!",
+      features: ["Discount highlight", "Urgency elements", "Product showcase"],
+      estimatedTime: "12 min"
     },
     {
+      id: 12,
       name: "Event Invitation",
       description: "Event announcement broadcast",
       emails: 1,
       category: "Event",
-      type: "broadcast"
+      type: "broadcast",
+      difficulty: "basic",
+      industry: "Events",
+      preview: "You're Invited: Exclusive Webinar",
+      features: ["Event details", "Speaker info", "Registration link"],
+      estimatedTime: "10 min"
+    },
+    // Advanced Templates
+    {
+      id: 13,
+      name: "Survey & Feedback",
+      description: "Interactive feedback collection email",
+      emails: 1,
+      category: "Feedback",
+      type: "broadcast",
+      difficulty: "advanced",
+      industry: "General",
+      preview: "Help Us Improve: Quick Survey Inside",
+      features: ["Interactive elements", "Personalized questions", "Incentive offers"],
+      estimatedTime: "20 min"
+    },
+    {
+      id: 14,
+      name: "Case Study Showcase",
+      description: "Success story broadcast email",
+      emails: 1,
+      category: "Social Proof",
+      type: "broadcast",
+      difficulty: "advanced",
+      industry: "B2B",
+      preview: "Success Story: How [Client] Increased Revenue 300%",
+      features: ["Detailed case study", "Data visualization", "Call to action"],
+      estimatedTime: "25 min"
+    },
+    {
+      id: 15,
+      name: "Interactive Content",
+      description: "Engaging interactive email experience",
+      emails: 1,
+      category: "Interactive",
+      type: "broadcast",
+      difficulty: "advanced",
+      industry: "General",
+      preview: "Take Our Quiz: What's Your Marketing Type?",
+      features: ["Interactive quiz", "Personalized results", "Follow-up actions"],
+      estimatedTime: "30 min"
+    },
+    {
+      id: 16,
+      name: "Holiday Campaign",
+      description: "Seasonal holiday promotion email",
+      emails: 1,
+      category: "Seasonal",
+      type: "broadcast",
+      difficulty: "advanced",
+      industry: "E-commerce",
+      preview: "Holiday Special: Gifts They'll Love",
+      features: ["Seasonal design", "Gift guides", "Multi-product showcase"],
+      estimatedTime: "35 min"
     }
   ];
 
@@ -299,6 +533,7 @@ export default function EmailSequenceBuilder() {
     emailCount: number;
     tone: 'professional' | 'friendly' | 'casual' | 'urgent';
     brandName: string;
+    template?: any;
   }) => {
     setIsGenerating(true);
     try {
@@ -315,18 +550,17 @@ export default function EmailSequenceBuilder() {
       }
 
       const data = await response.json();
-      const emails = data.emails;
-
+      
       // Create new campaign with AI-generated emails
       const newCampaign: EmailCampaign = {
         id: campaigns.length + 1,
-        name: `AI-Generated ${params.campaignType} Campaign`,
-        description: `AI-generated ${params.campaignType} campaign for ${params.targetAudience}`,
+        name: data.campaign?.name || `AI-Generated ${params.campaignType} Campaign`,
+        description: data.campaign?.description || `AI-generated ${params.campaignType} campaign for ${params.targetAudience}`,
         status: 'draft',
         type: params.campaignType,
         subscribers: 0,
         stats: { opens: "0%", clicks: "0%", revenue: "$0" },
-        emailSequence: emails.map((email: any, index: number) => ({
+        emailSequence: (data.emails || []).map((email: any, index: number) => ({
           id: index + 1,
           name: params.campaignType === 'broadcast' ? `${params.brandName} Broadcast` : `Email ${index + 1}`,
           subject: email.subject,
@@ -345,7 +579,7 @@ export default function EmailSequenceBuilder() {
       
       toast({
         title: "AI Emails Generated!",
-        description: `Successfully generated ${emails.length} ${params.campaignType} emails.`,
+        description: `Successfully generated ${data.emails?.length || 0} ${params.campaignType} emails.`,
       });
     } catch (error) {
       console.error('AI Generation Error:', error);
@@ -484,30 +718,79 @@ export default function EmailSequenceBuilder() {
   };
 
   const createFromScratch = () => {
-    const scratchCampaign: EmailCampaign = {
+    setCurrentCreationFlow('scratch');
+    setView('campaign-type');
+  };
+
+  const createFromTemplate = () => {
+    setCurrentCreationFlow('template');
+    setView('campaign-type');
+  };
+
+  const createWithAI = () => {
+    setCurrentCreationFlow('ai');
+    setView('campaign-type');
+  };
+
+
+
+
+
+  const createCampaignFromTemplateFunction = (template: any) => {
+    const newCampaign: EmailCampaign = {
       id: campaigns.length + 1,
-      name: 'New Campaign',
-      description: 'Created from scratch with AI assistance',
+      name: `${template.name} Campaign`,
+      description: template.description,
       status: 'draft',
-      type: 'nurture',
+      type: template.type,
       subscribers: 0,
       stats: { opens: "0%", clicks: "0%", revenue: "$0" },
-      emailSequence: [{
-        id: 1,
-        name: 'Email 1',
-        subject: 'Your compelling subject line here',
-        delay: 0,
-        delayUnit: 'minutes',
-        content: [],
-        settings: { list: "all-subscribers", sendTime: "immediate" }
-      }]
+      emailSequence: Array.from({ length: template.emails }, (_, i) => ({
+        id: i + 1,
+        name: template.type === 'broadcast' ? template.name : `Email ${i + 1}`,
+        subject: `Subject for ${template.type === 'broadcast' ? template.name : `Email ${i + 1}`}`,
+        delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
+        delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
+        content: getTemplateContent(template, i),
+        settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
+      }))
     };
     
-    setCampaigns([...campaigns, scratchCampaign]);
-    setSelectedCampaign(scratchCampaign);
-    setSelectedEmailStep(scratchCampaign.emailSequence[0]);
-    setShowAIAssistant(true);
+    setCampaigns([...campaigns, newCampaign]);
+    setSelectedCampaign(newCampaign);
+    setSelectedEmailStep(newCampaign.emailSequence[0]);
     setView('builder');
+  };
+
+  const getTemplateContent = (template: any, emailIndex: number) => {
+    // Basic template content structure
+    const content = [
+      {
+        id: 'heading-1',
+        type: 'heading',
+        properties: { text: `${template.name} - Email ${emailIndex + 1}`, fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
+      },
+      {
+        id: 'text-1',
+        type: 'text',
+        properties: { text: 'This is a template email. Customize this content to match your brand and message.', fontSize: '16px', lineHeight: '1.5', textAlign: 'left' }
+      },
+      {
+        id: 'button-1',
+        type: 'button',
+        properties: { 
+          text: 'Learn More', 
+          backgroundColor: '#0066cc', 
+          textColor: '#ffffff',
+          borderRadius: '5px',
+          padding: '12px 24px',
+          textAlign: 'center',
+          link: '#'
+        }
+      }
+    ];
+    
+    return content;
   };
 
   const addEmailStep = () => {
@@ -863,7 +1146,6 @@ export default function EmailSequenceBuilder() {
 
   // AI Generation Dialog Component
   const AIGenerationDialog = () => {
-    const [campaignType, setCampaignType] = useState<'nurture' | 'broadcast'>('nurture');
     const [formData, setFormData] = useState({
       industry: '',
       targetAudience: '',
@@ -875,11 +1157,13 @@ export default function EmailSequenceBuilder() {
 
     const handleGenerate = () => {
       generateAIEmails({
-        campaignType,
+        campaignType: selectedCampaignType,
         ...formData,
         emailCount: Number(formData.emailCount),
-        tone: formData.tone as any
+        tone: formData.tone as any,
+        template: selectedTemplate
       });
+      setShowAIDialog(false);
     };
 
     return (
@@ -893,24 +1177,35 @@ export default function EmailSequenceBuilder() {
           </DialogHeader>
           
           <div className="space-y-6">
+            {selectedTemplate && (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-2">Selected Template</h3>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{selectedTemplate.name}</p>
+                    <p className="text-sm text-muted-foreground">{selectedTemplate.description}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div>
               <Label className="text-sm font-medium">Campaign Type</Label>
-              <RadioGroup value={campaignType} onValueChange={(value: any) => setCampaignType(value)} className="mt-2">
+              <div className="mt-2 p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="nurture" id="nurture" />
-                  <Label htmlFor="nurture" className="flex items-center cursor-pointer">
-                    <Heart className="w-4 h-4 mr-2 text-green-500" />
-                    Nurture Sequence - Build relationships over time
-                  </Label>
+                  {selectedCampaignType === 'nurture' ? (
+                    <Heart className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Megaphone className="w-4 h-4 text-blue-500" />
+                  )}
+                  <span className="font-medium">
+                    {selectedCampaignType === 'nurture' ? 'Nurture Sequence' : 'Broadcast Email'}
+                  </span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="broadcast" id="broadcast" />
-                  <Label htmlFor="broadcast" className="flex items-center cursor-pointer">
-                    <Megaphone className="w-4 h-4 mr-2 text-blue-500" />
-                    Broadcast Email - One-time announcement
-                  </Label>
-                </div>
-              </RadioGroup>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -958,7 +1253,7 @@ export default function EmailSequenceBuilder() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {campaignType === 'broadcast' ? (
+                    {selectedCampaignType === 'broadcast' ? (
                       <SelectItem value="1">1 Email</SelectItem>
                     ) : (
                       <>
@@ -1006,6 +1301,348 @@ export default function EmailSequenceBuilder() {
     );
   };
 
+  // Campaign Type Selection View
+  if (view === 'campaign-type') {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="text-center mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => setView('campaigns')}
+            className="absolute left-4 top-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-3xl font-bold mb-2">Choose Campaign Type</h1>
+          <p className="text-muted-foreground">
+            {currentCreationFlow === 'scratch' && 'Start building your email campaign from scratch'}
+            {currentCreationFlow === 'template' && 'Select a template to customize'}
+            {currentCreationFlow === 'ai' && 'Choose the type of AI-generated campaign'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-green-500"
+            onClick={() => handleCampaignTypeSelection('nurture')}
+          >
+            <CardHeader>
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <Heart className="w-8 h-8 text-green-600" />
+                </div>
+              </div>
+              <CardTitle className="text-center text-xl">Nurture Sequence</CardTitle>
+              <CardDescription className="text-center">
+                Build relationships with multiple emails sent over time
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                  Multiple emails (3-12)
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                  Automated timing
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                  Relationship building
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                  Higher conversion rates
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-blue-500"
+            onClick={() => handleCampaignTypeSelection('broadcast')}
+          >
+            <CardHeader>
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Megaphone className="w-8 h-8 text-blue-600" />
+                </div>
+              </div>
+              <CardTitle className="text-center text-xl">Broadcast Email</CardTitle>
+              <CardDescription className="text-center">
+                Send a single email to your entire audience at once
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
+                  Single email
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
+                  Immediate delivery
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
+                  Announcements & updates
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
+                  Quick setup
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Template Selection View
+  if (view === 'template-selection') {
+    const availableTemplates = selectedCampaignType === 'nurture' ? nurtureTemplates : broadcastTemplates;
+    const basicTemplates = availableTemplates.filter(t => t.difficulty === 'basic');
+    const advancedTemplates = availableTemplates.filter(t => t.difficulty === 'advanced');
+
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => setView('campaign-type')}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Campaign Type
+          </Button>
+          <h1 className="text-3xl font-bold mb-2">
+            Choose {selectedCampaignType === 'nurture' ? 'Nurture Sequence' : 'Broadcast Email'} Template
+          </h1>
+          <p className="text-muted-foreground">
+            {currentCreationFlow === 'template' && 'Select a template to customize with our drag-and-drop editor'}
+            {currentCreationFlow === 'ai' && 'Choose a template for AI to generate complete content'}
+          </p>
+        </div>
+
+        <Tabs defaultValue="basic" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="basic">Basic Templates</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced Templates</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="basic" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {basicTemplates.map((template) => (
+                <Card key={template.id} className="cursor-pointer hover:shadow-lg transition-all">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">{template.name}</CardTitle>
+                      <Badge variant="outline">{template.category}</Badge>
+                    </div>
+                    <CardDescription className="text-sm">{template.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="text-sm">
+                        <span className="font-medium">Preview:</span>
+                        <div className="bg-gray-50 p-2 rounded text-xs mt-1">
+                          {template.preview}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex items-center">
+                          <Mail className="w-4 h-4 mr-1" />
+                          {template.emails} Email{template.emails > 1 ? 's' : ''}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {template.estimatedTime}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {template.features.map((feature, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            setSelectedTemplate(template);
+                            setShowTemplatePreview(true);
+                          }}
+                          className="flex-1"
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Preview
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleTemplateSelection(template)}
+                          className="flex-1"
+                        >
+                          <Edit3 className="w-4 h-4 mr-2" />
+                          Select
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="advanced" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {advancedTemplates.map((template) => (
+                <Card key={template.id} className="cursor-pointer hover:shadow-lg transition-all">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">{template.name}</CardTitle>
+                      <Badge variant="outline">{template.category}</Badge>
+                    </div>
+                    <CardDescription className="text-sm">{template.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="text-sm">
+                        <span className="font-medium">Preview:</span>
+                        <div className="bg-gray-50 p-2 rounded text-xs mt-1">
+                          {template.preview}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex items-center">
+                          <Mail className="w-4 h-4 mr-1" />
+                          {template.emails} Email{template.emails > 1 ? 's' : ''}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {template.estimatedTime}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {template.features.map((feature, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            setSelectedTemplate(template);
+                            setShowTemplatePreview(true);
+                          }}
+                          className="flex-1"
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Preview
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleTemplateSelection(template)}
+                          className="flex-1"
+                        >
+                          <Edit3 className="w-4 h-4 mr-2" />
+                          Select
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  }
+
+  // Template Preview Dialog
+  const TemplatePreviewDialog = () => {
+    if (!selectedTemplate) return null;
+
+    return (
+      <Dialog open={showTemplatePreview} onOpenChange={setShowTemplatePreview}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Eye className="w-5 h-5 mr-2" />
+              {selectedTemplate.name} Preview
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">Template Details</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Type:</span> {selectedTemplate.type}
+                </div>
+                <div>
+                  <span className="font-medium">Category:</span> {selectedTemplate.category}
+                </div>
+                <div>
+                  <span className="font-medium">Emails:</span> {selectedTemplate.emails}
+                </div>
+                <div>
+                  <span className="font-medium">Estimated Time:</span> {selectedTemplate.estimatedTime}
+                </div>
+                <div>
+                  <span className="font-medium">Industry:</span> {selectedTemplate.industry}
+                </div>
+                <div>
+                  <span className="font-medium">Difficulty:</span> {selectedTemplate.difficulty}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">Email Flow Preview</h3>
+              <div className="bg-white border rounded-lg p-4">
+                <div className="text-sm font-mono">
+                  {selectedTemplate.preview}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">Features Included</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedTemplate.features.map((feature, index) => (
+                  <Badge key={index} variant="secondary">
+                    {feature}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowTemplatePreview(false)}>
+                Close
+              </Button>
+              <Button onClick={() => {
+                setShowTemplatePreview(false);
+                handleTemplateSelection(selectedTemplate);
+              }}>
+                Select This Template
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   if (view === 'campaigns') {
     return (
       <div className="max-w-7xl mx-auto p-4 space-y-6">
@@ -1022,6 +1659,14 @@ export default function EmailSequenceBuilder() {
             <Button onClick={() => createFromScratch()} className="bg-gradient-to-r from-green-600 to-teal-600">
               <Wand2 className="w-4 h-4 mr-2" />
               Create from Scratch
+            </Button>
+            <Button onClick={() => createFromTemplate()} className="bg-gradient-to-r from-blue-600 to-indigo-600">
+              <FileText className="w-4 h-4 mr-2" />
+              Create
+            </Button>
+            <Button onClick={() => createWithAI()} className="bg-gradient-to-r from-purple-600 to-pink-600">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Create with AI
             </Button>
             <Button variant="outline" onClick={() => setView('builder')}>
               <Plus className="w-4 h-4 mr-2" />
@@ -1161,6 +1806,7 @@ export default function EmailSequenceBuilder() {
         </Tabs>
         
         <AIGenerationDialog />
+        <TemplatePreviewDialog />
       </div>
     );
   }
