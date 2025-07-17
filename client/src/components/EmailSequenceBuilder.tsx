@@ -88,7 +88,11 @@ import {
   Move,
   RotateCcw,
   Maximize2,
-  Minimize2
+  Minimize2,
+  ShoppingCart,
+  MousePointer,
+  Brain,
+  Activity
 } from 'lucide-react';
 
 interface EmailStep {
@@ -2032,8 +2036,10 @@ export default function EmailSequenceBuilder() {
         </div>
 
         <Tabs defaultValue="campaigns" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-11">
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+            <TabsTrigger value="automation">Automation</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="audience">Audience</TabsTrigger>
             <TabsTrigger value="forms">Forms</TabsTrigger>
             <TabsTrigger value="personalization">Personalization</TabsTrigger>
@@ -2045,6 +2051,82 @@ export default function EmailSequenceBuilder() {
           </TabsList>
 
           <TabsContent value="campaigns" className="space-y-4">
+            {/* A/B Testing Section */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <BarChart3 className="w-5 h-5 mr-2" />
+                  A/B Testing
+                </CardTitle>
+                <CardDescription>Test different versions to improve performance</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card className="border-dashed border-2 border-muted-foreground/20">
+                    <CardContent className="p-4">
+                      <div className="text-center space-y-3">
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                          <Plus className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Create A/B Test</h4>
+                          <p className="text-sm text-muted-foreground">Test subject lines, content, or send times</p>
+                        </div>
+                        <Button size="sm" className="w-full">
+                          <Plus className="w-4 h-4 mr-2" />
+                          New Test
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {[
+                    { name: "Subject Line Test", variants: 2, winner: "Version A", lift: "+15%", status: "Complete" },
+                    { name: "CTA Button Test", variants: 3, winner: "Version B", lift: "+8%", status: "Running" },
+                    { name: "Send Time Test", variants: 2, winner: "TBD", lift: "TBD", status: "Draft" }
+                  ].map((test, index) => (
+                    <Card key={index}>
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium text-sm">{test.name}</h4>
+                            <Badge variant={test.status === 'Complete' ? 'default' : test.status === 'Running' ? 'secondary' : 'outline'}>
+                              {test.status}
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">Variants:</span>
+                              <span className="font-medium ml-1">{test.variants}</span>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Winner:</span>
+                              <span className="font-medium ml-1">{test.winner}</span>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Lift:</span>
+                              <span className="font-medium ml-1 text-green-600">{test.lift}</span>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button size="sm" variant="outline" className="flex-1">
+                              <Eye className="w-4 h-4 mr-1" />
+                              View
+                            </Button>
+                            <Button size="sm" variant="outline" className="flex-1">
+                              <Edit3 className="w-4 h-4 mr-1" />
+                              Edit
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Campaigns List */}
             <div className="grid gap-4">
               {campaigns.map((campaign) => (
                 <Card key={campaign.id} className="cursor-pointer hover:shadow-md transition-shadow">
@@ -2107,6 +2189,10 @@ export default function EmailSequenceBuilder() {
                           <Button variant="outline" size="sm">
                             {campaign.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                           </Button>
+                          <Button variant="outline" size="sm">
+                            <BarChart3 className="w-4 h-4 mr-2" />
+                            A/B Test
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -2164,6 +2250,298 @@ export default function EmailSequenceBuilder() {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* Visual Automation Builder Tab */}
+          <TabsContent value="automation" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Automation Canvas */}
+              <Card className="lg:col-span-3">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Zap className="w-5 h-5 mr-2" />
+                    Automation Canvas
+                  </CardTitle>
+                  <CardDescription>Build visual automation flows with drag-and-drop</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 h-96 flex items-center justify-center">
+                    <div className="text-center space-y-4">
+                      <Zap className="w-12 h-12 mx-auto text-muted-foreground/40" />
+                      <div>
+                        <h3 className="font-semibold text-lg">Visual Flow Builder</h3>
+                        <p className="text-sm text-muted-foreground">Drag elements to create automation sequences</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <Button size="sm" className="bg-blue-500 hover:bg-blue-600">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Email Trigger
+                        </Button>
+                        <Button size="sm" className="bg-green-500 hover:bg-green-600">
+                          <Users className="w-4 h-4 mr-2" />
+                          Tag Added
+                        </Button>
+                        <Button size="sm" className="bg-purple-500 hover:bg-purple-600">
+                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          Purchase Made
+                        </Button>
+                        <Button size="sm" className="bg-orange-500 hover:bg-orange-600">
+                          <Clock className="w-4 h-4 mr-2" />
+                          Time Delay
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Automation Blocks */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Layers className="w-5 h-5 mr-2" />
+                    Automation Blocks
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Trigger Blocks</Label>
+                    <div className="mt-2 space-y-2">
+                      {[
+                        { name: "New Subscriber", icon: Users, color: "bg-blue-500" },
+                        { name: "Tag Added", icon: Target, color: "bg-green-500" },
+                        { name: "Email Opened", icon: Eye, color: "bg-purple-500" },
+                        { name: "Link Clicked", icon: MousePointer, color: "bg-orange-500" }
+                      ].map((block, index) => (
+                        <div key={index} className="flex items-center p-2 bg-muted rounded-lg cursor-pointer hover:bg-muted/80">
+                          <div className={`w-8 h-8 ${block.color} rounded flex items-center justify-center mr-3`}>
+                            <block.icon className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-sm font-medium">{block.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <Label className="text-sm font-medium">Action Blocks</Label>
+                    <div className="mt-2 space-y-2">
+                      {[
+                        { name: "Send Email", icon: Mail, color: "bg-red-500" },
+                        { name: "Add Tag", icon: Target, color: "bg-cyan-500" },
+                        { name: "Wait", icon: Clock, color: "bg-yellow-500" },
+                        { name: "Condition", icon: CheckCircle, color: "bg-indigo-500" }
+                      ].map((block, index) => (
+                        <div key={index} className="flex items-center p-2 bg-muted rounded-lg cursor-pointer hover:bg-muted/80">
+                          <div className={`w-8 h-8 ${block.color} rounded flex items-center justify-center mr-3`}>
+                            <block.icon className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-sm font-medium">{block.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Sequence Library */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <BookOpen className="w-5 h-5 mr-2" />
+                  Sequence Library
+                </CardTitle>
+                <CardDescription>Ready-to-use automation sequences</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { name: "Welcome Series", desc: "5-email welcome sequence", emails: 5, icon: Heart },
+                    { name: "Cart Abandonment", desc: "Recover abandoned carts", emails: 3, icon: ShoppingCart },
+                    { name: "Post-Purchase", desc: "Thank you & feedback", emails: 2, icon: CheckCircle },
+                    { name: "Lead Nurture", desc: "Warm up cold leads", emails: 7, icon: Target },
+                    { name: "Re-engagement", desc: "Win back inactive users", emails: 4, icon: RefreshCw },
+                    { name: "Product Launch", desc: "Build anticipation", emails: 6, icon: Zap }
+                  ].map((sequence, index) => (
+                    <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                            <sequence.icon className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">{sequence.name}</h4>
+                            <p className="text-xs text-muted-foreground">{sequence.desc}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">{sequence.emails} emails</span>
+                          <Button size="sm" variant="outline">Use Template</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Advanced Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Email Heatmaps */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Activity className="w-5 h-5 mr-2" />
+                    Email Heatmaps
+                  </CardTitle>
+                  <CardDescription>See where subscribers click in your emails</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Select>
+                        <SelectTrigger className="w-64">
+                          <SelectValue placeholder="Select campaign" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="welcome">Welcome Series #1</SelectItem>
+                          <SelectItem value="promo">Spring Promotion</SelectItem>
+                          <SelectItem value="newsletter">Monthly Newsletter</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button variant="outline" size="sm">
+                        <Download className="w-4 h-4 mr-2" />
+                        Export
+                      </Button>
+                    </div>
+                    <div className="border rounded-lg p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+                      <div className="space-y-4">
+                        <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
+                          <div className="text-center">
+                            <h3 className="font-semibold text-blue-800 mb-2">Email Preview</h3>
+                            <div className="space-y-2">
+                              <div className="bg-red-100 p-2 rounded text-sm">
+                                <span className="font-medium">Header (45 clicks)</span>
+                              </div>
+                              <div className="bg-yellow-100 p-2 rounded text-sm">
+                                <span className="font-medium">Main Content (23 clicks)</span>
+                              </div>
+                              <div className="bg-green-100 p-2 rounded text-sm">
+                                <span className="font-medium">CTA Button (127 clicks)</span>
+                              </div>
+                              <div className="bg-blue-100 p-2 rounded text-sm">
+                                <span className="font-medium">Footer (8 clicks)</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="inline-flex items-center space-x-4 text-sm">
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-red-400 rounded mr-2"></div>
+                              <span>High Activity</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-yellow-400 rounded mr-2"></div>
+                              <span>Medium Activity</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-blue-400 rounded mr-2"></div>
+                              <span>Low Activity</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Analytics Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <BarChart3 className="w-5 h-5 mr-2" />
+                    Performance Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">24.5%</div>
+                      <div className="text-sm text-muted-foreground">Open Rate</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">5.2%</div>
+                      <div className="text-sm text-muted-foreground">Click Rate</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">$2,450</div>
+                      <div className="text-sm text-muted-foreground">Revenue</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-600">1.8%</div>
+                      <div className="text-sm text-muted-foreground">Unsubscribe</div>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <Label className="text-sm font-medium">Top Performing Emails</Label>
+                    <div className="mt-2 space-y-2">
+                      {[
+                        { name: "Welcome Email #1", rate: "32.1%", revenue: "$890" },
+                        { name: "Product Launch", rate: "28.7%", revenue: "$1,200" },
+                        { name: "Newsletter #12", rate: "19.3%", revenue: "$360" }
+                      ].map((email, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                          <div>
+                            <p className="text-sm font-medium">{email.name}</p>
+                            <p className="text-xs text-muted-foreground">{email.rate} open • {email.revenue}</p>
+                          </div>
+                          <Button size="sm" variant="ghost">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Revenue Attribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <DollarSign className="w-5 h-5 mr-2" />
+                  Revenue Attribution
+                </CardTitle>
+                <CardDescription>Track revenue by email campaign and subscriber segment</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    { campaign: "Welcome Series", revenue: "$4,250", conversion: "12.3%" },
+                    { campaign: "Product Launch", revenue: "$8,900", conversion: "8.7%" },
+                    { campaign: "Newsletter", revenue: "$2,100", conversion: "3.2%" },
+                    { campaign: "Re-engagement", revenue: "$1,800", conversion: "15.1%" }
+                  ].map((item, index) => (
+                    <Card key={index}>
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">{item.campaign}</h4>
+                          <div className="text-2xl font-bold text-green-600">{item.revenue}</div>
+                          <div className="text-sm text-muted-foreground">{item.conversion} conversion</div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Audience Management Tab */}
@@ -2452,6 +2830,130 @@ export default function EmailSequenceBuilder() {
                       </Button>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Smart AI Features */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Persona-Driven Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Brain className="w-5 h-5 mr-2" />
+                    AI Persona Content
+                  </CardTitle>
+                  <CardDescription>Automatically adapt content tone by audience</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div>
+                        <p className="text-sm font-medium">Gen Z Audience</p>
+                        <p className="text-xs text-muted-foreground">Fun, casual, emoji-rich</p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div>
+                        <p className="text-sm font-medium">Professionals</p>
+                        <p className="text-xs text-muted-foreground">Formal, authoritative</p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div>
+                        <p className="text-sm font-medium">Seniors</p>
+                        <p className="text-xs text-muted-foreground">Clear, respectful</p>
+                      </div>
+                      <Switch />
+                    </div>
+                  </div>
+                  <Button className="w-full">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Configure Personas
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Smart Send Time */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Clock className="w-5 h-5 mr-2" />
+                    Smart Send Time
+                  </CardTitle>
+                  <CardDescription>AI learns best send time for each contact</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Enable Smart Timing</span>
+                      <Switch defaultChecked />
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <h4 className="font-medium text-sm mb-2">Current Insights</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span>Best hour:</span>
+                          <span className="font-medium">9-10 AM</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Best day:</span>
+                          <span className="font-medium">Tuesday</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Improvement:</span>
+                          <span className="font-medium text-green-600">+23%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <Button className="w-full">
+                    <Brain className="w-4 h-4 mr-2" />
+                    View Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Smart Tagging */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Target className="w-5 h-5 mr-2" />
+                    Smart Tagging
+                  </CardTitle>
+                  <CardDescription>AI recommends tags based on behavior</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="p-3 bg-green-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Suggested Rule</span>
+                        <Badge variant="outline">New</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Add "hot-lead" tag if user clicks 3+ emails
+                      </p>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline">Accept</Button>
+                        <Button size="sm" variant="ghost">Dismiss</Button>
+                      </div>
+                    </div>
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Active Rule</span>
+                        <Badge variant="default">Running</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Tag "engaged" if opens 5+ emails in 30 days
+                      </p>
+                    </div>
+                  </div>
+                  <Button className="w-full">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Rule
+                  </Button>
                 </CardContent>
               </Card>
             </div>
