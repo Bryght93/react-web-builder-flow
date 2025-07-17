@@ -81,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/ai/process-request", async (req, res) => {
     try {
       const { prompt, mode, context } = req.body;
-      
+
       // Process different AI modes
       let response = "";
       let suggestions = null;
@@ -129,7 +129,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
              "• Your Free Guide is Ready for Download\n\n" +
              "These subject lines use proven techniques like urgency, curiosity, and value proposition.";
     }
-    
+
     if (prompt.includes('headline')) {
       return "Compelling headline suggestions:\n\n" +
              "• Discover the Game-Changing Strategy That's Transforming Businesses\n" +
@@ -138,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
              "• Get Results in 30 Days or Less\n\n" +
              "These headlines focus on benefits, social proof, and time-sensitive outcomes.";
     }
-    
+
     if (prompt.includes('body') || prompt.includes('content')) {
       return "Here's engaging body content:\n\n" +
              "Start with a personal story or relatable problem your audience faces. This creates immediate connection.\n\n" +
@@ -148,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
              "• Get step-by-step implementation guide\n\n" +
              "Include social proof and end with a clear call-to-action.";
     }
-    
+
     return "I can help you create compelling email content. What specific element would you like me to focus on?";
   }
 
@@ -197,12 +197,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Voice AI API endpoints
-  
+
   // Generate eBook content
   app.post("/api/generate-ebook", async (req, res) => {
     try {
       const { topic } = req.body;
-      
+
       const ebookContent = {
         id: Date.now().toString(),
         title: `The Ultimate Guide to ${topic}`,
@@ -223,7 +223,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         landingPageUrl: `/landing/${topic.toLowerCase().replace(/\s+/g, '-')}`,
         downloadUrl: `/download/ebook-${topic.toLowerCase().replace(/\s+/g, '-')}.pdf`
       };
-      
+
       res.json(ebookContent);
     } catch (error) {
       res.status(500).json({ error: "Failed to generate ebook" });
@@ -234,7 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-funnel", async (req, res) => {
     try {
       const { productDescription } = req.body;
-      
+
       const funnelData = {
         id: Date.now().toString(),
         name: `${productDescription} Sales Funnel`,
@@ -282,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         traffic: 0,
         totalRevenue: 0
       };
-      
+
       res.json(funnelData);
     } catch (error) {
       res.status(500).json({ error: "Failed to generate funnel" });
@@ -293,7 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/subscribers", async (req, res) => {
     try {
       const { name, email, source } = req.body;
-      
+
       const subscriber = {
         id: Date.now().toString(),
         name,
@@ -305,7 +305,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tags: ['voice-generated'],
         notes: `Added via ${source} on ${new Date().toLocaleDateString()}`
       };
-      
+
       res.json(subscriber);
     } catch (error) {
       res.status(500).json({ error: "Failed to add subscriber" });
@@ -316,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/send-campaign", async (req, res) => {
     try {
       const { listName, subject } = req.body;
-      
+
       const campaign = {
         id: Date.now().toString(),
         name: `${listName} - ${subject}`,
@@ -328,7 +328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         clickRate: Math.floor(Math.random() * 10) + 3, // 3-13% click rate
         status: 'sent'
       };
-      
+
       res.json(campaign);
     } catch (error) {
       res.status(500).json({ error: "Failed to send campaign" });
@@ -339,7 +339,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/email-lists", async (req, res) => {
     try {
       const { name } = req.body;
-      
+
       const emailList = {
         id: Date.now().toString(),
         name,
@@ -351,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         autoresponders: [],
         segmentRules: []
       };
-      
+
       res.json(emailList);
     } catch (error) {
       res.status(500).json({ error: "Failed to create email list" });
@@ -362,7 +362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-landing-page", async (req, res) => {
     try {
       const { topic, goal } = req.body;
-      
+
       const landingPage = {
         id: Date.now().toString(),
         title: `${topic} Landing Page`,
@@ -398,7 +398,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         created: new Date().toISOString(),
         status: 'active'
       };
-      
+
       res.json(landingPage);
     } catch (error) {
       res.status(500).json({ error: "Failed to generate landing page" });
@@ -409,7 +409,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/sales-coaching", async (req, res) => {
     try {
       const { situation } = req.body;
-      
+
       const coachingAdvice = {
         id: Date.now().toString(),
         situation,
@@ -435,7 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         confidence: 'high',
         created: new Date().toISOString()
       };
-      
+
       res.json(coachingAdvice);
     } catch (error) {
       res.status(500).json({ error: "Failed to provide sales coaching" });
@@ -446,7 +446,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-funnel-step", async (req, res) => {
     try {
       const { stepType, funnelData } = req.body;
-      
+
       const stepTemplates = {
         landing: {
           title: 'Landing Page',
@@ -527,7 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-lead-magnet", async (req, res) => {
     try {
       const { type, topic, targetAudience, goal } = req.body;
-      
+
       const leadMagnetContent = {
         id: Date.now().toString(),
         title: `The Ultimate ${topic} Guide`,
@@ -567,7 +567,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         ]
       };
-      
+
       res.json(leadMagnetContent);
     } catch (error) {
       res.status(500).json({ error: "Failed to generate lead magnet" });
@@ -591,7 +591,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { aiEmailService } = await import('./ai-email-service.js');
       const { prompt, mode, context } = req.body;
-      
+
       const response = await aiEmailService.processAssistantRequest(prompt, mode, context);
       res.json({ response: response.content, suggestions: response.suggestions });
     } catch (error) {
@@ -678,7 +678,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Database-backed API endpoints
-  
+
   // Funnel API endpoints
   app.get("/api/funnels", async (req, res) => {
     try {
@@ -960,7 +960,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = 1; // Mock user ID for now
       const user = await storage.getUser(userId);
       const profile = await storage.getUserProfile(userId);
-      
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -1014,7 +1014,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if profile exists
       let profile = await storage.getUserProfile(userId);
-      
+
       if (!profile) {
         // Create new profile
         profile = await storage.createUserProfile({

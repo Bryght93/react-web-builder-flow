@@ -92,7 +92,8 @@ import {
   ShoppingCart,
   MousePointer,
   Brain,
-  Activity
+  Activity,
+  DollarSign
 } from 'lucide-react';
 
 interface EmailStep {
