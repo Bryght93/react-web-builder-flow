@@ -2032,10 +2032,16 @@ export default function EmailSequenceBuilder() {
         </div>
 
         <Tabs defaultValue="campaigns" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="campaigns">My Campaigns</TabsTrigger>
-            <TabsTrigger value="nurture">Nurture Templates</TabsTrigger>
-            <TabsTrigger value="broadcast">Broadcast Templates</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
+            <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+            <TabsTrigger value="audience">Audience</TabsTrigger>
+            <TabsTrigger value="forms">Forms</TabsTrigger>
+            <TabsTrigger value="personalization">Personalization</TabsTrigger>
+            <TabsTrigger value="deliverability">Deliverability</TabsTrigger>
+            <TabsTrigger value="compliance">Compliance</TabsTrigger>
+            <TabsTrigger value="team">Team</TabsTrigger>
+            <TabsTrigger value="nurture">Nurture</TabsTrigger>
+            <TabsTrigger value="broadcast">Broadcast</TabsTrigger>
           </TabsList>
 
           <TabsContent value="campaigns" className="space-y-4">
@@ -2157,6 +2163,522 @@ export default function EmailSequenceBuilder() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </TabsContent>
+
+          {/* Audience Management Tab */}
+          <TabsContent value="audience" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Subscribers Table */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    Subscribers
+                  </CardTitle>
+                  <CardDescription>Manage your email subscribers and segments</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Button size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Subscriber
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Import CSV
+                      </Button>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Input placeholder="Search subscribers..." className="w-64" />
+                      <Button size="sm" variant="outline">
+                        <Sliders className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="border rounded-lg">
+                    <table className="w-full">
+                      <thead className="bg-muted">
+                        <tr>
+                          <th className="text-left p-3 text-sm font-medium">Email</th>
+                          <th className="text-left p-3 text-sm font-medium">Name</th>
+                          <th className="text-left p-3 text-sm font-medium">Tags</th>
+                          <th className="text-left p-3 text-sm font-medium">Status</th>
+                          <th className="text-left p-3 text-sm font-medium">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { email: "john@example.com", name: "John Doe", tags: ["VIP", "Customer"], status: "Active" },
+                          { email: "jane@example.com", name: "Jane Smith", tags: ["Lead"], status: "Active" },
+                          { email: "mike@example.com", name: "Mike Johnson", tags: ["Prospect"], status: "Unsubscribed" }
+                        ].map((subscriber, index) => (
+                          <tr key={index} className="border-t">
+                            <td className="p-3 text-sm">{subscriber.email}</td>
+                            <td className="p-3 text-sm">{subscriber.name}</td>
+                            <td className="p-3 text-sm">
+                              <div className="flex gap-1">
+                                {subscriber.tags.map((tag, tagIndex) => (
+                                  <Badge key={tagIndex} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="p-3 text-sm">
+                              <Badge variant={subscriber.status === "Active" ? "default" : "secondary"}>
+                                {subscriber.status}
+                              </Badge>
+                            </td>
+                            <td className="p-3 text-sm">
+                              <div className="flex items-center space-x-2">
+                                <Button size="sm" variant="ghost">
+                                  <Edit3 className="w-4 h-4" />
+                                </Button>
+                                <Button size="sm" variant="ghost">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Segments and Tags */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Target className="w-5 h-5 mr-2" />
+                    Segments & Tags
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Create Segment</Label>
+                    <div className="mt-2 space-y-2">
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select condition" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="tag">Has Tag</SelectItem>
+                          <SelectItem value="opened">Opened Email</SelectItem>
+                          <SelectItem value="clicked">Clicked Link</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button className="w-full" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Segment
+                      </Button>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <Label className="text-sm font-medium">Manage Tags</Label>
+                    <div className="mt-2 space-y-2">
+                      {["VIP", "Customer", "Lead", "Prospect"].map((tag) => (
+                        <div key={tag} className="flex items-center justify-between p-2 bg-muted rounded">
+                          <span className="text-sm">{tag}</span>
+                          <Button size="sm" variant="ghost">
+                            <Edit3 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      <Button className="w-full" size="sm" variant="outline">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Tag
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Forms & Landing Pages Tab */}
+          <TabsContent value="forms" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <FileText className="w-5 h-5 mr-2" />
+                    Email Forms
+                  </CardTitle>
+                  <CardDescription>Create and manage signup forms</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-center h-24 bg-muted rounded-lg mb-3">
+                          <FileText className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <h4 className="font-medium text-sm">Embedded Form</h4>
+                        <p className="text-xs text-muted-foreground">Add to any website</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-center h-24 bg-muted rounded-lg mb-3">
+                          <Globe className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <h4 className="font-medium text-sm">Popup Form</h4>
+                        <p className="text-xs text-muted-foreground">Exit intent & timed</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <Button className="w-full">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create New Form
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Globe className="w-5 h-5 mr-2" />
+                    Landing Pages
+                  </CardTitle>
+                  <CardDescription>Standalone pages for lead capture</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    {[
+                      { name: "Free Guide Landing", visits: 1250, conversion: "24%" },
+                      { name: "Webinar Signup", visits: 890, conversion: "18%" },
+                      { name: "Newsletter Signup", visits: 560, conversion: "31%" }
+                    ].map((page, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                        <div>
+                          <p className="text-sm font-medium">{page.name}</p>
+                          <p className="text-xs text-muted-foreground">{page.visits} visits • {page.conversion} conversion</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button size="sm" variant="ghost">
+                            <Edit3 className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Button className="w-full">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Landing Page
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Personalization Tab */}
+          <TabsContent value="personalization" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <User className="w-5 h-5 mr-2" />
+                    Merge Tags
+                  </CardTitle>
+                  <CardDescription>Personalize emails with subscriber data</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      "{{name}}", "{{email}}", "{{company}}", "{{city}}", 
+                      "{{purchase_date}}", "{{last_click}}", "{{custom_field}}", "{{score}}"
+                    ].map((tag) => (
+                      <Button key={tag} variant="outline" size="sm" className="font-mono text-xs">
+                        {tag}
+                      </Button>
+                    ))}
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Example Usage</Label>
+                    <div className="mt-2 p-3 bg-muted rounded-lg">
+                      <p className="text-sm">Hi <code className="bg-background px-1 rounded">&#123;&#123;name&#125;&#125;</code>,</p>
+                      <p className="text-sm">Thanks for joining from <code className="bg-background px-1 rounded">&#123;&#123;city&#125;&#125;</code>!</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Layers className="w-5 h-5 mr-2" />
+                    Conditional Content
+                  </CardTitle>
+                  <CardDescription>Show different content based on subscriber data</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Condition Rules</Label>
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Select>
+                          <SelectTrigger className="w-32">
+                            <SelectValue placeholder="Field" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="tag">Tag</SelectItem>
+                            <SelectItem value="location">Location</SelectItem>
+                            <SelectItem value="purchase">Purchase</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger className="w-20">
+                            <SelectValue placeholder="Is" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="is">Is</SelectItem>
+                            <SelectItem value="is-not">Is Not</SelectItem>
+                            <SelectItem value="contains">Contains</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input placeholder="Value" className="flex-1" />
+                      </div>
+                      <Button size="sm" className="w-full">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Condition
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Deliverability Tab */}
+          <TabsContent value="deliverability" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Shield className="w-5 h-5 mr-2" />
+                    Domain Health
+                  </CardTitle>
+                  <CardDescription>Monitor your sender reputation</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">98%</div>
+                      <div className="text-sm text-muted-foreground">Delivery Rate</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">A+</div>
+                      <div className="text-sm text-muted-foreground">Sender Score</div>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">DKIM</span>
+                      <Badge variant="default">✓ Configured</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">SPF</span>
+                      <Badge variant="default">✓ Configured</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">DMARC</span>
+                      <Badge variant="secondary">⚠ Pending</Badge>
+                    </div>
+                  </div>
+                  <Button className="w-full">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Configure Authentication
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <AlertTriangle className="w-5 h-5 mr-2" />
+                    Spam Check
+                  </CardTitle>
+                  <CardDescription>Test email deliverability</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-600">8.5/10</div>
+                    <div className="text-sm text-muted-foreground">Deliverability Score</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Subject Line</span>
+                      <Badge variant="default">✓ Good</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Content</span>
+                      <Badge variant="default">✓ Good</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Images</span>
+                      <Badge variant="secondary">⚠ Too Many</Badge>
+                    </div>
+                  </div>
+                  <Button className="w-full">
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Run Spam Check
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Compliance Tab */}
+          <TabsContent value="compliance" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Shield className="w-5 h-5 mr-2" />
+                    Compliance Checklist
+                  </CardTitle>
+                  <CardDescription>GDPR & CAN-SPAM compliance</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    {[
+                      { item: "Unsubscribe link in all emails", status: "complete" },
+                      { item: "Physical address in footer", status: "complete" },
+                      { item: "Clear sender identification", status: "complete" },
+                      { item: "Double opt-in process", status: "pending" },
+                      { item: "Data retention policy", status: "pending" }
+                    ].map((check, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <div className={`w-4 h-4 rounded-full ${check.status === 'complete' ? 'bg-green-500' : 'bg-yellow-500'}`}>
+                          {check.status === 'complete' && <CheckCircle className="w-4 h-4 text-white" />}
+                        </div>
+                        <span className="text-sm">{check.item}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button className="w-full">
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    Compliance Guide
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Edit3 className="w-5 h-5 mr-2" />
+                    Email Footer
+                  </CardTitle>
+                  <CardDescription>Required footer information</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Company Name</Label>
+                    <Input placeholder="Your Company Name" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Physical Address</Label>
+                    <Textarea placeholder="123 Main St, City, State 12345" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Unsubscribe Text</Label>
+                    <Input placeholder="Click here to unsubscribe" className="mt-1" />
+                  </div>
+                  <Button className="w-full">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Footer
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Team Management Tab */}
+          <TabsContent value="team" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    Team Members
+                  </CardTitle>
+                  <CardDescription>Manage user roles and permissions</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    {[
+                      { name: "John Doe", email: "john@company.com", role: "Admin", status: "Active" },
+                      { name: "Jane Smith", email: "jane@company.com", role: "Editor", status: "Active" },
+                      { name: "Mike Johnson", email: "mike@company.com", role: "Viewer", status: "Pending" }
+                    ].map((member, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                        <div>
+                          <p className="text-sm font-medium">{member.name}</p>
+                          <p className="text-xs text-muted-foreground">{member.email}</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline">{member.role}</Badge>
+                          <Badge variant={member.status === "Active" ? "default" : "secondary"}>
+                            {member.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Button className="w-full">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Invite Team Member
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Approval Flow
+                  </CardTitle>
+                  <CardDescription>Campaign approval settings</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Require approval for broadcast emails</span>
+                      <Switch />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Require approval for new campaigns</span>
+                      <Switch />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Log all changes</span>
+                      <Switch defaultChecked />
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <Label className="text-sm font-medium">Approvers</Label>
+                    <Select>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select approver" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="john">John Doe (Admin)</SelectItem>
+                        <SelectItem value="jane">Jane Smith (Editor)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
