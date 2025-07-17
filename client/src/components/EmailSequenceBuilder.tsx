@@ -43,13 +43,14 @@ import {
   Underline,
   Link,
   AlignLeft,
+  User,
+  Loader2,
   AlignCenter,
   AlignRight,
   Palette,
   Zap,
   Megaphone,
   Heart,
-  Loader2,
   Sparkles,
   Monitor,
   Smartphone,
@@ -125,7 +126,7 @@ interface EmailCampaign {
 }
 
 export default function EmailSequenceBuilder() {
-  const [view, setView] = useState<'campaigns' | 'builder' | 'template-selection' | 'campaign-type'>('campaigns');
+  const [view, setView] = useState<'campaigns' | 'builder' | 'template-selection' | 'campaign-type' | 'personal-info'>('campaigns');
   const [selectedCampaign, setSelectedCampaign] = useState<EmailCampaign | null>(null);
   const [selectedEmailStep, setSelectedEmailStep] = useState<EmailStep | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
@@ -142,6 +143,14 @@ export default function EmailSequenceBuilder() {
   const [selectedCampaignType, setSelectedCampaignType] = useState<'nurture' | 'broadcast'>('nurture');
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [showTemplatePreview, setShowTemplatePreview] = useState(false);
+  const [personalInfo, setPersonalInfo] = useState({
+    brandName: '',
+    industry: '',
+    targetAudience: '',
+    campaignGoal: '',
+    numberOfEmails: 5,
+    tone: 'professional'
+  });
   const { toast } = useToast();
 
   // Navigation handlers
@@ -154,9 +163,12 @@ export default function EmailSequenceBuilder() {
       setSelectedCampaign(newCampaign);
       setSelectedEmailStep(newCampaign.emailSequence[0]);
       setView('builder');
-    } else {
-      // For template and AI, show template selection
+    } else if (currentCreationFlow === 'template') {
+      // For template, show template selection
       setView('template-selection');
+    } else if (currentCreationFlow === 'ai') {
+      // For AI, show personal information form first
+      setView('personal-info');
     }
   };
 
@@ -173,6 +185,11 @@ export default function EmailSequenceBuilder() {
       setSelectedEmailStep(newCampaign.emailSequence[0]);
       setView('builder');
     }
+  };
+
+  const handlePersonalInfoSubmit = () => {
+    // After personal info is submitted, show template selection
+    setView('template-selection');
   };
 
   // Helper functions
@@ -1146,21 +1163,15 @@ export default function EmailSequenceBuilder() {
 
   // AI Generation Dialog Component
   const AIGenerationDialog = () => {
-    const [formData, setFormData] = useState({
-      industry: '',
-      targetAudience: '',
-      campaignGoal: '',
-      emailCount: 5,
-      tone: 'professional',
-      brandName: ''
-    });
-
     const handleGenerate = () => {
       generateAIEmails({
         campaignType: selectedCampaignType,
-        ...formData,
-        emailCount: Number(formData.emailCount),
-        tone: formData.tone as any,
+        industry: personalInfo.industry,
+        targetAudience: personalInfo.targetAudience,
+        campaignGoal: personalInfo.campaignGoal,
+        emailCount: personalInfo.numberOfEmails,
+        tone: personalInfo.tone as any,
+        brandName: personalInfo.brandName,
         template: selectedTemplate
       });
       setShowAIDialog(false);
@@ -1208,77 +1219,35 @@ export default function EmailSequenceBuilder() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm">Brand Name</Label>
-                <Input
-                  value={formData.brandName}
-                  onChange={(e) => setFormData({...formData, brandName: e.target.value})}
-                  placeholder="Your Company Name"
-                />
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3">Your Business Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Brand Name</Label>
+                  <p className="text-sm">{personalInfo.brandName}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Industry</Label>
+                  <p className="text-sm">{personalInfo.industry}</p>
+                </div>
               </div>
-              <div>
-                <Label className="text-sm">Industry</Label>
-                <Input
-                  value={formData.industry}
-                  onChange={(e) => setFormData({...formData, industry: e.target.value})}
-                  placeholder="e.g., Marketing, Finance, Health"
-                />
+              <div className="mt-3">
+                <Label className="text-sm font-medium">Target Audience</Label>
+                <p className="text-sm">{personalInfo.targetAudience}</p>
               </div>
-            </div>
-
-            <div>
-              <Label className="text-sm">Target Audience</Label>
-              <Input
-                value={formData.targetAudience}
-                onChange={(e) => setFormData({...formData, targetAudience: e.target.value})}
-                placeholder="e.g., Small business owners, Marketing professionals"
-              />
-            </div>
-
-            <div>
-              <Label className="text-sm">Campaign Goal</Label>
-              <Input
-                value={formData.campaignGoal}
-                onChange={(e) => setFormData({...formData, campaignGoal: e.target.value})}
-                placeholder="e.g., Increase sales, Build brand awareness"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm">Number of Emails</Label>
-                <Select value={formData.emailCount.toString()} onValueChange={(value) => setFormData({...formData, emailCount: parseInt(value)})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {selectedCampaignType === 'broadcast' ? (
-                      <SelectItem value="1">1 Email</SelectItem>
-                    ) : (
-                      <>
-                        <SelectItem value="3">3 Emails</SelectItem>
-                        <SelectItem value="5">5 Emails</SelectItem>
-                        <SelectItem value="7">7 Emails</SelectItem>
-                        <SelectItem value="10">10 Emails</SelectItem>
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
+              <div className="mt-3">
+                <Label className="text-sm font-medium">Campaign Goal</Label>
+                <p className="text-sm">{personalInfo.campaignGoal}</p>
               </div>
-              <div>
-                <Label className="text-sm">Tone</Label>
-                <Select value={formData.tone} onValueChange={(value) => setFormData({...formData, tone: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="professional">Professional</SelectItem>
-                    <SelectItem value="friendly">Friendly</SelectItem>
-                    <SelectItem value="casual">Casual</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4 mt-3">
+                <div>
+                  <Label className="text-sm font-medium">Number of Emails</Label>
+                  <p className="text-sm">{personalInfo.numberOfEmails}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Tone</Label>
+                  <p className="text-sm capitalize">{personalInfo.tone}</p>
+                </div>
               </div>
             </div>
 
@@ -1397,6 +1366,126 @@ export default function EmailSequenceBuilder() {
             </CardContent>
           </Card>
         </div>
+      </div>
+    );
+  }
+
+  // Personal Information View
+  if (view === 'personal-info') {
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <div className="text-center mb-8">
+          <Button variant="ghost" size="sm" onClick={() => setView('campaign-type')} className="mb-4">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Campaign Type
+          </Button>
+          <h2 className="text-2xl font-bold mb-2">Personal Information</h2>
+          <p className="text-muted-foreground">
+            Tell us about your business to generate personalized emails
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                <User className="w-5 h-5 text-white" />
+              </div>
+              Business Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Brand Name</label>
+                <input
+                  type="text"
+                  placeholder="Your Company Name"
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={personalInfo.brandName}
+                  onChange={(e) => setPersonalInfo({...personalInfo, brandName: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Industry</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Marketing, Finance, Health"
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={personalInfo.industry}
+                  onChange={(e) => setPersonalInfo({...personalInfo, industry: e.target.value})}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">Target Audience</label>
+              <textarea
+                placeholder="e.g., Small business owners, Marketing professionals"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                rows={3}
+                value={personalInfo.targetAudience}
+                onChange={(e) => setPersonalInfo({...personalInfo, targetAudience: e.target.value})}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">Campaign Goal</label>
+              <textarea
+                placeholder="e.g., Increase sales, Build brand awareness"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                rows={3}
+                value={personalInfo.campaignGoal}
+                onChange={(e) => setPersonalInfo({...personalInfo, campaignGoal: e.target.value})}
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Number of Emails</label>
+                <select
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={personalInfo.numberOfEmails}
+                  onChange={(e) => setPersonalInfo({...personalInfo, numberOfEmails: parseInt(e.target.value)})}
+                >
+                  <option value={1}>1 Email</option>
+                  <option value={3}>3 Emails</option>
+                  <option value={5}>5 Emails</option>
+                  <option value={7}>7 Emails</option>
+                  <option value={10}>10 Emails</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Tone</label>
+                <select
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={personalInfo.tone}
+                  onChange={(e) => setPersonalInfo({...personalInfo, tone: e.target.value})}
+                >
+                  <option value="professional">Professional</option>
+                  <option value="friendly">Friendly</option>
+                  <option value="casual">Casual</option>
+                  <option value="formal">Formal</option>
+                  <option value="conversational">Conversational</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button variant="outline" onClick={() => setView('campaign-type')}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handlePersonalInfoSubmit}
+                disabled={!personalInfo.brandName || !personalInfo.industry || !personalInfo.targetAudience || !personalInfo.campaignGoal}
+                className="bg-gradient-to-r from-purple-600 to-pink-600"
+              >
+                Continue to Templates
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

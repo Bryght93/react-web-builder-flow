@@ -62,16 +62,27 @@ export class AIEmailService {
     emailCount: number;
     tone: 'professional' | 'friendly' | 'casual' | 'urgent';
     brandName: string;
+    template?: any;
   }): GeneratedEmail[] {
     
     const emails: GeneratedEmail[] = [];
     
+    // Get template-specific context
+    const templateContext = params.template ? {
+      name: params.template.name,
+      description: params.template.description,
+      features: params.template.features || [],
+      category: params.template.category || 'general'
+    } : null;
+    
     if (params.campaignType === 'nurture') {
-      // Generate nurture sequence
+      // Generate nurture sequence with personalized content
       const nurtureTemplates = [
         {
-          subject: `Welcome to ${params.brandName}! 🎉`,
-          content: `<h2>Welcome to Our Community!</h2><p>Hi there,</p><p>Thanks for joining ${params.brandName}! We're excited to have you as part of our ${params.targetAudience} community.</p><p>Over the next few days, I'll be sharing valuable insights about ${params.industry} that will help you achieve ${params.campaignGoal}.</p><p>Best regards,<br>The ${params.brandName} Team</p>`,
+          subject: templateContext ? 
+            `Welcome to ${params.brandName} - Your ${templateContext.name} Journey Begins!` :
+            `Welcome to ${params.brandName}! 🎉`,
+          content: `<h2>Welcome to Our Community!</h2><p>Hi there,</p><p>Thanks for joining ${params.brandName}! We're excited to have you as part of our ${params.targetAudience} community in the ${params.industry} industry.</p>${templateContext ? `<p>You've chosen our ${templateContext.name} approach, which is perfect for achieving ${params.campaignGoal}.</p>` : ''}<p>Over the next few days, I'll be sharing valuable insights about ${params.industry} that will help you ${params.campaignGoal}.</p><p>Best regards,<br>The ${params.brandName} Team</p>`,
           send_delay: 0,
           call_to_action: 'Get Started'
         },
