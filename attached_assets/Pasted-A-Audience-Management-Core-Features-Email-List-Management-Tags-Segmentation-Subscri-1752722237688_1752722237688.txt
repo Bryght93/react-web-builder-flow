@@ -1,0 +1,72 @@
+A. Audience Management
+🔹 Core Features:
+•	Email List Management
+•	Tags & Segmentation
+•	Subscriber Profiles
+•	Custom Fields / Attributes
+🔸 Components:
+•	SubscribersTable: View, filter, and sort subscriber data
+•	ImportCSVModal: Upload contacts from file
+•	AddSubscriberForm: Add one-by-one manually
+•	SegmentBuilder: Drag/drop or rule-based segmentation UI
+•	TagManager: Create, assign, edit, delete tags
+•	SubscriberProfilePage: Shows full history, engagement, automation flow
+________________________________________
+✅ D. Forms & Landing Pages
+🔹 Core Features:
+•	Embedded Forms
+•	Popups & Slide-ins
+•	Hosted Landing Pages
+•	Double Opt-In Settings
+🔸 Components:
+•	FormBuilder: Create form with fields, design, behavior
+•	PopupTriggerOptions: Scroll %, time delay, exit intent
+•	LandingPageBuilder: Visual editor for LPs
+•	FormIntegrationGuide: Copy-paste or embed code, WordPress guide
+•	ThankYouPageSelector: Choose redirect or default page
+________________________________________
+________________________________________
+✅ F. Personalization & Dynamic Content
+🔹 Core Features:
+•	Merge Tags / Custom Variables
+•	Conditional Content Blocks
+•	Behavioral Triggers (opens, clicks, purchases and more add others)
+🔸 Components:
+•	MergeTagMenu: Dropdown to insert fields (e.g. {{name}})
+•	ConditionalBlock: "Show if tag = VIP", etc.
+•	SmartContentBlock: AI-tailored sections per user segment
+•	BehaviorConditionBuilder: "Show this if subscriber clicked X last week"
+________________________________________
+________________________________________
+✅ H. Deliverability Tools
+🔹 Core Features:
+•	Sender Authentication (DKIM, SPF)
+•	Email Verification
+•	Spam Score Checker
+•	Blacklist Monitoring
+🔸 Components:
+•	DeliverabilityCenter: Overview of sender domain health
+•	DomainSetupWizard: For DKIM, SPF, DMARC setup
+•	SpamCheckTool: Scores your email before send
+•	BounceMonitor: Hard vs soft bounce alerts
+✅ K. Settings & Compliance
+🔹 Core Features:
+•	GDPR / CAN-SPAM compliance
+•	Email Footer Editor
+•	Unsubscribe Page Editor
+•	Permission Tracking
+🔸 Components:
+•	ComplianceChecklist: Must-dos before going live
+•	FooterEditor: Add company info, address, unsubscribe
+•	UnsubscribePageBuilder: Edit what user sees when opting out
+•	PermissionLogViewer: Track consent for each user
+________________________________________
+✅ L. User Roles & Team Collaboration
+🔹 Core Features:
+•	Multi-user Roles
+•	Approvals Before Send
+•	Change Logs
+🔸 Components:
+•	TeamMemberManager: Add/remove users and assign roles
+•	CampaignApprovalFlow: Reviewer must approve before send
+•	ChangeHistoryPanel: Log of who edited what and wh
