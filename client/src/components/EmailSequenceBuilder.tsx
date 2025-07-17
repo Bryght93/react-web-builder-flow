@@ -1983,10 +1983,6 @@ export default function EmailSequenceBuilder() {
             <p className="text-muted-foreground">Create beautiful email sequences that convert</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button onClick={() => setShowAIDialog(true)} className="bg-gradient-to-r from-purple-600 to-pink-600">
-              <Sparkles className="w-4 h-4 mr-2" />
-              AI Generator
-            </Button>
             <Button onClick={() => createFromScratch()} className="bg-gradient-to-r from-green-600 to-teal-600">
               <Wand2 className="w-4 h-4 mr-2" />
               Create from Scratch
