@@ -22,6 +22,17 @@ export class AIEmailService {
     tone: 'professional' | 'friendly' | 'casual' | 'urgent';
     brandName: string;
     template?: any;
+    // Enhanced business context
+    productService?: string;
+    uniqueSellingPoint?: string;
+    customerPainPoints?: string;
+    competitiveDifferentiator?: string;
+    priceRange?: string;
+    currentMarketing?: string;
+    audienceAge?: string;
+    audienceGender?: string;
+    audienceIncome?: string;
+    purchaseMotivation?: string;
   }): Promise<GeneratedEmail[]> {
     
     // If OpenAI is not available, return dummy content
@@ -30,17 +41,66 @@ export class AIEmailService {
     }
 
     try {
+      // Build comprehensive business context for AI
+      const businessContext = this.buildBusinessContext(params);
+      
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: `You are an expert email marketing copywriter. Generate a ${params.campaignType} email sequence for ${params.brandName} targeting ${params.targetAudience} in the ${params.industry} industry. The goal is ${params.campaignGoal}. Use a ${params.tone} tone. ${params.template ? `Base it on this template: ${params.template.name} - ${params.template.description}. Features to include: ${params.template.features.join(', ')}` : ''} Return JSON format with array of emails containing subject, content, and timing.`
+            content: `You are a world-class email marketing copywriter and business strategist. Your expertise includes:
+            - Conversion-focused copywriting that drives sales
+            - Deep understanding of consumer psychology and buying behavior
+            - Mastery of persuasive writing techniques and marketing frameworks
+            - Ability to craft compelling narratives that resonate with specific audiences
+
+            Your task: Create a high-converting ${params.campaignType} email sequence for ${params.brandName}.
+
+            BUSINESS CONTEXT:
+            ${businessContext}
+
+            WRITING REQUIREMENTS:
+            - Use a ${params.tone} tone throughout
+            - Focus on solving customer pain points and highlighting unique benefits
+            - Include psychological triggers and persuasive elements
+            - Make each email valuable and engaging, not just promotional
+            - Build trust and credibility through the sequence
+            - Include strong, action-oriented calls-to-action
+            - Use proven copywriting formulas (AIDA, PAS, etc.)
+            - Address objections and build desire progressively
+
+            ${params.template ? `Template Foundation: Use "${params.template.name}" as inspiration. Key features: ${params.template.features?.join(', ') || 'N/A'}. Description: ${params.template.description}` : ''}
+
+            Return ONLY valid JSON with this exact structure:
+            {
+              "emails": [
+                {
+                  "subject": "Compelling subject line",
+                  "content": "Full HTML email content with proper structure",
+                  "send_delay": number (days),
+                  "call_to_action": "Specific CTA text",
+                  "email_type": "nurture" or "broadcast"
+                }
+              ]
+            }`
           },
           {
             role: "user",
-            content: `Generate ${params.emailCount} ${params.campaignType} emails for ${params.brandName}. Each email should have: subject, content (with HTML elements), send_delay (in days), and call_to_action. Make the content engaging and conversion-focused.`
+            content: `Generate ${params.emailCount} professional, high-converting ${params.campaignType} emails that will drive sales for ${params.brandName}.
+
+            Each email must:
+            1. Have a compelling, curiosity-driven subject line
+            2. Open with a hook that addresses customer pain points
+            3. Present the product/service as the solution
+            4. Include social proof, benefits, and value propositions
+            5. Build urgency or scarcity when appropriate
+            6. End with a clear, compelling call-to-action
+            7. Be properly formatted with HTML structure
+            8. Progressive timing: ${params.campaignType === 'nurture' ? 'spaced over days/weeks' : 'immediate delivery'}
+
+            Focus on persuasive copywriting that converts prospects into customers.`
           }
         ],
         response_format: { type: "json_object" },
@@ -54,6 +114,39 @@ export class AIEmailService {
     }
   }
 
+  private buildBusinessContext(params: any): string {
+    let context = `Company: ${params.brandName} in the ${params.industry} industry
+Target Audience: ${params.targetAudience}
+Campaign Goal: ${params.campaignGoal}`;
+
+    if (params.productService) {
+      context += `\nProduct/Service: ${params.productService}`;
+    }
+    if (params.uniqueSellingPoint) {
+      context += `\nUnique Selling Point: ${params.uniqueSellingPoint}`;
+    }
+    if (params.customerPainPoints) {
+      context += `\nCustomer Pain Points: ${params.customerPainPoints}`;
+    }
+    if (params.competitiveDifferentiator) {
+      context += `\nCompetitive Advantage: ${params.competitiveDifferentiator}`;
+    }
+    if (params.priceRange) {
+      context += `\nPrice Range: ${params.priceRange}`;
+    }
+    if (params.audienceAge || params.audienceGender || params.audienceIncome) {
+      context += `\nAudience Demographics: Age: ${params.audienceAge || 'N/A'}, Gender: ${params.audienceGender || 'Mixed'}, Income: ${params.audienceIncome || 'N/A'}`;
+    }
+    if (params.purchaseMotivation) {
+      context += `\nPurchase Motivation: ${params.purchaseMotivation}`;
+    }
+    if (params.currentMarketing) {
+      context += `\nCurrent Marketing: ${params.currentMarketing}`;
+    }
+
+    return context;
+  }
+
   private generateDummyEmailSequence(params: {
     campaignType: 'nurture' | 'broadcast';
     industry: string;
@@ -63,6 +156,9 @@ export class AIEmailService {
     tone: 'professional' | 'friendly' | 'casual' | 'urgent';
     brandName: string;
     template?: any;
+    productService?: string;
+    uniqueSellingPoint?: string;
+    customerPainPoints?: string;
   }): GeneratedEmail[] {
     
     const emails: GeneratedEmail[] = [];

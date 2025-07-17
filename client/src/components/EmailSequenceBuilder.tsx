@@ -150,7 +150,21 @@ export default function EmailSequenceBuilder() {
     targetAudience: '',
     campaignGoal: '',
     numberOfEmails: 5,
-    tone: 'professional'
+    tone: 'professional',
+    // Enhanced business context fields
+    productService: '',
+    uniqueSellingPoint: '',
+    targetMarket: '',
+    customerPainPoints: '',
+    businessGoals: '',
+    competitiveDifferentiator: '',
+    priceRange: '',
+    currentMarketing: '',
+    audienceAge: '',
+    audienceGender: '',
+    audienceIncome: '',
+    customerBehavior: '',
+    purchaseMotivation: ''
   });
   const { toast } = useToast();
 
@@ -555,12 +569,28 @@ export default function EmailSequenceBuilder() {
   }) => {
     setIsGenerating(true);
     try {
+      // Combine template params with comprehensive business context
+      const enhancedParams = {
+        ...params,
+        // Enhanced business context from personalInfo
+        productService: personalInfo.productService,
+        uniqueSellingPoint: personalInfo.uniqueSellingPoint,
+        customerPainPoints: personalInfo.customerPainPoints,
+        competitiveDifferentiator: personalInfo.competitiveDifferentiator,
+        priceRange: personalInfo.priceRange,
+        currentMarketing: personalInfo.currentMarketing,
+        audienceAge: personalInfo.audienceAge,
+        audienceGender: personalInfo.audienceGender,
+        audienceIncome: personalInfo.audienceIncome,
+        purchaseMotivation: personalInfo.purchaseMotivation,
+      };
+
       const response = await fetch('/api/ai/generate-emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(params),
+        body: JSON.stringify(enhancedParams),
       });
 
       if (!response.ok) {
@@ -1220,49 +1250,101 @@ export default function EmailSequenceBuilder() {
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-3">Your Business Information</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium">Brand Name</Label>
-                  <p className="text-sm">{personalInfo.brandName}</p>
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border">
+              <h3 className="font-semibold mb-3 flex items-center">
+                <User className="w-4 h-4 mr-2 text-blue-600" />
+                Business Intelligence for AI
+              </h3>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium text-blue-600">Brand</Label>
+                    <p className="text-sm font-medium">{personalInfo.brandName}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-blue-600">Industry</Label>
+                    <p className="text-sm">{personalInfo.industry}</p>
+                  </div>
                 </div>
+                
+                {personalInfo.productService && (
+                  <div>
+                    <Label className="text-sm font-medium text-green-600">Product/Service</Label>
+                    <p className="text-sm">{personalInfo.productService}</p>
+                  </div>
+                )}
+                
+                {personalInfo.uniqueSellingPoint && (
+                  <div>
+                    <Label className="text-sm font-medium text-purple-600">Unique Selling Point</Label>
+                    <p className="text-sm">{personalInfo.uniqueSellingPoint}</p>
+                  </div>
+                )}
+                
                 <div>
-                  <Label className="text-sm font-medium">Industry</Label>
-                  <p className="text-sm">{personalInfo.industry}</p>
+                  <Label className="text-sm font-medium text-orange-600">Target Audience</Label>
+                  <p className="text-sm">{personalInfo.targetAudience}</p>
+                </div>
+                
+                {personalInfo.customerPainPoints && (
+                  <div>
+                    <Label className="text-sm font-medium text-red-600">Customer Pain Points</Label>
+                    <p className="text-sm">{personalInfo.customerPainPoints}</p>
+                  </div>
+                )}
+                
+                <div>
+                  <Label className="text-sm font-medium text-indigo-600">Campaign Goal</Label>
+                  <p className="text-sm">{personalInfo.campaignGoal}</p>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t">
+                  <div className="text-center">
+                    <Label className="text-xs font-medium text-gray-500">Emails</Label>
+                    <p className="text-sm font-semibold">{personalInfo.numberOfEmails}</p>
+                  </div>
+                  <div className="text-center">
+                    <Label className="text-xs font-medium text-gray-500">Tone</Label>
+                    <p className="text-sm font-semibold capitalize">{personalInfo.tone}</p>
+                  </div>
+                  <div className="text-center">
+                    <Label className="text-xs font-medium text-gray-500">Type</Label>
+                    <p className="text-sm font-semibold capitalize">{selectedCampaignType}</p>
+                  </div>
                 </div>
               </div>
-              <div className="mt-3">
-                <Label className="text-sm font-medium">Target Audience</Label>
-                <p className="text-sm">{personalInfo.targetAudience}</p>
+            </div>
+
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+              <div className="flex items-center mb-2">
+                <Lightbulb className="w-4 h-4 mr-2 text-purple-600" />
+                <h4 className="font-medium text-purple-800">AI Marketing Expert Ready</h4>
               </div>
-              <div className="mt-3">
-                <Label className="text-sm font-medium">Campaign Goal</Label>
-                <p className="text-sm">{personalInfo.campaignGoal}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-3">
-                <div>
-                  <Label className="text-sm font-medium">Number of Emails</Label>
-                  <p className="text-sm">{personalInfo.numberOfEmails}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">Tone</Label>
-                  <p className="text-sm capitalize">{personalInfo.tone}</p>
-                </div>
-              </div>
+              <p className="text-sm text-purple-700 mb-4">
+                Your AI will now analyze your business context and create professional, high-converting email copy that speaks directly to your audience's pain points and drives sales.
+              </p>
             </div>
 
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setShowAIDialog(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleGenerate} disabled={isGenerating}>
+              <Button 
+                onClick={handleGenerate} 
+                disabled={isGenerating}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
                 {isGenerating ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating Marketing Copy...
+                  </>
                 ) : (
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate High-Converting Emails
+                  </>
                 )}
-                Generate Emails
               </Button>
             </div>
           </div>
@@ -1371,122 +1453,281 @@ export default function EmailSequenceBuilder() {
     );
   }
 
-  // Personal Information View
+  // Personal Information View - Enhanced Business Context
   if (view === 'personal-info') {
     return (
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6">
         <div className="text-center mb-8">
           <Button variant="ghost" size="sm" onClick={() => setView('campaign-type')} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Campaign Type
           </Button>
-          <h2 className="text-2xl font-bold mb-2">Personal Information</h2>
-          <p className="text-muted-foreground">
-            Tell us about your business to generate personalized emails
+          <h2 className="text-3xl font-bold mb-2">Business Context for AI</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Help our AI understand your business deeply so we can create compelling, personalized marketing copy that resonates with your audience and drives sales.
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                <User className="w-5 h-5 text-white" />
+        <div className="space-y-6">
+          {/* Basic Business Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mr-3">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                Basic Business Information
+              </CardTitle>
+              <CardDescription>Core details about your company and industry</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2">Brand Name *</Label>
+                  <Input
+                    type="text"
+                    placeholder="Your Company Name"
+                    value={personalInfo.brandName}
+                    onChange={(e) => setPersonalInfo({...personalInfo, brandName: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2">Industry *</Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., SaaS, E-commerce, Consulting, Health & Wellness"
+                    value={personalInfo.industry}
+                    onChange={(e) => setPersonalInfo({...personalInfo, industry: e.target.value})}
+                  />
+                </div>
               </div>
-              Business Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
               <div>
-                <label className="block text-sm font-medium mb-2">Brand Name</label>
-                <input
-                  type="text"
-                  placeholder="Your Company Name"
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  value={personalInfo.brandName}
-                  onChange={(e) => setPersonalInfo({...personalInfo, brandName: e.target.value})}
+                <Label className="text-sm font-medium mb-2">Product/Service Description *</Label>
+                <Textarea
+                  placeholder="Describe what you sell. Be specific about features, benefits, and how it helps customers solve problems."
+                  className="min-h-[80px]"
+                  value={personalInfo.productService}
+                  onChange={(e) => setPersonalInfo({...personalInfo, productService: e.target.value})}
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Industry</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Marketing, Finance, Health"
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  value={personalInfo.industry}
-                  onChange={(e) => setPersonalInfo({...personalInfo, industry: e.target.value})}
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Target Audience</label>
-              <textarea
-                placeholder="e.g., Small business owners, Marketing professionals"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                rows={3}
-                value={personalInfo.targetAudience}
-                onChange={(e) => setPersonalInfo({...personalInfo, targetAudience: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Campaign Goal</label>
-              <textarea
-                placeholder="e.g., Increase sales, Build brand awareness"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                rows={3}
-                value={personalInfo.campaignGoal}
-                onChange={(e) => setPersonalInfo({...personalInfo, campaignGoal: e.target.value})}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Number of Emails</label>
-                <select
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  value={personalInfo.numberOfEmails}
-                  onChange={(e) => setPersonalInfo({...personalInfo, numberOfEmails: parseInt(e.target.value)})}
-                >
-                  <option value={1}>1 Email</option>
-                  <option value={3}>3 Emails</option>
-                  <option value={5}>5 Emails</option>
-                  <option value={7}>7 Emails</option>
-                  <option value={10}>10 Emails</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Tone</label>
-                <select
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  value={personalInfo.tone}
-                  onChange={(e) => setPersonalInfo({...personalInfo, tone: e.target.value})}
-                >
-                  <option value="professional">Professional</option>
-                  <option value="friendly">Friendly</option>
-                  <option value="casual">Casual</option>
-                  <option value="formal">Formal</option>
-                  <option value="conversational">Conversational</option>
-                </select>
-              </div>
-            </div>
 
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button variant="outline" onClick={() => setView('campaign-type')}>
-                Cancel
-              </Button>
-              <Button 
-                onClick={handlePersonalInfoSubmit}
-                disabled={!personalInfo.brandName || !personalInfo.industry || !personalInfo.targetAudience || !personalInfo.campaignGoal}
-                className="bg-gradient-to-r from-purple-600 to-pink-600"
-              >
-                Continue to Templates
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div>
+                <Label className="text-sm font-medium mb-2">Unique Selling Point *</Label>
+                <Textarea
+                  placeholder="What makes you different from competitors? What's your unique advantage or benefit?"
+                  className="min-h-[60px]"
+                  value={personalInfo.uniqueSellingPoint}
+                  onChange={(e) => setPersonalInfo({...personalInfo, uniqueSellingPoint: e.target.value})}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2">Price Range</Label>
+                  <Select value={personalInfo.priceRange} onValueChange={(value) => setPersonalInfo({...personalInfo, priceRange: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select price range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-50">Under $50</SelectItem>
+                      <SelectItem value="50-200">$50 - $200</SelectItem>
+                      <SelectItem value="200-500">$200 - $500</SelectItem>
+                      <SelectItem value="500-1000">$500 - $1,000</SelectItem>
+                      <SelectItem value="1000-5000">$1,000 - $5,000</SelectItem>
+                      <SelectItem value="5000-10000">$5,000 - $10,000</SelectItem>
+                      <SelectItem value="over-10000">Over $10,000</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2">Competitive Differentiator</Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., Fastest delivery, Best customer service, Lowest price"
+                    value={personalInfo.competitiveDifferentiator}
+                    onChange={(e) => setPersonalInfo({...personalInfo, competitiveDifferentiator: e.target.value})}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Target Audience Deep Dive */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
+                  <Target className="w-5 h-5 text-white" />
+                </div>
+                Target Audience Analysis
+              </CardTitle>
+              <CardDescription>Help AI understand who you're selling to</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium mb-2">Target Audience *</Label>
+                <Textarea
+                  placeholder="Who is your ideal customer? Be specific: job titles, company sizes, demographics, interests."
+                  className="min-h-[80px]"
+                  value={personalInfo.targetAudience}
+                  onChange={(e) => setPersonalInfo({...personalInfo, targetAudience: e.target.value})}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2">Age Range</Label>
+                  <Select value={personalInfo.audienceAge} onValueChange={(value) => setPersonalInfo({...personalInfo, audienceAge: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select age" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="18-25">18-25</SelectItem>
+                      <SelectItem value="26-35">26-35</SelectItem>
+                      <SelectItem value="36-45">36-45</SelectItem>
+                      <SelectItem value="46-55">46-55</SelectItem>
+                      <SelectItem value="56-65">56-65</SelectItem>
+                      <SelectItem value="65+">65+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2">Gender</Label>
+                  <Select value={personalInfo.audienceGender} onValueChange={(value) => setPersonalInfo({...personalInfo, audienceGender: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mixed">Mixed</SelectItem>
+                      <SelectItem value="female">Primarily Female</SelectItem>
+                      <SelectItem value="male">Primarily Male</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2">Income Level</Label>
+                  <Select value={personalInfo.audienceIncome} onValueChange={(value) => setPersonalInfo({...personalInfo, audienceIncome: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select income" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-30k">Under $30k</SelectItem>
+                      <SelectItem value="30k-50k">$30k - $50k</SelectItem>
+                      <SelectItem value="50k-75k">$50k - $75k</SelectItem>
+                      <SelectItem value="75k-100k">$75k - $100k</SelectItem>
+                      <SelectItem value="100k-150k">$100k - $150k</SelectItem>
+                      <SelectItem value="over-150k">Over $150k</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-2">Customer Pain Points *</Label>
+                <Textarea
+                  placeholder="What problems, frustrations, or challenges does your audience face that your product solves?"
+                  className="min-h-[80px]"
+                  value={personalInfo.customerPainPoints}
+                  onChange={(e) => setPersonalInfo({...personalInfo, customerPainPoints: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-2">Purchase Motivation</Label>
+                <Textarea
+                  placeholder="Why do customers buy from you? What drives their purchasing decisions?"
+                  className="min-h-[60px]"
+                  value={personalInfo.purchaseMotivation}
+                  onChange={(e) => setPersonalInfo({...personalInfo, purchaseMotivation: e.target.value})}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Marketing Goals & Strategy */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                  <TrendingUp className="w-5 h-5 text-white" />
+                </div>
+                Marketing Goals & Strategy
+              </CardTitle>
+              <CardDescription>Define your objectives and current approach</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium mb-2">Campaign Goal *</Label>
+                <Textarea
+                  placeholder="What do you want to achieve? Increase sales, build brand awareness, launch new product, nurture leads, etc."
+                  className="min-h-[80px]"
+                  value={personalInfo.campaignGoal}
+                  onChange={(e) => setPersonalInfo({...personalInfo, campaignGoal: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-2">Current Marketing Approach</Label>
+                <Textarea
+                  placeholder="What marketing channels and strategies are you currently using? Social media, ads, content marketing, etc."
+                  className="min-h-[60px]"
+                  value={personalInfo.currentMarketing}
+                  onChange={(e) => setPersonalInfo({...personalInfo, currentMarketing: e.target.value})}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2">Number of Emails</Label>
+                  <Select value={personalInfo.numberOfEmails.toString()} onValueChange={(value) => setPersonalInfo({...personalInfo, numberOfEmails: parseInt(value)})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 Email</SelectItem>
+                      <SelectItem value="3">3 Emails</SelectItem>
+                      <SelectItem value="5">5 Emails</SelectItem>
+                      <SelectItem value="7">7 Emails</SelectItem>
+                      <SelectItem value="10">10 Emails</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2">Communication Tone</Label>
+                  <Select value={personalInfo.tone} onValueChange={(value) => setPersonalInfo({...personalInfo, tone: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional</SelectItem>
+                      <SelectItem value="friendly">Friendly</SelectItem>
+                      <SelectItem value="casual">Casual</SelectItem>
+                      <SelectItem value="conversational">Conversational</SelectItem>
+                      <SelectItem value="authoritative">Authoritative</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button variant="outline" onClick={() => setView('campaign-type')}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handlePersonalInfoSubmit}
+              disabled={!personalInfo.brandName || !personalInfo.industry || !personalInfo.targetAudience || !personalInfo.campaignGoal || !personalInfo.productService || !personalInfo.uniqueSellingPoint || !personalInfo.customerPainPoints}
+              className="bg-gradient-to-r from-purple-600 to-pink-600"
+            >
+              Continue to Templates
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }

@@ -22,10 +22,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         emailCount, 
         tone, 
         brandName, 
-        template 
+        template,
+        // Enhanced business context
+        productService,
+        uniqueSellingPoint,
+        customerPainPoints,
+        competitiveDifferentiator,
+        priceRange,
+        currentMarketing,
+        audienceAge,
+        audienceGender,
+        audienceIncome,
+        purchaseMotivation
       } = req.body;
 
-      // Generate email sequence using AI service
+      // Generate email sequence using AI service with comprehensive business context
       const emailSequence = await aiEmailService.generateEmailSequence({
         campaignType,
         industry,
@@ -34,7 +45,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         emailCount,
         tone,
         brandName,
-        template
+        template,
+        // Enhanced business context
+        productService,
+        uniqueSellingPoint,
+        customerPainPoints,
+        competitiveDifferentiator,
+        priceRange,
+        currentMarketing,
+        audienceAge,
+        audienceGender,
+        audienceIncome,
+        purchaseMotivation
       });
 
       res.json({
