@@ -110,10 +110,10 @@ export default function AIAdLauncher() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const mockCopy = {
-      professional: `Transform your ${productService} experience with our proven solution. Join thousands of satisfied customers who've already made the switch. Get started today and see results within 30 days.`,
-      casual: `Hey there! Looking for an amazing ${productService}? We've got you covered! Our customers love us and we think you will too. Check it out - no boring sales pitch, just good stuff!`,
-      urgent: `⚡ LIMITED TIME: Get ${productService} now! Don't miss out on this exclusive offer. Only available for the next 48 hours. Act fast before it's gone!`,
-      friendly: `We're excited to help you with ${productService}! Our friendly team has helped thousands of people just like you. Let's chat about how we can make your life easier!`
+      professional: `🎯 STOP Wasting Money on ${productService} That Don't Work!\n\nListen, ${audience}... I know you're skeptical. You've been burned before by "miracle solutions" that promised the world and delivered nothing.\n\nBut here's the brutal truth: While you're sitting there doing nothing, your competitors are already using this proven ${productService.toLowerCase()} system to dominate the market.\n\n✅ PROVEN: 2,847 clients achieved results in 30 days\n✅ GUARANTEED: Full refund if you don't see results\n✅ EXCLUSIVE: Only 50 spots available this month\n\nFACT: Every day you wait costs you $247 in lost opportunities.\n\nYour two choices:\n1. Keep struggling with outdated methods\n2. Join the winners who took action\n\n👉 Click NOW - Your Future Self Will Thank You!`,
+      casual: `Hey ${audience.toLowerCase()}... Can I be brutally honest? 👋\n\nYou're probably thinking "Another ${productService.toLowerCase()} pitch? Yeah right..."\n\nI get it. I was skeptical too. Tried everything. Wasted $3,000+.\n\nThen I found THIS system. (Changed everything)\n\nLook, I'm not gonna sugarcoat it:\n• Takes 2-3 weeks to see results\n• You'll need to follow the process exactly\n• Not for lazy people\n\nBUT... if you're serious about success:\n📈 Sarah made $12K in month 1\n📈 Mike quit his job after 6 weeks\n📈 Lisa doubled her income in 90 days\n\nProof inside. No BS. No hype.\n\n👆 See the evidence yourself`,
+      urgent: `🚨 FINAL WARNING: This ${productService} Opportunity Expires in 11 Hours!\n\nListen ${audience.toUpperCase()}, I'll be straight with you...\n\nWhile you've been "thinking about it," 847 smart people already secured their spot.\n\nOnly 53 LEFT.\n\nHere's what happens when these spots are gone:\n❌ Price jumps from $97 to $497\n❌ Bonuses worth $1,200 disappear\n❌ You wait 6 months for the next opening\n\nI've seen too many people miss out and regret it for months.\n\nDon't be that person who says "I wish I had acted."\n\nYour last chance is RIGHT NOW.\n\n⏰ 11 hours left\n⏰ 53 spots remaining\n⏰ $1,200 in bonuses included\n\n🔥 SECURE YOUR SPOT BEFORE THE DEADLINE!`,
+      friendly: `Hi ${audience.toLowerCase()}! 😊\n\nI know what you're thinking... "Another person trying to sell me something."\n\nFair enough. You should be skeptical.\n\nBut before you scroll past, let me share why this ${productService.toLowerCase()} is different:\n\n🎯 Created by someone who actually USED it (not just teaches it)\n🎯 Tested with 1,000+ real people like you\n🎯 Comes with a "prove it works" guarantee\n\nLook, I could flood you with testimonials, but actions speak louder than words.\n\nThat's why I'm giving you a 30-day trial. If it doesn't work for you, keep the bonuses and get your money back.\n\nNo risk. All reward.\n\n💙 Ready to see if this works for you?`
     };
     
     return mockCopy[tone as keyof typeof mockCopy] || mockCopy.professional;
@@ -226,7 +226,38 @@ export default function AIAdLauncher() {
     isAuditing: false
   });
 
-  // Handler functions
+  // New enhanced AI features state
+  const [carouselAdState, setCarouselAdState] = useState({
+    funnel: '',
+    audience: '',
+    isGenerating: false,
+    generatedAds: [] as any[]
+  });
+
+  const [videoAdState, setVideoAdState] = useState({
+    funnel: '',
+    audience: '',
+    tone: 'professional',
+    isGenerating: false,
+    generatedScript: ''
+  });
+
+  const [targetingPresetsState, setTargetingPresetsState] = useState({
+    business: '',
+    audience: '',
+    isGenerating: false,
+    generatedPresets: [] as any[]
+  });
+
+  const [multiPlatformState, setMultiPlatformState] = useState({
+    funnel: '',
+    audience: '',
+    selectedPlatforms: [] as string[],
+    isGenerating: false,
+    generatedCopies: {} as any
+  });
+
+  // Enhanced AI handler functions for professional marketing
   const handleGenerateCopy = async () => {
     if (!copyGeneratorState.productService || !copyGeneratorState.audience || !copyGeneratorState.tone) {
       alert('Please fill in all fields');
@@ -246,6 +277,170 @@ export default function AIAdLauncher() {
       setCopyGeneratorState(prev => ({ ...prev, isGenerating: false }));
       alert('Error generating copy. Please try again.');
     }
+  };
+
+  const handleGenerateCarouselAds = async () => {
+    if (!carouselAdState.funnel || !carouselAdState.audience) {
+      alert('Please fill in funnel and audience fields');
+      return;
+    }
+    
+    setCarouselAdState(prev => ({ ...prev, isGenerating: true }));
+    
+    // Simulate AI generating carousel ads
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
+    const mockCarouselAds = [
+      {
+        id: 1,
+        title: "The Problem",
+        headline: `Why ${carouselAdState.audience} Struggle with ${carouselAdState.funnel}`,
+        description: "Most people fail because they don't know these 3 hidden obstacles...",
+        image: "🚫"
+      },
+      {
+        id: 2,
+        title: "The Solution",
+        headline: `The ${carouselAdState.funnel} System That Actually Works`,
+        description: "This proven 3-step framework has generated over $2.4M in results...",
+        image: "✅"
+      },
+      {
+        id: 3,
+        title: "Social Proof",
+        headline: "Real Results From Real People",
+        description: "See how Sarah went from $0 to $10K/month in just 90 days...",
+        image: "📈"
+      },
+      {
+        id: 4,
+        title: "The Offer",
+        headline: `Get ${carouselAdState.funnel} Training (Limited Time)`,
+        description: "Join 2,847 others who transformed their business. Only 47 spots left!",
+        image: "🎯"
+      }
+    ];
+    
+    setCarouselAdState(prev => ({ ...prev, generatedAds: mockCarouselAds, isGenerating: false }));
+  };
+
+  const handleGenerateVideoScript = async () => {
+    if (!videoAdState.funnel || !videoAdState.audience) {
+      alert('Please fill in funnel and audience fields');
+      return;
+    }
+    
+    setVideoAdState(prev => ({ ...prev, isGenerating: true }));
+    
+    // Simulate AI generating video script
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    const mockVideoScript = `🎬 VIDEO AD SCRIPT - ${videoAdState.funnel.toUpperCase()}\n\n[HOOK - 0-3 seconds]\n"Stop! If you're a ${videoAdState.audience.toLowerCase()} struggling with ${videoAdState.funnel.toLowerCase()}, this will change everything..."\n\n[PROBLEM - 3-8 seconds]\n"I know you've tried everything. Downloaded the free PDFs. Watched the YouTube videos. Maybe even bought a few courses.\n\nBut you're still stuck, right?"\n\n[AGITATE - 8-15 seconds]\n"Meanwhile, your competitors are crushing it. They're getting the results you want. And every day you wait, you fall further behind.\n\nThe truth? It's not your fault. You just don't have the right system."\n\n[SOLUTION - 15-25 seconds]\n"That's why I created this ${videoAdState.funnel} framework. It's the exact system that helped me go from struggling to generating $50K/month.\n\nAnd now, 2,847 people have used it to transform their business."\n\n[PROOF - 25-35 seconds]\n"Like Sarah, who made $12K in her first month. Or Mike, who quit his job after 6 weeks. Real people. Real results."\n\n[CALL TO ACTION - 35-45 seconds]\n"Look, I could charge $2,000 for this. But for the next 48 hours, you can get everything for just $97.\n\nClick the link below. Your future self will thank you."\n\n[URGENCY - 45-50 seconds]\n"But hurry. This offer expires in 48 hours. Don't be the person who says 'I wish I had acted.'"\n\n[FINAL CTA - 50-60 seconds]\n"Click now. Take action. Your breakthrough is waiting."\n\n[END SCREEN]\n"👆 CLICK HERE TO GET STARTED"`;
+    
+    setVideoAdState(prev => ({ ...prev, generatedScript: mockVideoScript, isGenerating: false }));
+  };
+
+  const handleGenerateTargetingPresets = async () => {
+    if (!targetingPresetsState.business || !targetingPresetsState.audience) {
+      alert('Please fill in business and audience fields');
+      return;
+    }
+    
+    setTargetingPresetsState(prev => ({ ...prev, isGenerating: true }));
+    
+    // Simulate AI generating targeting presets
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const mockPresets = [
+      {
+        id: 1,
+        name: "High-Intent Warm Audience",
+        description: "People who visited your site but didn't buy",
+        targeting: {
+          demographics: "Age: 25-45, All genders, College+",
+          interests: [`${targetingPresetsState.business}`, "Online Learning", "Business Growth"],
+          behaviors: "Visited website in last 30 days, Didn't purchase",
+          lookalike: "Based on email subscribers (1%)"
+        },
+        expectedCPA: "$15-25",
+        estimatedReach: "45,000-78,000"
+      },
+      {
+        id: 2,
+        name: "Cold Audience - Competitor Interest",
+        description: "People interested in your competitors",
+        targeting: {
+          demographics: "Age: 28-50, All genders, College+",
+          interests: ["Digital Marketing", "Online Business", "Entrepreneurship"],
+          behaviors: "Engaged with competitor content, Small business owners",
+          lookalike: "Based on purchasers (2%)"
+        },
+        expectedCPA: "$28-40",
+        estimatedReach: "120,000-250,000"
+      },
+      {
+        id: 3,
+        name: "Retargeting High-Value Prospects",
+        description: "People who engaged but need more nurturing",
+        targeting: {
+          demographics: "Age: 30-55, All genders, College+",
+          interests: [`${targetingPresetsState.business}`, "Professional Development"],
+          behaviors: "Clicked ads, Watched videos 50%+, Didn't convert",
+          lookalike: "Based on high-value customers (1%)"
+        },
+        expectedCPA: "$12-18",
+        estimatedReach: "15,000-32,000"
+      }
+    ];
+    
+    setTargetingPresetsState(prev => ({ ...prev, generatedPresets: mockPresets, isGenerating: false }));
+  };
+
+  const handleGenerateMultiPlatformCopy = async () => {
+    if (!multiPlatformState.funnel || !multiPlatformState.audience || multiPlatformState.selectedPlatforms.length === 0) {
+      alert('Please fill in all fields and select at least one platform');
+      return;
+    }
+    
+    setMultiPlatformState(prev => ({ ...prev, isGenerating: true }));
+    
+    // Simulate AI generating platform-specific copy
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    const mockPlatformCopies = {
+      facebook: {
+        tone: "value-based",
+        copy: `🎯 ATTENTION ${multiPlatformState.audience.toUpperCase()}!\n\nAre you tired of watching others succeed with ${multiPlatformState.funnel.toLowerCase()} while you're stuck?\n\nHere's the truth: You don't need more information. You need a proven SYSTEM.\n\n✅ Step-by-step framework\n✅ Real case studies\n✅ 30-day money-back guarantee\n\nOver 2,847 people have already transformed their business with this method.\n\nYour turn. Click the link below.`,
+        cta: "Get Instant Access Now →"
+      },
+      instagram: {
+        tone: "curiosity",
+        copy: `What if I told you that ${multiPlatformState.audience.toLowerCase()} are making $10K/month with ${multiPlatformState.funnel.toLowerCase()}... 🤔\n\nAnd they're doing it with a simple 3-step system that takes 30 minutes a day?\n\nI know it sounds too good to be true...\n\nBut I've got the proof. 📈\n\nSwipe to see the exact method that's working right now.\n\n#${multiPlatformState.funnel.replace(/\s+/g, '')} #Success #Business`,
+        cta: "Link in bio 👆"
+      },
+      tiktok: {
+        tone: "urgency",
+        copy: `POV: You're a ${multiPlatformState.audience.toLowerCase()} who's been struggling with ${multiPlatformState.funnel.toLowerCase()} for MONTHS 😩\n\nThen you discover this ONE system that changes everything...\n\nIt's literally what Sarah used to make $12K in her first month 🤯\n\nBut here's the catch: This method only works if you actually USE it\n\nReady to stop making excuses? 👇`,
+        cta: "Click the link NOW ⬇️"
+      },
+      youtube: {
+        tone: "testimonial-style",
+        copy: `"I was skeptical about ${multiPlatformState.funnel.toLowerCase()} systems. Tried everything. Wasted $3,000+.\n\nThen I found this method...\n\nIn 90 days, I went from $0 to $15K/month. My life completely changed.\n\nIf you're a ${multiPlatformState.audience.toLowerCase()} who's tired of struggling, this is for you.\n\nWatch the full training to see exactly how I did it."`,
+        cta: "👆 WATCH THE TRAINING"
+      },
+      google: {
+        tone: "value-based",
+        copy: `${multiPlatformState.funnel} System for ${multiPlatformState.audience}\n\nProven Method | 2,847 Success Stories | 30-Day Guarantee\n\nTired of struggling? Get the exact system that generated $2.4M in results.\n\n✓ Step-by-step training\n✓ Real case studies\n✓ Money-back guarantee\n\nJoin thousands who've already transformed their business.`,
+        cta: "Get Started Today"
+      }
+    };
+    
+    const generatedCopies = {};
+    multiPlatformState.selectedPlatforms.forEach(platform => {
+      generatedCopies[platform] = mockPlatformCopies[platform];
+    });
+    
+    setMultiPlatformState(prev => ({ ...prev, generatedCopies, isGenerating: false }));
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1384,10 +1579,10 @@ export default function AIAdLauncher() {
                       <SelectValue placeholder="Select tone" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="professional">Professional</SelectItem>
-                      <SelectItem value="casual">Casual</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                      <SelectItem value="friendly">Friendly</SelectItem>
+                      <SelectItem value="professional">Professional (Skeptical Audience)</SelectItem>
+                      <SelectItem value="casual">Casual (Honest & Direct)</SelectItem>
+                      <SelectItem value="urgent">Urgent (Scarcity Driven)</SelectItem>
+                      <SelectItem value="friendly">Friendly (Trust Building)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1568,6 +1763,246 @@ export default function AIAdLauncher() {
                       <li>Targeting refinements</li>
                       <li>Budget recommendations</li>
                     </ul>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Enhanced AI Features */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>🎯 Carousel/Image Ad Generator</CardTitle>
+                <CardDescription>Generate complete carousel ads with branded templates for any funnel</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Funnel/Product</Label>
+                  <Input 
+                    placeholder="e.g., Confidence Funnel, Lead Generation Course..." 
+                    value={carouselAdState.funnel}
+                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, funnel: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Female entrepreneurs, 25-35..." 
+                    value={carouselAdState.audience}
+                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <Button className="w-full" onClick={handleGenerateCarouselAds} disabled={carouselAdState.isGenerating}>
+                  <Zap className="w-4 h-4 mr-2" />
+                  {carouselAdState.isGenerating ? 'Generating Carousel...' : 'Generate Carousel Ads'}
+                </Button>
+                {carouselAdState.generatedAds.length > 0 && (
+                  <div className="mt-4 space-y-3">
+                    <Label className="text-sm font-medium">Generated Carousel Ads:</Label>
+                    {carouselAdState.generatedAds.map((ad: any, index: number) => (
+                      <div key={index} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">{ad.title}</span>
+                          <span className="text-2xl">{ad.image}</span>
+                        </div>
+                        <p className="font-medium text-sm mb-1">{ad.headline}</p>
+                        <p className="text-xs text-muted-foreground">{ad.description}</p>
+                      </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="w-full">
+                      Export as Templates
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>🎥 Video Ad Script Generator</CardTitle>
+                <CardDescription>Create compelling video ad scripts with AI avatars or voice-overs</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Funnel/Product</Label>
+                  <Input 
+                    placeholder="e.g., Confidence Funnel, Lead Generation Course..." 
+                    value={videoAdState.funnel}
+                    onChange={(e) => setVideoAdState(prev => ({ ...prev, funnel: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Female entrepreneurs, 25-35..." 
+                    value={videoAdState.audience}
+                    onChange={(e) => setVideoAdState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Tone</Label>
+                  <Select value={videoAdState.tone} onValueChange={(value) => setVideoAdState(prev => ({ ...prev, tone: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select tone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional (Authority)</SelectItem>
+                      <SelectItem value="casual">Casual (Relatable)</SelectItem>
+                      <SelectItem value="urgent">Urgent (Scarcity)</SelectItem>
+                      <SelectItem value="testimonial">Testimonial (Social Proof)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button className="w-full" onClick={handleGenerateVideoScript} disabled={videoAdState.isGenerating}>
+                  <Zap className="w-4 h-4 mr-2" />
+                  {videoAdState.isGenerating ? 'Creating Script...' : 'Generate Video Script'}
+                </Button>
+                {videoAdState.generatedScript && (
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <Label className="text-sm font-medium">Generated Video Script:</Label>
+                    <pre className="text-xs mt-2 whitespace-pre-wrap">{videoAdState.generatedScript}</pre>
+                    <div className="flex space-x-2 mt-3">
+                      <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(videoAdState.generatedScript)}>
+                        Copy Script
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        Generate Voice-Over
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>🔧 Targeting Presets Builder</CardTitle>
+                <CardDescription>AI-powered audience persona builder with targeting presets</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Business Type</Label>
+                  <Input 
+                    placeholder="e.g., Online coaching, SaaS, E-commerce..." 
+                    value={targetingPresetsState.business}
+                    onChange={(e) => setTargetingPresetsState(prev => ({ ...prev, business: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Female entrepreneurs, Small business owners..." 
+                    value={targetingPresetsState.audience}
+                    onChange={(e) => setTargetingPresetsState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <Button className="w-full" onClick={handleGenerateTargetingPresets} disabled={targetingPresetsState.isGenerating}>
+                  <Zap className="w-4 h-4 mr-2" />
+                  {targetingPresetsState.isGenerating ? 'Building Presets...' : 'Generate Targeting Presets'}
+                </Button>
+                {targetingPresetsState.generatedPresets.length > 0 && (
+                  <div className="mt-4 space-y-3">
+                    <Label className="text-sm font-medium">Generated Targeting Presets:</Label>
+                    {targetingPresetsState.generatedPresets.map((preset: any, index: number) => (
+                      <div key={index} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">{preset.name}</span>
+                          <Badge variant="outline">{preset.expectedCPA}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-2">{preset.description}</p>
+                        <div className="space-y-1 text-xs">
+                          <p><strong>Demographics:</strong> {preset.targeting.demographics}</p>
+                          <p><strong>Interests:</strong> {preset.targeting.interests.join(', ')}</p>
+                          <p><strong>Behaviors:</strong> {preset.targeting.behaviors}</p>
+                          <p><strong>Lookalike:</strong> {preset.targeting.lookalike}</p>
+                          <p><strong>Reach:</strong> {preset.estimatedReach}</p>
+                        </div>
+                      </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="w-full">
+                      Save All Presets
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>📱 Multi-Platform Copy Generator</CardTitle>
+                <CardDescription>Generate platform-specific copy with different tones for each channel</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Funnel/Product</Label>
+                  <Input 
+                    placeholder="e.g., Confidence Funnel, Lead Generation Course..." 
+                    value={multiPlatformState.funnel}
+                    onChange={(e) => setMultiPlatformState(prev => ({ ...prev, funnel: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Female entrepreneurs, 25-35..." 
+                    value={multiPlatformState.audience}
+                    onChange={(e) => setMultiPlatformState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Select Platforms</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['facebook', 'instagram', 'tiktok', 'youtube', 'google'].map(platform => (
+                      <div key={platform} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={platform}
+                          checked={multiPlatformState.selectedPlatforms.includes(platform)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setMultiPlatformState(prev => ({ 
+                                ...prev, 
+                                selectedPlatforms: [...prev.selectedPlatforms, platform]
+                              }));
+                            } else {
+                              setMultiPlatformState(prev => ({ 
+                                ...prev, 
+                                selectedPlatforms: prev.selectedPlatforms.filter(p => p !== platform)
+                              }));
+                            }
+                          }}
+                        />
+                        <label htmlFor={platform} className="text-sm capitalize">{platform}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <Button className="w-full" onClick={handleGenerateMultiPlatformCopy} disabled={multiPlatformState.isGenerating}>
+                  <Zap className="w-4 h-4 mr-2" />
+                  {multiPlatformState.isGenerating ? 'Generating Copy...' : 'Generate Multi-Platform Copy'}
+                </Button>
+                {Object.keys(multiPlatformState.generatedCopies).length > 0 && (
+                  <div className="mt-4 space-y-3">
+                    <Label className="text-sm font-medium">Generated Platform Copy:</Label>
+                    {Object.entries(multiPlatformState.generatedCopies).map(([platform, copy]: [string, any]) => (
+                      <div key={platform} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm capitalize">{platform}</span>
+                          <Badge variant="outline">{copy.tone}</Badge>
+                        </div>
+                        <p className="text-xs mb-2">{copy.copy}</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium text-blue-600">{copy.cta}</p>
+                          <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(copy.copy)}>
+                            Copy
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="w-full">
+                      Export All Copy
+                    </Button>
                   </div>
                 )}
               </CardContent>
