@@ -1361,10 +1361,10 @@ export default function EmailSequenceBuilder() {
           <Button 
             variant="ghost" 
             onClick={() => setView('campaigns')}
-            className="absolute left-4 top-4"
+            className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            Back to Email Designer
           </Button>
           <h1 className="text-3xl font-bold mb-2">Choose Campaign Type</h1>
           <p className="text-muted-foreground">
@@ -1743,11 +1743,11 @@ export default function EmailSequenceBuilder() {
         <div className="mb-8">
           <Button 
             variant="ghost" 
-            onClick={() => setView('campaign-type')}
+            onClick={() => currentCreationFlow === 'ai' ? setView('personal-info') : setView('campaign-type')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Campaign Type
+            {currentCreationFlow === 'ai' ? 'Back to Business Info' : 'Back to Campaign Type'}
           </Button>
           <h1 className="text-3xl font-bold mb-2">
             Choose {selectedCampaignType === 'nurture' ? 'Nurture Sequence' : 'Broadcast Email'} Template
