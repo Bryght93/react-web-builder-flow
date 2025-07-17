@@ -1,0 +1,74 @@
+B. Campaign Creation & Management
+🔹 Core Features:
+•	Broadcast Campaigns (One-time emails)
+•	Email Templates
+•	A/B Testing
+•	Send Time Optimization
+🔸 Components:
+•	CreateCampaignWizard: Step-by-step email creator
+•	TemplateLibrary: Prebuilt and saved templates
+•	RichEmailEditor: Drag-and-drop + HTML + AI writing
+•	A/BTestModule: Add subject line variants, content versions
+•	ScheduleSendModal: Pick date, time, or use AI to suggest
+________________________________________
+✅ C. Automation / Sequences
+🔹 Core Features:
+•	Visual Automation Builder
+•	Trigger-Based Sequences
+•	Conditional Logic
+•	Delays, Time-based Waits
+🔸 Components:
+•	AutomationCanvas: Visual flow editor (like Sendlane/ConvertKit)
+•	TriggerBlock: Subscribes, tag added, purchase made, etc.
+•	ActionBlock: Send email, add tag, wait, move to sequence
+•	ConditionBlock: If/Else logic branches
+•	SequenceLibrary: Prebuilt flows (e.g. welcome, cart abandonment)
+✅ E. Email Design Tools
+🔹 Core Features:
+•	Drag-and-Drop Email Builder
+•	Mobile Responsive Design
+•	Custom HTML Option
+•	Image & Media Embeds
+🔸 Components:
+•	BlockLibrary: Text, images, CTA, button, spacer, divider
+•	StyleSettings: Fonts, spacing, colors, background
+•	PreviewPanel: Desktop and mobile toggle
+•	ImageUploader: With built-in optimizer or CDN
+•	SavedLayouts: Reuse layout blocks across campaigns
+
+________________________________________
+•	en
+
+________________________________________
+✅ J. Smart AI Tools
+🔹 Core Features:
+•	AI Email Writing Assistant
+•	Subject Line Generator
+•	Smart Send Time Prediction
+•	AI Persona Targeting
+🔸 Components:
+•	AIWriterModal: Generate full emails or sections
+•	AISubjectSuggestor: Headlines + emoji variations
+•	SmartSendToggle: Enable AI to pick best delivery time
+PersonaScanner: Uses subscriber data
+
+ G. Analytics & Reporting
+🔹 Core Features:
+•	Open Rates, CTR, Bounce, Unsubscribe
+•	Per Email and Per Campaign Reporting
+•	Heatmaps (Clicks on email)
+•	Revenue Attribution
+🔸 Components:
+•	CampaignDashboard: Lists stats for each sent email
+•	EmailDetailAnalytics: Open graph, click graph, bounce log
+•	HeatmapOverlay: Shows which sections were clicked most
+•	TagAnalytics: Shows performance by segment/tag
+•	RevenueChart: From eCommerce/checkout connection
+Add Unique Killer Features other email marketing platforms don’t have
+Here are undeniably next-gen features you should include — they’ll beat traditional tools without adding complexity:
+💡 Smart AI + Autopilot Layer
+Feature	Why It Beats Others
+Persona-Driven Content	Uses tags or behavior to rewrite the email tone (e.g. fun for Gen Z, formal for professionals)
+Smart Send Time AI	Learns best send time for each contact (Sendlane has it, but few others)
+Smart Tagging Assistant	Recommends how to auto-tag users based on behavior (e.g. "Add 'hot lead' tag if 3 emails clicked")
+
