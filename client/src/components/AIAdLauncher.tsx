@@ -2145,7 +2145,7 @@ export default function AIAdLauncher() {
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{account.platform}</p>
-                      <p className="text-sm text-muted-foreground">{account.account</p>
+                      <p className="text-sm text-muted-foreground">{account.account}</p>
                     </div>
                     <Badge variant={account.status === "Connected" ? "default" : "outline"}>
                       {account.status}
