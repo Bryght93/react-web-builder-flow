@@ -1466,3 +1466,919 @@ export default function AIAdLauncher() {
         <TabsContent value="library" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold">Ad Library</h2>
+            <Button variant="outline">
+              <FileText className="w-4 h-4 mr-2" />
+              Import Ad
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Saved Ad Copies</CardTitle>
+                <CardDescription>Your generated ad content</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="p-3 border rounded-lg">
+                    <p className="text-sm font-medium">Lead Magnet Ad</p>
+                    <p className="text-xs text-muted-foreground">Professional tone • Saved to library</p>
+                  </div>
+                  <Button variant="outline" className="w-full">View All</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Video Scripts</CardTitle>
+                <CardDescription>Generated video ad scripts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="p-3 border rounded-lg">
+                    <p className="text-sm font-medium">Course Launch Script</p>
+                    <p className="text-xs text-muted-foreground">60 seconds • Saved to library</p>
+                  </div>
+                  <Button variant="outline" className="w-full">View All</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Carousel Ads</CardTitle>
+                <CardDescription>Image ad creatives</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="p-3 border rounded-lg">
+                    <p className="text-sm font-medium">Product Showcase</p>
+                    <p className="text-xs text-muted-foreground">5 slides • Saved to library</p>
+                  </div>
+                  <Button variant="outline" className="w-full">View All</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="audiences" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Audience Management</h2>
+            <Button variant="outline">
+              <Users className="w-4 h-4 mr-2" />
+              Create Audience
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Saved Audiences</CardTitle>
+                <CardDescription>Your custom audience segments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { name: "Warm Leads", size: "2,847", description: "Website visitors, didn't convert" },
+                    { name: "Course Buyers", size: "423", description: "Previous course purchasers" },
+                    { name: "Email Subscribers", size: "5,621", description: "Newsletter subscribers" }
+                  ].map((audience, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">{audience.name}</p>
+                        <p className="text-sm text-muted-foreground">{audience.description}</p>
+                      </div>
+                      <Badge variant="outline">{audience.size}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Audience Builder</CardTitle>
+                <CardDescription>Create audiences with AI assistance</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Business Type</Label>
+                  <Input placeholder="e.g., Online Course Creator" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Customer</Label>
+                  <Textarea placeholder="Describe your ideal customer..." rows={3} />
+                </div>
+                <Button className="w-full">
+                  <Zap className="w-4 h-4 mr-2" />
+                  Generate Audience Suggestions
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Campaign Analytics</h2>
+            <Button variant="outline">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Export Report
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Total Spend</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">$2,847</div>
+                <p className="text-xs text-muted-foreground">This month</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Conversions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">142</div>
+                <p className="text-xs text-muted-foreground">+18% from last month</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">ROAS</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">4.2x</div>
+                <p className="text-xs text-muted-foreground">Return on ad spend</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Cost per Lead</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">$12.50</div>
+                <p className="text-xs text-muted-foreground">-15% improvement</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Click-through Rate</span>
+                      <span>2.4%</span>
+                    </div>
+                    <Progress value={24} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Conversion Rate</span>
+                      <span>8.7%</span>
+                    </div>
+                    <Progress value={87} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Ad Relevance Score</span>
+                      <span>9.2/10</span>
+                    </div>
+                    <Progress value={92} className="h-2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Platform Performance</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { platform: "Facebook", spend: "$1,420", conversions: "67", roas: "4.8x" },
+                    { platform: "Instagram", spend: "$892", conversions: "34", roas: "3.9x" },
+                    { platform: "Google", spend: "$535", conversions: "41", roas: "4.1x" }
+                  ].map((platform, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">{platform.platform}</p>
+                        <p className="text-sm text-muted-foreground">{platform.spend} spent</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">{platform.conversions} conversions</p>
+                        <p className="text-sm text-muted-foreground">{platform.roas} ROAS</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="ai-assist" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-semibold">AI Assist</h2>
+              <p className="text-muted-foreground">Advanced AI tools for marketing professionals</p>
+            </div>
+            <Badge variant="outline" className="bg-gradient-to-r from-purple-100 to-blue-100">
+              ✨ Pro Features
+            </Badge>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Multi-Platform Ad Copy Generator - Priority 1 */}
+            <Card>
+              <CardHeader>
+                <CardTitle>🌐 Multi-Platform Ad Copy Generator</CardTitle>
+                <CardDescription>Generate platform-optimized ad copy for multiple channels simultaneously</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Funnel/Product</Label>
+                  <Input 
+                    placeholder="e.g., 30-Day Copywriting Course, Lead Generation Webinar..." 
+                    value={multiPlatformState.funnel}
+                    onChange={(e) => setMultiPlatformState(prev => ({ ...prev, funnel: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Entrepreneurs, 25-45, interested in online business..." 
+                    value={multiPlatformState.audience}
+                    onChange={(e) => setMultiPlatformState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Tone</Label>
+                  <Select value={multiPlatformState.tone} onValueChange={(value) => setMultiPlatformState(prev => ({ ...prev, tone: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select tone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional</SelectItem>
+                      <SelectItem value="casual">Casual/Friendly</SelectItem>
+                      <SelectItem value="urgent">Urgent/Scarcity</SelectItem>
+                      <SelectItem value="friendly">Warm/Personal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Select Platforms</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: "facebook", name: "Facebook", icon: "📘" },
+                      { id: "instagram", name: "Instagram", icon: "📸" },
+                      { id: "tiktok", name: "TikTok", icon: "🎵" },
+                      { id: "youtube", name: "YouTube", icon: "📺" },
+                      { id: "google", name: "Google Ads", icon: "🔍" }
+                    ].map((platform) => (
+                      <div 
+                        key={platform.id}
+                        className={`p-2 border rounded cursor-pointer text-center text-xs ${
+                          multiPlatformState.selectedPlatforms.includes(platform.id) 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        }`}
+                        onClick={() => {
+                          const platforms = multiPlatformState.selectedPlatforms.includes(platform.id)
+                            ? multiPlatformState.selectedPlatforms.filter(p => p !== platform.id)
+                            : [...multiPlatformState.selectedPlatforms, platform.id];
+                          setMultiPlatformState(prev => ({ ...prev, selectedPlatforms: platforms }));
+                        }}
+                      >
+                        <div>{platform.icon}</div>
+                        <div>{platform.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleGenerateMultiPlatformCopy} 
+                  disabled={multiPlatformState.isGenerating}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {multiPlatformState.isGenerating ? 'Generating Copy...' : 'Generate Platform-Specific Copy'}
+                </Button>
+
+                {/* Display generated copies */}
+                {Object.keys(multiPlatformState.generatedCopies).length > 0 && (
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Generated Copy:</h4>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => regenerateContent('multiplatform', multiPlatformState)}
+                        >
+                          🔄 Regenerate
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          📚 Save to Library
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto space-y-3">
+                      {Object.entries(multiPlatformState.generatedCopies).map(([platform, copy]: [string, any]) => (
+                        <div key={platform} className="border rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <h5 className="font-medium capitalize">{platform}</h5>
+                            <Badge variant="outline">{copy.tone}</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground whitespace-pre-line mb-2">
+                            {copy.copy}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium">CTA: {copy.cta}</span>
+                            <div className="flex space-x-1">
+                              <Button size="sm" variant="outline">Copy</Button>
+                              <Button size="sm" variant="outline">Edit</Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Video Ad Script Generator - Priority 2 */}
+            <Card>
+              <CardHeader>
+                <CardTitle>🎬 Video Ad Script Generator</CardTitle>
+                <CardDescription>Create compelling video ad scripts with AI assistance and turn them into videos</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Funnel/Product</Label>
+                  <Input 
+                    placeholder="e.g., Online Course, SaaS Product, Coaching Program..." 
+                    value={videoAdState.funnel}
+                    onChange={(e) => setVideoAdState(prev => ({ ...prev, funnel: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Small business owners, content creators..." 
+                    value={videoAdState.audience}
+                    onChange={(e) => setVideoAdState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Script Tone</Label>
+                  <Select value={videoAdState.tone} onValueChange={(value) => setVideoAdState(prev => ({ ...prev, tone: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select tone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional</SelectItem>
+                      <SelectItem value="casual">Casual</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                      <SelectItem value="testimonial">Testimonial-style</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleGenerateVideoScript} 
+                  disabled={videoAdState.isGenerating}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {videoAdState.isGenerating ? 'Generating Script...' : 'Generate Video Script'}
+                </Button>
+
+                {/* Display generated script */}
+                {videoAdState.generatedScript && (
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Generated Script:</h4>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => regenerateContent('video', videoAdState)}
+                        >
+                          🔄 Regenerate
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          📚 Save to Library
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="border rounded-lg p-3 max-h-64 overflow-y-auto">
+                      <pre className="text-sm whitespace-pre-line text-muted-foreground">
+                        {videoAdState.generatedScript}
+                      </pre>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" className="flex-1">
+                        🎥 Turn to Video
+                      </Button>
+                      <Button size="sm" variant="outline" className="flex-1">
+                        🎤 Add Voiceover
+                      </Button>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="outline" className="flex-1">
+                        ✏️ Edit Manually
+                      </Button>
+                      <Button size="sm" variant="outline" className="flex-1">
+                        🤖 Edit with AI
+                      </Button>
+                    </div>
+                    <Button size="sm" variant="outline" className="w-full">
+                      📤 Export & Save
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Carousel/Image Ad Generator - Priority 3 */}
+            <Card>
+              <CardHeader>
+                <CardTitle>🎯 Carousel/Image Ad Generator</CardTitle>
+                <CardDescription>Generate carousel ads or creative image ads with AI-powered design</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Generation Type</Label>
+                  <Select 
+                    value={carouselAdState.generationType} 
+                    onValueChange={(value) => setCarouselAdState(prev => ({ ...prev, generationType: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose generation type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="carousel">📱 Carousel Ads (Multiple slides)</SelectItem>
+                      <SelectItem value="image-creative">🎨 Image Ad Creative (Single design)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Product/Service Name</Label>
+                  <Input 
+                    placeholder="e.g., 30 Days Copywriting Course" 
+                    value={carouselAdState.productName}
+                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, productName: e.target.value }))}
+                  />
+                </div>
+                {carouselAdState.generationType === 'image-creative' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Key Benefits (comma-separated)</Label>
+                      <Textarea 
+                        placeholder="e.g., Learn copywriting fast, Proven templates, Expert feedback, 30-day guarantee" 
+                        value={carouselAdState.keyBenefits}
+                        onChange={(e) => setCarouselAdState(prev => ({ ...prev, keyBenefits: e.target.value }))}
+                        rows={2}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Dimensions</Label>
+                        <Select 
+                          value={carouselAdState.dimensions} 
+                          onValueChange={(value) => setCarouselAdState(prev => ({ ...prev, dimensions: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select size" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1200x628">📘 Facebook Feed (1200x628)</SelectItem>
+                            <SelectItem value="1080x1080">📸 Instagram Square (1080x1080)</SelectItem>
+                            <SelectItem value="1080x1920">📱 Instagram Story (1080x1920)</SelectItem>
+                            <SelectItem value="1200x900">💼 LinkedIn (1200x900)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Color Scheme</Label>
+                        <Select 
+                          value={carouselAdState.colorScheme} 
+                          onValueChange={(value) => setCarouselAdState(prev => ({ ...prev, colorScheme: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select colors" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="blue-white">🔵 Blue & White</SelectItem>
+                            <SelectItem value="red-black">🔴 Red & Black</SelectItem>
+                            <SelectItem value="green-gold">🟢 Green & Gold</SelectItem>
+                            <SelectItem value="purple-pink">🟣 Purple & Pink</SelectItem>
+                            <SelectItem value="orange-blue">🟠 Orange & Blue</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {carouselAdState.generationType === 'carousel' && (
+                  <div className="space-y-2">
+                    <Label>Key Benefits/Features (comma-separated)</Label>
+                    <Textarea 
+                      placeholder="e.g., Learn fast, Get templates, Expert support, Money-back guarantee, Instant access" 
+                      value={carouselAdState.keyBenefits}
+                      onChange={(e) => setCarouselAdState(prev => ({ ...prev, keyBenefits: e.target.value }))}
+                      rows={2}
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Input 
+                    placeholder="e.g., Entrepreneurs, marketers, small business owners..." 
+                    value={carouselAdState.audience}
+                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleGenerateCarouselAds} 
+                  disabled={carouselAdState.isGenerating}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {carouselAdState.isGenerating ? 'Generating...' : 
+                    carouselAdState.generationType === 'carousel' ? 'Generate Carousel Ads' : 'Generate Image Creative'}
+                </Button>
+
+                {/* Display generated carousel ads */}
+                {carouselAdState.generatedAds.length > 0 && (
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Generated Carousel:</h4>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => regenerateContent('carousel', carouselAdState)}
+                        >
+                          🔄 Regenerate
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          📚 Save to Library
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto space-y-2">
+                      {carouselAdState.generatedAds.map((ad, index) => (
+                        <div key={ad.id} className="border rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <h5 className="font-medium">Slide {index + 1}: {ad.title}</h5>
+                            <span className="text-2xl">{ad.image}</span>
+                          </div>
+                          <h6 className="font-medium text-sm mb-1">{ad.headline}</h6>
+                          <p className="text-xs text-muted-foreground mb-2">{ad.description}</p>
+                          <div className="space-y-1">
+                            {ad.bulletPoints.map((point: string, idx: number) => (
+                              <div key={idx} className="text-xs flex items-center">
+                                <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
+                                {point}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Display generated image ad */}
+                {carouselAdState.generatedImageAd && (
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Generated Image Ad:</h4>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => regenerateContent('carousel', carouselAdState)}
+                        >
+                          🔄 Regenerate
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          📚 Save to Library
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="border rounded-lg p-4">
+                      <h5 className="font-bold text-lg mb-2">{carouselAdState.generatedImageAd.headline}</h5>
+                      <div className="space-y-1 mb-3">
+                        {carouselAdState.generatedImageAd.bulletPoints.map((point: string, idx: number) => (
+                          <div key={idx} className="text-sm flex items-center">
+                            <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                            {point}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="bg-primary text-primary-foreground p-2 rounded text-center font-bold text-sm">
+                        {carouselAdState.generatedImageAd.cta}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        <p><strong>Design:</strong> {carouselAdState.generatedImageAd.designElements.style}</p>
+                        <p><strong>Colors:</strong> {carouselAdState.generatedImageAd.designElements.colorScheme}</p>
+                        <p><strong>Size:</strong> {carouselAdState.generatedImageAd.designElements.dimensions}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Additional AI Tools */}
+            <Card>
+              <CardHeader>
+                <CardTitle>🎯 AI Targeting Preset Generator</CardTitle>
+                <CardDescription>Generate custom audience targeting presets for your business</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Business/Product</Label>
+                  <Input 
+                    placeholder="e.g., Online Fitness Coaching" 
+                    value={targetingPresetsState.business}
+                    onChange={(e) => setTargetingPresetsState(prev => ({ ...prev, business: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Ideal Customer</Label>
+                  <Textarea 
+                    placeholder="Describe your ideal customer demographics and interests..." 
+                    value={targetingPresetsState.audience}
+                    onChange={(e) => setTargetingPresetsState(prev => ({ ...prev, audience: e.target.value }))}
+                    rows={2}
+                  />
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleGenerateTargetingPresets} 
+                  disabled={targetingPresetsState.isGenerating}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {targetingPresetsState.isGenerating ? 'Generating Presets...' : 'Generate Targeting Presets'}
+                </Button>
+
+                {/* Display generated presets */}
+                {targetingPresetsState.generatedPresets.length > 0 && (
+                  <div className="space-y-3 mt-4">
+                    <h4 className="font-medium">Generated Targeting Presets:</h4>
+                    <div className="max-h-64 overflow-y-auto space-y-2">
+                      {targetingPresetsState.generatedPresets.map((preset) => (
+                        <div key={preset.id} className="border rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <h5 className="font-medium text-sm">{preset.name}</h5>
+                            <Badge variant="outline">{preset.expectedCPA}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mb-2">{preset.description}</p>
+                          <div className="text-xs space-y-1">
+                            <p><strong>Demographics:</strong> {preset.targeting.demographics}</p>
+                            <p><strong>Interests:</strong> {preset.targeting.interests.join(", ")}</p>
+                            <p><strong>Behaviors:</strong> {preset.targeting.behaviors}</p>
+                          </div>
+                          <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                            <span>Reach: {preset.estimatedReach}</span>
+                            <Button size="sm" variant="outline">Use Preset</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>📊 Visual Ad Analyzer</CardTitle>
+                <CardDescription>Analyze your ad visuals for performance optimization</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Upload Ad Creative</Label>
+                  <Input 
+                    type="file" 
+                    accept="image/*,video/*"
+                    onChange={handleFileUpload}
+                  />
+                </div>
+
+                {visualAnalyzerState.isAnalyzing && (
+                  <div className="text-center py-4">
+                    <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <p className="text-sm text-muted-foreground">Analyzing visual...</p>
+                  </div>
+                )}
+
+                {visualAnalyzerState.analysisResult && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Analysis Results:</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm">Engagement Score</span>
+                        <Badge variant="outline">{visualAnalyzerState.analysisResult.engagementScore}/100</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Color Balance</span>
+                        <Badge variant="outline">{visualAnalyzerState.analysisResult.colorBalance}/100</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Text Readability</span>
+                        <Badge variant="outline">{visualAnalyzerState.analysisResult.textReadability}/100</Badge>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <h5 className="font-medium text-sm">Suggestions:</h5>
+                      {visualAnalyzerState.analysisResult.suggestions.map((suggestion: string, index: number) => (
+                        <p key={index} className="text-xs text-muted-foreground">• {suggestion}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>🔍 Headline Variations Tester</CardTitle>
+                <CardDescription>Generate multiple headline variations for A/B testing</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Original Headline</Label>
+                  <Input 
+                    placeholder="Enter your current headline..." 
+                    value={headlineTesterState.originalHeadline}
+                    onChange={(e) => setHeadlineTesterState(prev => ({ ...prev, originalHeadline: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Optimization Goal</Label>
+                  <Select 
+                    value={headlineTesterState.optimizationGoal} 
+                    onValueChange={(value) => setHeadlineTesterState(prev => ({ ...prev, optimizationGoal: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select goal" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="clicks">More Clicks</SelectItem>
+                      <SelectItem value="conversions">More Conversions</SelectItem>
+                      <SelectItem value="engagement">More Engagement</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleGenerateHeadlines} 
+                  disabled={headlineTesterState.isGenerating}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {headlineTesterState.isGenerating ? 'Generating...' : 'Generate Variations'}
+                </Button>
+
+                {headlineTesterState.variations.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Headline Variations:</h4>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {headlineTesterState.variations.map((variation, index) => (
+                        <div key={index} className="p-2 border rounded text-sm">
+                          {variation}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>🕵️ Competitor Ad Audit</CardTitle>
+                <CardDescription>Analyze competitor ads and get improvement suggestions</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Competitor Ad URL</Label>
+                  <Input 
+                    placeholder="Paste competitor ad URL or Facebook ad library link..." 
+                    value={adAuditState.adUrl}
+                    onChange={(e) => setAdAuditState(prev => ({ ...prev, adUrl: e.target.value }))}
+                  />
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleAuditAd} 
+                  disabled={adAuditState.isAuditing}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {adAuditState.isAuditing ? 'Analyzing...' : 'Audit Competitor Ad'}
+                </Button>
+
+                {adAuditState.auditResult && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Audit Results:</h4>
+                      <Badge variant="outline">Score: {adAuditState.auditResult.score}/100</Badge>
+                    </div>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {adAuditState.auditResult.improvements.map((improvement: any, index: number) => (
+                        <div key={index} className="p-3 border rounded-lg">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-medium text-sm">{improvement.category}</span>
+                            <div className="flex space-x-1">
+                              <Badge variant="outline" className="text-xs">{improvement.impact}</Badge>
+                              <Badge variant={improvement.priority === "High" ? "default" : "secondary"} className="text-xs">
+                                {improvement.priority}
+                              </Badge>
+                            </div>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{improvement.suggestion}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Settings</h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Connected Accounts</CardTitle>
+                <CardDescription>Manage your social media and advertising accounts</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  {[
+                    { platform: "Facebook", account: "Your Business Page", status: "Connected" },
+                    { platform: "Instagram", account: "@yourbusiness", status: "Connected" },
+                    { platform: "Google Ads", account: "yourbusiness@gmail.com", status: "Not Connected" },
+                    { platform: "TikTok", account: "@yourbusiness", status: "Not Connected" }
+                  ].map((account, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">{account.platform}</p>
+                        <p className="text-sm text-muted-foreground">{account.account}</p>
+                      </div>
+                      <Badge variant={account.status === "Connected" ? "default" : "outline"}>
+                        {account.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Notification Preferences</CardTitle>
+                <CardDescription>Choose what notifications you want to receive</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  {[
+                    { label: "Campaign performance alerts", checked: true },
+                    { label: "Budget threshold warnings", checked: true },
+                    { label: "Weekly performance reports", checked: false },
+                    { label: "AI optimization suggestions", checked: true }
+                  ].map((notification, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-sm">{notification.label}</span>
+                      <Switch defaultChecked={notification.checked} />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
