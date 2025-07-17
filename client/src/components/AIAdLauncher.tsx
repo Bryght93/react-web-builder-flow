@@ -654,15 +654,7 @@ export default function AIAdLauncher() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3">
-                    <div className````text
-="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <p className="font-medium">Best Performing Ad</p>
-                      <p className="text-sm text-muted-foreground">Lead Magnet Campaign - 18% conversion rate</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                     <div>
                       <p className="font-medium">Optimization Opportunity</p>
                       <p className="text-sm text-muted-foreground">Increase budget on Instagram ads by 25%</p>
@@ -2153,7 +2145,7 @@ export default function AIAdLauncher() {
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{account.platform}</p>
-                      <p className="text-sm text-muted-foreground">{account.account}</p>
+                      <p className="text-sm text-muted-foreground">{account.account</p>
                     </div>
                     <Badge variant={account.status === "Connected" ? "default" : "outline"}>
                       {account.status}
