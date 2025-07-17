@@ -257,6 +257,7 @@ export default function AIAdLauncher() {
   const [multiPlatformState, setMultiPlatformState] = useState({
     funnel: '',
     audience: '',
+    tone: 'professional',
     selectedPlatforms: [] as string[],
     isGenerating: false,
     generatedCopies: {} as any
@@ -1594,57 +1595,6 @@ export default function AIAdLauncher() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ad Copy Generator</CardTitle>
-                <CardDescription>Generate compelling ad copy from your product details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Product/Service</Label>
-                  <Input 
-                    placeholder="Describe what you're promoting..." 
-                    value={copyGeneratorState.productService}
-                    onChange={(e) => setCopyGeneratorState(prev => ({ ...prev, productService: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Target Audience</Label>
-                  <Input 
-                    placeholder="Who is your ideal customer?" 
-                    value={copyGeneratorState.audience}
-                    onChange={(e) => setCopyGeneratorState(prev => ({ ...prev, audience: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Tone</Label>
-                  <Select value={copyGeneratorState.tone} onValueChange={(value) => setCopyGeneratorState(prev => ({ ...prev, tone: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select tone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="professional">Professional (Skeptical Audience)</SelectItem>
-                      <SelectItem value="casual">Casual (Honest & Direct)</SelectItem>
-                      <SelectItem value="urgent">Urgent (Scarcity Driven)</SelectItem>
-                      <SelectItem value="friendly">Friendly (Trust Building)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button className="w-full" onClick={handleGenerateCopy} disabled={copyGeneratorState.isGenerating}>
-                  <Zap className="w-4 h-4 mr-2" />
-                  {copyGeneratorState.isGenerating ? 'Generating...' : 'Generate Copy'}
-                </Button>
-                {copyGeneratorState.generatedCopy && (
-                  <div className="mt-4 p-4 bg-muted rounded-lg">
-                    <Label className="text-sm font-medium">Generated Copy:</Label>
-                    <p className="text-sm mt-2">{copyGeneratorState.generatedCopy}</p>
-                    <Button variant="outline" size="sm" className="mt-2" onClick={() => navigator.clipboard.writeText(copyGeneratorState.generatedCopy)}>
-                      Copy Text
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
 
             <Card>
               <CardHeader>
@@ -2095,8 +2045,8 @@ export default function AIAdLauncher() {
 
             <Card>
               <CardHeader>
-                <CardTitle>📱 Multi-Platform Copy Generator</CardTitle>
-                <CardDescription>Generate platform-specific copy with different tones for each channel</CardDescription>
+                <CardTitle>📱 Multi-Platform Ad Copy Generator</CardTitle>
+                <CardDescription>Generate platform-specific ad copy with different tones for each channel</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -2114,6 +2064,20 @@ export default function AIAdLauncher() {
                     value={multiPlatformState.audience}
                     onChange={(e) => setMultiPlatformState(prev => ({ ...prev, audience: e.target.value }))}
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label>Tone</Label>
+                  <Select value={multiPlatformState.tone || 'professional'} onValueChange={(value) => setMultiPlatformState(prev => ({ ...prev, tone: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select tone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional (Skeptical Audience)</SelectItem>
+                      <SelectItem value="casual">Casual (Honest & Direct)</SelectItem>
+                      <SelectItem value="urgent">Urgent (Scarcity Driven)</SelectItem>
+                      <SelectItem value="friendly">Friendly (Trust Building)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label>Select Platforms</Label>
