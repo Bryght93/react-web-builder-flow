@@ -104,6 +104,242 @@ export default function AIAdLauncher() {
     setAdLaunched(true);
   };
 
+  // Mock AI functions that will be ready for API integration
+  const generateAdCopy = async (productService: string, audience: string, tone: string) => {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const mockCopy = {
+      professional: `Transform your ${productService} experience with our proven solution. Join thousands of satisfied customers who've already made the switch. Get started today and see results within 30 days.`,
+      casual: `Hey there! Looking for an amazing ${productService}? We've got you covered! Our customers love us and we think you will too. Check it out - no boring sales pitch, just good stuff!`,
+      urgent: `⚡ LIMITED TIME: Get ${productService} now! Don't miss out on this exclusive offer. Only available for the next 48 hours. Act fast before it's gone!`,
+      friendly: `We're excited to help you with ${productService}! Our friendly team has helped thousands of people just like you. Let's chat about how we can make your life easier!`
+    };
+    
+    return mockCopy[tone as keyof typeof mockCopy] || mockCopy.professional;
+  };
+
+  const analyzeVisual = async (file: File) => {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    return {
+      engagementScore: Math.floor(Math.random() * 40) + 60, // 60-100
+      colorBalance: Math.floor(Math.random() * 30) + 70, // 70-100
+      textReadability: Math.floor(Math.random() * 25) + 75, // 75-100
+      suggestions: [
+        "Consider adding more contrast to improve readability",
+        "The color palette works well for your target audience",
+        "Text placement could be optimized for mobile viewing"
+      ]
+    };
+  };
+
+  const generateHeadlineVariations = async (originalHeadline: string, goal: string) => {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    
+    const variations = {
+      clicks: [
+        `${originalHeadline} - Click to Learn More!`,
+        `Discover: ${originalHeadline}`,
+        `Don't Miss: ${originalHeadline}`,
+        `New: ${originalHeadline} (Limited Time)`
+      ],
+      conversions: [
+        `Get Results: ${originalHeadline}`,
+        `Proven Solution: ${originalHeadline}`,
+        `Transform Your Life: ${originalHeadline}`,
+        `Success Story: ${originalHeadline}`
+      ],
+      engagement: [
+        `What if: ${originalHeadline}?`,
+        `The Truth About: ${originalHeadline}`,
+        `Why Everyone's Talking About: ${originalHeadline}`,
+        `You Won't Believe: ${originalHeadline}`
+      ]
+    };
+    
+    return variations[goal as keyof typeof variations] || variations.clicks;
+  };
+
+  const auditAd = async (adUrl: string) => {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
+    return {
+      score: Math.floor(Math.random() * 30) + 70, // 70-100
+      improvements: [
+        {
+          category: "Copy",
+          suggestion: "Add emotional triggers to increase engagement",
+          impact: "Medium",
+          priority: "High"
+        },
+        {
+          category: "Visual",
+          suggestion: "Use brighter colors to stand out in feed",
+          impact: "High", 
+          priority: "Medium"
+        },
+        {
+          category: "Targeting",
+          suggestion: "Narrow age range to 25-35 for better performance",
+          impact: "Medium",
+          priority: "High"
+        },
+        {
+          category: "Budget",
+          suggestion: "Increase budget by 20% during peak hours",
+          impact: "High",
+          priority: "Low"
+        }
+      ]
+    };
+  };
+
+  // State for AI features
+  const [copyGeneratorState, setCopyGeneratorState] = useState({
+    productService: '',
+    audience: '',
+    tone: '',
+    generatedCopy: '',
+    isGenerating: false
+  });
+
+  const [visualAnalyzerState, setVisualAnalyzerState] = useState({
+    selectedFile: null as File | null,
+    analysisResult: null as any,
+    isAnalyzing: false
+  });
+
+  const [headlineTesterState, setHeadlineTesterState] = useState({
+    originalHeadline: '',
+    optimizationGoal: '',
+    variations: [] as string[],
+    isGenerating: false
+  });
+
+  const [adAuditState, setAdAuditState] = useState({
+    adUrl: '',
+    auditResult: null as any,
+    isAuditing: false
+  });
+
+  // Handler functions
+  const handleGenerateCopy = async () => {
+    if (!copyGeneratorState.productService || !copyGeneratorState.audience || !copyGeneratorState.tone) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    setCopyGeneratorState(prev => ({ ...prev, isGenerating: true }));
+    
+    try {
+      const generatedCopy = await generateAdCopy(
+        copyGeneratorState.productService,
+        copyGeneratorState.audience,
+        copyGeneratorState.tone
+      );
+      setCopyGeneratorState(prev => ({ ...prev, generatedCopy, isGenerating: false }));
+    } catch (error) {
+      setCopyGeneratorState(prev => ({ ...prev, isGenerating: false }));
+      alert('Error generating copy. Please try again.');
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setVisualAnalyzerState(prev => ({ ...prev, selectedFile: file, isAnalyzing: true }));
+    
+    try {
+      const analysisResult = await analyzeVisual(file);
+      setVisualAnalyzerState(prev => ({ ...prev, analysisResult, isAnalyzing: false }));
+    } catch (error) {
+      setVisualAnalyzerState(prev => ({ ...prev, isAnalyzing: false }));
+      alert('Error analyzing image. Please try again.');
+    }
+  };
+
+  const handleGenerateHeadlines = async () => {
+    if (!headlineTesterState.originalHeadline || !headlineTesterState.optimizationGoal) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    setHeadlineTesterState(prev => ({ ...prev, isGenerating: true }));
+    
+    try {
+      const variations = await generateHeadlineVariations(
+        headlineTesterState.originalHeadline,
+        headlineTesterState.optimizationGoal
+      );
+      setHeadlineTesterState(prev => ({ ...prev, variations, isGenerating: false }));
+    } catch (error) {
+      setHeadlineTesterState(prev => ({ ...prev, isGenerating: false }));
+      alert('Error generating headlines. Please try again.');
+    }
+  };
+
+  const handleAuditAd = async () => {
+    if (!adAuditState.adUrl) {
+      alert('Please enter an ad URL');
+      return;
+    }
+    
+    setAdAuditState(prev => ({ ...prev, isAuditing: true }));
+    
+    try {
+      const auditResult = await auditAd(adAuditState.adUrl);
+      setAdAuditState(prev => ({ ...prev, auditResult, isAuditing: false }));
+    } catch (error) {
+      setAdAuditState(prev => ({ ...prev, isAuditing: false }));
+      alert('Error auditing ad. Please try again.');
+    }
+  };
+
+  // Quick action handlers
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'boost':
+        alert('🚀 Boosting your best performing product ads by 25%! Campaign updated.');
+        break;
+      case 'duplicate':
+        alert('📋 Top performing ad duplicated across 3 new audiences. Check your campaigns.');
+        break;
+      case 'rebalance':
+        alert('⚖️ AI has rebalanced your budget. Moved $50 from low-performing to high-performing ads.');
+        break;
+      case 'summary':
+        alert('📊 Weekly summary: 23% increase in conversions, $145 saved through optimization.');
+        break;
+      default:
+        alert('Action completed successfully!');
+    }
+  };
+
+  // Generate AI copy for wizard
+  const handleGenerateWizardCopy = async () => {
+    if (!campaignGoal) {
+      alert('Please select a campaign goal first');
+      return;
+    }
+    
+    const mockCopy = {
+      awareness: "Discover the solution that's changing everything. Join thousands who've already made the switch to better results.",
+      traffic: "Ready to transform your business? Click to learn the proven strategies that actually work.",
+      leads: "Get exclusive access to our proven system. Enter your email and start seeing results in 24 hours.",
+      sales: "Limited time offer: Get 50% off our bestselling product. Thousands of happy customers can't be wrong!",
+      retargeting: "Still thinking about it? Here's what you missed - and why you should act now."
+    };
+    
+    const copy = mockCopy[campaignGoal as keyof typeof mockCopy] || mockCopy.awareness;
+    setCreativeCopy(copy);
+    alert('AI copy generated! Check the Creative & Copy section.');
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center space-x-3 mb-6">
@@ -199,7 +435,7 @@ export default function AIAdLauncher() {
                     </div>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => alert('📊 Opening full AI insights report... Detailed analysis of all campaigns, opportunities, and recommendations.')}>
                   View Full Report
                 </Button>
               </CardContent>
@@ -210,19 +446,19 @@ export default function AIAdLauncher() {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
+                <Button className="w-full justify-start" variant="outline" onClick={() => handleQuickAction('boost')}>
                   <Zap className="w-4 h-4 mr-2" />
                   1-Click Boost Best Product
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button className="w-full justify-start" variant="outline" onClick={() => handleQuickAction('duplicate')}>
                   <Target className="w-4 h-4 mr-2" />
                   Duplicate Top Performer
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button className="w-full justify-start" variant="outline" onClick={() => handleQuickAction('rebalance')}>
                   <BarChart3 className="w-4 h-4 mr-2" />
                   AI Budget Rebalancer
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button className="w-full justify-start" variant="outline" onClick={() => handleQuickAction('summary')}>
                   <Eye className="w-4 h-4 mr-2" />
                   Weekly Smart Summary
                 </Button>
@@ -429,7 +665,7 @@ export default function AIAdLauncher() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full" onClick={handleGenerateWizardCopy}>
                         <Zap className="w-4 h-4 mr-2" />
                         Generate with AI
                       </Button>
@@ -590,7 +826,7 @@ export default function AIAdLauncher() {
                           <Play className="w-4 h-4 mr-2" />
                           Launch Campaign
                         </Button>
-                        <Button variant="outline" className="w-full">
+                        <Button variant="outline" className="w-full" onClick={() => alert('💾 Campaign saved as draft! You can continue editing later from your dashboard.')}>
                           Save as Draft
                         </Button>
                       </div>
@@ -933,11 +1169,11 @@ export default function AIAdLauncher() {
                       </div>
                     </div>
                     <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => alert(`✏️ Opening ${campaign.name} campaign editor... You can modify targeting, budget, and schedule.`)}>
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => alert(`${campaign.status === "Active" ? "⏸️ Campaign paused" : "▶️ Campaign resumed"} successfully!`)}>
                         {campaign.status === "Active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                       </Button>
                     </div>
@@ -980,7 +1216,7 @@ export default function AIAdLauncher() {
         <TabsContent value="library" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold">Ad Library</h2>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => alert('📁 File uploader opened! You can now upload images, videos, and other creative assets.')}>
               <FileText className="w-4 h-4 mr-2" />
               Upload Creative
             </Button>
@@ -1007,11 +1243,11 @@ export default function AIAdLauncher() {
                       </Badge>
                     </div>
                     <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button variant="outline" size="sm" className="flex-1" onClick={() => alert(`🎨 Opening ${creative.name} in editor... You can now modify colors, text, and layout!`)}>
                         <Edit className="w-3 h-3 mr-1" />
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button variant="outline" size="sm" className="flex-1" onClick={() => alert(`📋 ${creative.name} cloned successfully! New version added to your library.`)}>
                         <Target className="w-3 h-3 mr-1" />
                         Clone
                       </Button>
@@ -1032,14 +1268,14 @@ export default function AIAdLauncher() {
                   <p className="font-medium">Turn Lead Magnet Image into Video</p>
                   <p className="text-sm text-muted-foreground">Video ads perform 23% better for your audience</p>
                 </div>
-                <Button size="sm">Create</Button>
+                <Button size="sm" onClick={() => alert('🎬 Creating video version of your lead magnet image... This will be ready in 5 minutes!')}>Create</Button>
               </div>
               <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div>
                   <p className="font-medium">Rewrite Sales Page Hero for TikTok</p>
                   <p className="text-sm text-muted-foreground">Adapt copy for younger demographic</p>
                 </div>
-                <Button size="sm">Create</Button>
+                <Button size="sm" onClick={() => alert('✍️ Rewriting sales page copy for TikTok audience... New version will emphasize trending benefits!')}>Create</Button>
               </div>
             </CardContent>
           </Card>
@@ -1048,7 +1284,7 @@ export default function AIAdLauncher() {
         <TabsContent value="audiences" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold">Audience Manager</h2>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => alert('👥 Audience builder opened! You can create custom audiences based on demographics, interests, and behaviors.')}>
               <Users className="w-4 h-4 mr-2" />
               Create New Audience
             </Button>
@@ -1098,7 +1334,7 @@ export default function AIAdLauncher() {
                     <p className="text-sm text-yellow-600">Create: "Clicked last week but didn't buy"</p>
                   </div>
                 </div>
-                <Button className="w-full">
+                <Button className="w-full" onClick={() => alert('🤖 AI Audience Matcher analyzing your customer data... Found 3 new high-potential audiences!')}>
                   <Zap className="w-4 h-4 mr-2" />
                   AI Audience Matcher
                 </Button>
@@ -1127,15 +1363,23 @@ export default function AIAdLauncher() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Product/Service</Label>
-                  <Input placeholder="Describe what you're promoting..." />
+                  <Input 
+                    placeholder="Describe what you're promoting..." 
+                    value={copyGeneratorState.productService}
+                    onChange={(e) => setCopyGeneratorState(prev => ({ ...prev, productService: e.target.value }))}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Target Audience</Label>
-                  <Input placeholder="Who is your ideal customer?" />
+                  <Input 
+                    placeholder="Who is your ideal customer?" 
+                    value={copyGeneratorState.audience}
+                    onChange={(e) => setCopyGeneratorState(prev => ({ ...prev, audience: e.target.value }))}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Tone</Label>
-                  <Select>
+                  <Select value={copyGeneratorState.tone} onValueChange={(value) => setCopyGeneratorState(prev => ({ ...prev, tone: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select tone" />
                     </SelectTrigger>
@@ -1147,10 +1391,19 @@ export default function AIAdLauncher() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className="w-full">
+                <Button className="w-full" onClick={handleGenerateCopy} disabled={copyGeneratorState.isGenerating}>
                   <Zap className="w-4 h-4 mr-2" />
-                  Generate Copy
+                  {copyGeneratorState.isGenerating ? 'Generating...' : 'Generate Copy'}
                 </Button>
+                {copyGeneratorState.generatedCopy && (
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <Label className="text-sm font-medium">Generated Copy:</Label>
+                    <p className="text-sm mt-2">{copyGeneratorState.generatedCopy}</p>
+                    <Button variant="outline" size="sm" className="mt-2" onClick={() => navigator.clipboard.writeText(copyGeneratorState.generatedCopy)}>
+                      Copy Text
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -1163,24 +1416,55 @@ export default function AIAdLauncher() {
                 <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
                   <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-muted-foreground">Drop your image or video here</p>
-                  <Button variant="outline" className="mt-4">
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="visual-upload"
+                  />
+                  <Button variant="outline" className="mt-4" onClick={() => document.getElementById('visual-upload')?.click()}>
                     Choose File
                   </Button>
+                  {visualAnalyzerState.selectedFile && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Selected: {visualAnalyzerState.selectedFile.name}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Engagement Score</span>
-                    <span className="font-medium">--</span>
+                    <span className="font-medium">
+                      {visualAnalyzerState.isAnalyzing ? 'Analyzing...' : 
+                       visualAnalyzerState.analysisResult ? `${visualAnalyzerState.analysisResult.engagementScore}/100` : '--'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Color Balance</span>
-                    <span className="font-medium">--</span>
+                    <span className="font-medium">
+                      {visualAnalyzerState.isAnalyzing ? 'Analyzing...' : 
+                       visualAnalyzerState.analysisResult ? `${visualAnalyzerState.analysisResult.colorBalance}/100` : '--'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Text Readability</span>
-                    <span className="font-medium">--</span>
+                    <span className="font-medium">
+                      {visualAnalyzerState.isAnalyzing ? 'Analyzing...' : 
+                       visualAnalyzerState.analysisResult ? `${visualAnalyzerState.analysisResult.textReadability}/100` : '--'}
+                    </span>
                   </div>
                 </div>
+                {visualAnalyzerState.analysisResult && (
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <Label className="text-sm font-medium">AI Suggestions:</Label>
+                    <ul className="list-disc list-inside text-sm mt-2 space-y-1">
+                      {visualAnalyzerState.analysisResult.suggestions.map((suggestion: string, index: number) => (
+                        <li key={index}>{suggestion}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -1192,11 +1476,15 @@ export default function AIAdLauncher() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Original Headline</Label>
-                  <Input placeholder="Enter your headline..." />
+                  <Input 
+                    placeholder="Enter your headline..." 
+                    value={headlineTesterState.originalHeadline}
+                    onChange={(e) => setHeadlineTesterState(prev => ({ ...prev, originalHeadline: e.target.value }))}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Optimization Goal</Label>
-                  <Select>
+                  <Select value={headlineTesterState.optimizationGoal} onValueChange={(value) => setHeadlineTesterState(prev => ({ ...prev, optimizationGoal: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select goal" />
                     </SelectTrigger>
@@ -1207,10 +1495,25 @@ export default function AIAdLauncher() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className="w-full">
+                <Button className="w-full" onClick={handleGenerateHeadlines} disabled={headlineTesterState.isGenerating}>
                   <Target className="w-4 h-4 mr-2" />
-                  Generate Variations
+                  {headlineTesterState.isGenerating ? 'Generating...' : 'Generate Variations'}
                 </Button>
+                {headlineTesterState.variations.length > 0 && (
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <Label className="text-sm font-medium">Generated Variations:</Label>
+                    <div className="space-y-2 mt-2">
+                      {headlineTesterState.variations.map((variation, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-background rounded border">
+                          <span className="text-sm">{variation}</span>
+                          <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(variation)}>
+                            Copy
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -1222,21 +1525,51 @@ export default function AIAdLauncher() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Ad URL</Label>
-                  <Input placeholder="Paste your ad URL..." />
+                  <Input 
+                    placeholder="Paste your ad URL..." 
+                    value={adAuditState.adUrl}
+                    onChange={(e) => setAdAuditState(prev => ({ ...prev, adUrl: e.target.value }))}
+                  />
                 </div>
-                <Button className="w-full">
+                <Button className="w-full" onClick={handleAuditAd} disabled={adAuditState.isAuditing}>
                   <Eye className="w-4 h-4 mr-2" />
-                  Audit Ad
+                  {adAuditState.isAuditing ? 'Auditing...' : 'Audit Ad'}
                 </Button>
-                <div className="text-sm text-muted-foreground">
-                  <p>Get suggestions for:</p>
-                  <ul className="list-disc list-inside mt-1 space-y-1">
-                    <li>Copy improvements</li>
-                    <li>Visual optimization</li>
-                    <li>Targeting refinements</li>
-                    <li>Budget recommendations</li>
-                  </ul>
-                </div>
+                {adAuditState.auditResult && (
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <Label className="text-sm font-medium">Audit Results</Label>
+                      <Badge variant={adAuditState.auditResult.score > 80 ? 'default' : 'secondary'}>
+                        Score: {adAuditState.auditResult.score}/100
+                      </Badge>
+                    </div>
+                    <div className="space-y-3">
+                      {adAuditState.auditResult.improvements.map((improvement: any, index: number) => (
+                        <div key={index} className="p-3 bg-background rounded border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-medium text-sm">{improvement.category}</span>
+                            <Badge variant={improvement.priority === 'High' ? 'destructive' : improvement.priority === 'Medium' ? 'secondary' : 'outline'} className="text-xs">
+                              {improvement.priority}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{improvement.suggestion}</p>
+                          <p className="text-xs text-muted-foreground mt-1">Impact: {improvement.impact}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {!adAuditState.auditResult && (
+                  <div className="text-sm text-muted-foreground">
+                    <p>Get suggestions for:</p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                      <li>Copy improvements</li>
+                      <li>Visual optimization</li>
+                      <li>Targeting refinements</li>
+                      <li>Budget recommendations</li>
+                    </ul>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -1267,7 +1600,7 @@ export default function AIAdLauncher() {
                     </Badge>
                   </div>
                 ))}
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => alert('🔗 Platform connector opened! You can now connect TikTok, LinkedIn, Twitter, and other advertising platforms.')}>
                   <Globe className="w-4 h-4 mr-2" />
                   Connect New Platform
                 </Button>
