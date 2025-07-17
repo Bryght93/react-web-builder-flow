@@ -187,13 +187,22 @@ export default function EmailSequenceBuilder() {
     }
   };
 
-  const handleTemplateSelection = (template: any) => {
+  const handleTemplateSelection = async (template: any) => {
     setSelectedTemplate(template);
     if (currentCreationFlow === 'ai') {
-      // For AI, show AI generation dialog
-      setShowAIDialog(true);
+      // For AI flow, generate emails directly using the business context and template
+      await generateAIEmails({
+        campaignType: selectedCampaignType,
+        industry: personalInfo.industry,
+        targetAudience: personalInfo.targetAudience,
+        campaignGoal: personalInfo.campaignGoal,
+        emailCount: personalInfo.numberOfEmails,
+        tone: personalInfo.tone as 'professional' | 'friendly' | 'casual' | 'urgent',
+        brandName: personalInfo.brandName,
+        template: template
+      });
     } else {
-      // For template, create campaign and go to builder
+      // For template flow, create campaign and go to builder
       const newCampaign = createCampaignFromTemplate(template);
       setCampaigns([...campaigns, newCampaign]);
       setSelectedCampaign(newCampaign);
@@ -1817,9 +1826,19 @@ export default function EmailSequenceBuilder() {
                           size="sm" 
                           onClick={() => handleTemplateSelection(template)}
                           className="flex-1"
+                          disabled={isGenerating}
                         >
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          Select
+                          {isGenerating ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <Edit3 className="w-4 h-4 mr-2" />
+                              Select
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -1882,9 +1901,19 @@ export default function EmailSequenceBuilder() {
                           size="sm" 
                           onClick={() => handleTemplateSelection(template)}
                           className="flex-1"
+                          disabled={isGenerating}
                         >
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          Select
+                          {isGenerating ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <Edit3 className="w-4 h-4 mr-2" />
+                              Select
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
