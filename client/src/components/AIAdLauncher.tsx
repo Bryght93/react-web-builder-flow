@@ -228,10 +228,15 @@ export default function AIAdLauncher() {
 
   // New enhanced AI features state
   const [carouselAdState, setCarouselAdState] = useState({
-    funnel: '',
+    generationType: '',
+    productName: '',
+    keyBenefits: '',
     audience: '',
+    dimensions: '',
+    colorScheme: '',
     isGenerating: false,
-    generatedAds: [] as any[]
+    generatedAds: [] as any[],
+    generatedImageAd: null as any
   });
 
   const [videoAdState, setVideoAdState] = useState({
@@ -280,48 +285,87 @@ export default function AIAdLauncher() {
   };
 
   const handleGenerateCarouselAds = async () => {
-    if (!carouselAdState.funnel || !carouselAdState.audience) {
-      alert('Please fill in funnel and audience fields');
+    if (!carouselAdState.generationType || !carouselAdState.productName || !carouselAdState.audience) {
+      alert('Please fill in all required fields');
       return;
     }
     
     setCarouselAdState(prev => ({ ...prev, isGenerating: true }));
     
-    // Simulate AI generating carousel ads
-    await new Promise(resolve => setTimeout(resolve, 2500));
+    // Simulate AI generation delay
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    const mockCarouselAds = [
-      {
-        id: 1,
-        title: "The Problem",
-        headline: `Why ${carouselAdState.audience} Struggle with ${carouselAdState.funnel}`,
-        description: "Most people fail because they don't know these 3 hidden obstacles...",
-        image: "🚫"
-      },
-      {
-        id: 2,
-        title: "The Solution",
-        headline: `The ${carouselAdState.funnel} System That Actually Works`,
-        description: "This proven 3-step framework has generated over $2.4M in results...",
-        image: "✅"
-      },
-      {
-        id: 3,
-        title: "Social Proof",
-        headline: "Real Results From Real People",
-        description: "See how Sarah went from $0 to $10K/month in just 90 days...",
-        image: "📈"
-      },
-      {
-        id: 4,
-        title: "The Offer",
-        headline: `Get ${carouselAdState.funnel} Training (Limited Time)`,
-        description: "Join 2,847 others who transformed their business. Only 47 spots left!",
-        image: "🎯"
-      }
-    ];
-    
-    setCarouselAdState(prev => ({ ...prev, generatedAds: mockCarouselAds, isGenerating: false }));
+    if (carouselAdState.generationType === 'image-creative') {
+      // Generate single ad creative
+      const mockImageAd = {
+        headline: `Master ${carouselAdState.productName} in Record Time!`,
+        bulletPoints: carouselAdState.keyBenefits.split(',').slice(0, 4).map(benefit => benefit.trim()),
+        cta: "CLAIM YOUR SPOT NOW - LIMITED TIME!",
+        designElements: {
+          colorScheme: carouselAdState.colorScheme,
+          dimensions: carouselAdState.dimensions,
+          style: "Professional with high-impact visuals"
+        }
+      };
+      
+      setCarouselAdState(prev => ({ 
+        ...prev, 
+        generatedImageAd: mockImageAd, 
+        isGenerating: false 
+      }));
+    } else {
+      // Generate carousel ads
+      const benefits = carouselAdState.keyBenefits.split(',').map(b => b.trim());
+      
+      const mockCarouselAds = [
+        {
+          id: 1,
+          title: "The Problem",
+          headline: `Why ${carouselAdState.audience} Struggle with ${carouselAdState.productName.split(' ')[0]}`,
+          description: "Most people fail because they don't know these 3 hidden obstacles...",
+          image: "🚫",
+          bulletPoints: ["Lack of proven system", "Information overload", "No step-by-step guidance"]
+        },
+        {
+          id: 2,
+          title: "The Solution", 
+          headline: `${carouselAdState.productName} - The System That Actually Works`,
+          description: "This proven framework has helped thousands achieve results...",
+          image: "✅",
+          bulletPoints: benefits.slice(0, 3)
+        },
+        {
+          id: 3,
+          title: "What You Get",
+          headline: "Everything You Need to Succeed",
+          description: "Complete system with templates, examples, and support...",
+          image: "📦",
+          bulletPoints: benefits.slice(3, 6)
+        },
+        {
+          id: 4,
+          title: "Social Proof",
+          headline: "Real Results From Real People",
+          description: "See how students went from zero to hero in just weeks...",
+          image: "📈",
+          bulletPoints: ["Sarah: $10K in month 1", "Mike: Quit his job after 6 weeks", "Lisa: Doubled income in 90 days"]
+        },
+        {
+          id: 5,
+          title: "The Offer",
+          headline: `Get ${carouselAdState.productName} (Limited Time)`,
+          description: "Join thousands who've already transformed their results. Act now!",
+          image: "🎯",
+          bulletPoints: ["Limited time pricing", "30-day money back guarantee", "Instant access"]
+        }
+      ];
+      
+      setCarouselAdState(prev => ({ 
+        ...prev, 
+        generatedAds: mockCarouselAds, 
+        isGenerating: false 
+      }));
+    }
   };
 
   const handleGenerateVideoScript = async () => {
@@ -1774,45 +1818,166 @@ export default function AIAdLauncher() {
             <Card>
               <CardHeader>
                 <CardTitle>🎯 Carousel/Image Ad Generator</CardTitle>
-                <CardDescription>Generate complete carousel ads with branded templates for any funnel</CardDescription>
+                <CardDescription>Generate carousel ads or single ad creative images with AI - Replace Canva!</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Funnel/Product</Label>
+                  <Label>Generation Type</Label>
+                  <Select value={carouselAdState.generationType} onValueChange={(value) => setCarouselAdState(prev => ({ ...prev, generationType: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose what to generate" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="image-creative">🖼️ Single Ad Creative Image</SelectItem>
+                      <SelectItem value="carousel">📱 Carousel Ad Series</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Product/Service Name</Label>
                   <Input 
-                    placeholder="e.g., Confidence Funnel, Lead Generation Course..." 
-                    value={carouselAdState.funnel}
-                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, funnel: e.target.value }))}
+                    placeholder="e.g., 30 Days Copywriting Course, Lead Generation Masterclass..." 
+                    value={carouselAdState.productName}
+                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, productName: e.target.value }))}
                   />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label>Key Benefits/Features</Label>
+                  <Textarea 
+                    placeholder="e.g., Learn copywriting secrets, Write high-converting sales pages, 30-day money back guarantee..."
+                    value={carouselAdState.keyBenefits}
+                    onChange={(e) => setCarouselAdState(prev => ({ ...prev, keyBenefits: e.target.value }))}
+                    rows={3}
+                  />
+                </div>
+                
                 <div className="space-y-2">
                   <Label>Target Audience</Label>
                   <Input 
-                    placeholder="e.g., Female entrepreneurs, 25-35..." 
+                    placeholder="e.g., Female entrepreneurs, 25-35, Small business owners..." 
                     value={carouselAdState.audience}
                     onChange={(e) => setCarouselAdState(prev => ({ ...prev, audience: e.target.value }))}
                   />
                 </div>
-                <Button className="w-full" onClick={handleGenerateCarouselAds} disabled={carouselAdState.isGenerating}>
+
+                {carouselAdState.generationType === 'image-creative' && (
+                  <div className="space-y-2">
+                    <Label>Ad Dimensions</Label>
+                    <Select value={carouselAdState.dimensions} onValueChange={(value) => setCarouselAdState(prev => ({ ...prev, dimensions: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select image size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="facebook-feed">Facebook Feed (1200x630px)</SelectItem>
+                        <SelectItem value="instagram-square">Instagram Square (1080x1080px)</SelectItem>
+                        <SelectItem value="instagram-story">Instagram Story (1080x1920px)</SelectItem>
+                        <SelectItem value="linkedin-post">LinkedIn Post (1200x627px)</SelectItem>
+                        <SelectItem value="custom">Custom Size</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label>Color Scheme/Style</Label>
+                  <Select value={carouselAdState.colorScheme} onValueChange={(value) => setCarouselAdState(prev => ({ ...prev, colorScheme: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional-blue">Professional Blue</SelectItem>
+                      <SelectItem value="vibrant-gradient">Vibrant Gradient</SelectItem>
+                      <SelectItem value="minimal-dark">Minimal Dark</SelectItem>
+                      <SelectItem value="energetic-orange">Energetic Orange</SelectItem>
+                      <SelectItem value="trustworthy-green">Trustworthy Green</SelectItem>
+                      <SelectItem value="luxury-purple">Luxury Purple</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button className="w-full" onClick={handleGenerateCarouselAds} disabled={carouselAdState.isGenerating || !carouselAdState.generationType}>
                   <Zap className="w-4 h-4 mr-2" />
-                  {carouselAdState.isGenerating ? 'Generating Carousel...' : 'Generate Carousel Ads'}
+                  {carouselAdState.isGenerating ? 
+                    (carouselAdState.generationType === 'image-creative' ? 'Creating Ad Image...' : 'Generating Carousel...') : 
+                    (carouselAdState.generationType === 'image-creative' ? 'Generate Ad Creative' : 'Generate Carousel Ads')
+                  }
                 </Button>
-                {carouselAdState.generatedAds.length > 0 && (
+                
+                {/* Image Creative Results */}
+                {carouselAdState.generationType === 'image-creative' && carouselAdState.generatedImageAd && (
+                  <div className="mt-4 space-y-3">
+                    <Label className="text-sm font-medium">Generated Ad Creative:</Label>
+                    <div className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-purple-50">
+                      <div className="aspect-video bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
+                        <div className="relative z-10">
+                          <h2 className="text-2xl font-bold mb-3">{carouselAdState.generatedImageAd.headline}</h2>
+                          <div className="space-y-2 mb-4">
+                            {carouselAdState.generatedImageAd.bulletPoints.map((bullet: string, index: number) => (
+                              <div key={index} className="flex items-center text-sm">
+                                <span className="mr-2">✅</span>
+                                <span>{bullet}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="bg-yellow-400 text-black px-4 py-2 rounded-lg font-bold text-center">
+                            {carouselAdState.generatedImageAd.cta}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        <p><strong>Dimensions:</strong> {carouselAdState.dimensions}</p>
+                        <p><strong>Style:</strong> {carouselAdState.colorScheme}</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        📥 Download PNG
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        🎨 Edit Design
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        📋 Copy Text
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Carousel Results */}
+                {carouselAdState.generationType === 'carousel' && carouselAdState.generatedAds.length > 0 && (
                   <div className="mt-4 space-y-3">
                     <Label className="text-sm font-medium">Generated Carousel Ads:</Label>
                     {carouselAdState.generatedAds.map((ad: any, index: number) => (
                       <div key={index} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium text-sm">{ad.title}</span>
+                          <span className="font-medium text-sm">Slide {index + 1}: {ad.title}</span>
                           <span className="text-2xl">{ad.image}</span>
                         </div>
                         <p className="font-medium text-sm mb-1">{ad.headline}</p>
-                        <p className="text-xs text-muted-foreground">{ad.description}</p>
+                        <p className="text-xs text-muted-foreground mb-2">{ad.description}</p>
+                        {ad.bulletPoints && (
+                          <div className="text-xs space-y-1">
+                            {ad.bulletPoints.map((bullet: string, bIndex: number) => (
+                              <div key={bIndex} className="flex items-center">
+                                <span className="mr-1">•</span>
+                                <span>{bullet}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
-                    <Button variant="outline" size="sm" className="w-full">
-                      Export as Templates
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        📥 Export Images
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        📋 Copy All Text
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
