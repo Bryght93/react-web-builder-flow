@@ -89,11 +89,9 @@ import {
   RotateCcw,
   Maximize2,
   Minimize2,
-  ShoppingCart,
   MousePointer,
   Brain,
-  Activity,
-  DollarSign
+  Activity
 } from 'lucide-react';
 
 interface EmailStep {
@@ -2037,16 +2035,14 @@ export default function EmailSequenceBuilder() {
         </div>
 
         <Tabs defaultValue="campaigns" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-11">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="automation">Automation</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="audience">Audience</TabsTrigger>
             <TabsTrigger value="forms">Forms</TabsTrigger>
             <TabsTrigger value="personalization">Personalization</TabsTrigger>
-            <TabsTrigger value="deliverability">Deliverability</TabsTrigger>
             <TabsTrigger value="compliance">Compliance</TabsTrigger>
-            <TabsTrigger value="team">Team</TabsTrigger>
             <TabsTrigger value="nurture">Nurture</TabsTrigger>
             <TabsTrigger value="broadcast">Broadcast</TabsTrigger>
           </TabsList>
@@ -2283,7 +2279,7 @@ export default function EmailSequenceBuilder() {
                           Tag Added
                         </Button>
                         <Button size="sm" className="bg-purple-500 hover:bg-purple-600">
-                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          <Target className="w-4 h-4 mr-2" />
                           Purchase Made
                         </Button>
                         <Button size="sm" className="bg-orange-500 hover:bg-orange-600">
@@ -2359,7 +2355,7 @@ export default function EmailSequenceBuilder() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[
                     { name: "Welcome Series", desc: "5-email welcome sequence", emails: 5, icon: Heart },
-                    { name: "Cart Abandonment", desc: "Recover abandoned carts", emails: 3, icon: ShoppingCart },
+                    { name: "Cart Abandonment", desc: "Recover abandoned carts", emails: 3, icon: Target },
                     { name: "Post-Purchase", desc: "Thank you & feedback", emails: 2, icon: CheckCircle },
                     { name: "Lead Nurture", desc: "Warm up cold leads", emails: 7, icon: Target },
                     { name: "Re-engagement", desc: "Win back inactive users", emails: 4, icon: RefreshCw },
@@ -2960,85 +2956,7 @@ export default function EmailSequenceBuilder() {
             </div>
           </TabsContent>
 
-          {/* Deliverability Tab */}
-          <TabsContent value="deliverability" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Shield className="w-5 h-5 mr-2" />
-                    Domain Health
-                  </CardTitle>
-                  <CardDescription>Monitor your sender reputation</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">98%</div>
-                      <div className="text-sm text-muted-foreground">Delivery Rate</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">A+</div>
-                      <div className="text-sm text-muted-foreground">Sender Score</div>
-                    </div>
-                  </div>
-                  <Separator />
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">DKIM</span>
-                      <Badge variant="default">✓ Configured</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">SPF</span>
-                      <Badge variant="default">✓ Configured</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">DMARC</span>
-                      <Badge variant="secondary">⚠ Pending</Badge>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Configure Authentication
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <AlertTriangle className="w-5 h-5 mr-2" />
-                    Spam Check
-                  </CardTitle>
-                  <CardDescription>Test email deliverability</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600">8.5/10</div>
-                    <div className="text-sm text-muted-foreground">Deliverability Score</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Subject Line</span>
-                      <Badge variant="default">✓ Good</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Content</span>
-                      <Badge variant="default">✓ Good</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Images</span>
-                      <Badge variant="secondary">⚠ Too Many</Badge>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Run Spam Check
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+          
 
           {/* Compliance Tab */}
           <TabsContent value="compliance" className="space-y-4">
@@ -3105,85 +3023,7 @@ export default function EmailSequenceBuilder() {
             </div>
           </TabsContent>
 
-          {/* Team Management Tab */}
-          <TabsContent value="team" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Users className="w-5 h-5 mr-2" />
-                    Team Members
-                  </CardTitle>
-                  <CardDescription>Manage user roles and permissions</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {[
-                      { name: "John Doe", email: "john@company.com", role: "Admin", status: "Active" },
-                      { name: "Jane Smith", email: "jane@company.com", role: "Editor", status: "Active" },
-                      { name: "Mike Johnson", email: "mike@company.com", role: "Viewer", status: "Pending" }
-                    ].map((member, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                        <div>
-                          <p className="text-sm font-medium">{member.name}</p>
-                          <p className="text-xs text-muted-foreground">{member.email}</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{member.role}</Badge>
-                          <Badge variant={member.status === "Active" ? "default" : "secondary"}>
-                            {member.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <Button className="w-full">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Invite Team Member
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <CheckCircle className="w-5 h-5 mr-2" />
-                    Approval Flow
-                  </CardTitle>
-                  <CardDescription>Campaign approval settings</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Require approval for broadcast emails</span>
-                      <Switch />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Require approval for new campaigns</span>
-                      <Switch />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Log all changes</span>
-                      <Switch defaultChecked />
-                    </div>
-                  </div>
-                  <Separator />
-                  <div>
-                    <Label className="text-sm font-medium">Approvers</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select approver" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="john">John Doe (Admin)</SelectItem>
-                        <SelectItem value="jane">Jane Smith (Editor)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+          
         </Tabs>
         
         <AIGenerationDialog />
