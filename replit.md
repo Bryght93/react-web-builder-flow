@@ -146,6 +146,17 @@ Changelog:
   * Built campaign performance tracking with multi-channel attribution
   * Added product analytics with conversion funnels and A/B testing insights
   * Created AI insights engine with opportunity detection and automated recommendations
+- July 17, 2025. AI Ad Launcher Major Enhancement:
+  * Expanded from 3 tabs to 7 comprehensive sections (Dashboard, New Campaign, Ad Library, Audiences, Analytics, AI Assist, Settings)
+  * Added unified dashboard with AI insights, quick actions, and performance overview
+  * Implemented 5-step campaign wizard with goal selection, platform targeting, creative tools, budget optimization, and review system
+  * Added user mode selection (Simplicity Mode for beginners, Pro Mode for advanced users)
+  * Created Ad Library for creative asset management with AI suggestions and performance tracking
+  * Built comprehensive Audience Manager with saved audiences, AI insights, and lookalike generation
+  * Implemented AI Assist Hub with copy generator, visual analyzer, headline tester, and ad audit tool
+  * Added multi-platform support (Facebook, Instagram, Google, TikTok, LinkedIn, Twitter)
+  * Created Settings panel for account management, brand kit, and platform integrations
+  * Enhanced with smart spend estimator, platform-specific requirements, and real-time preview
 ```
 
 ## User Preferences
