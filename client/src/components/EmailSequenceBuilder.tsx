@@ -45,6 +45,7 @@ import {
   AlignLeft,
   User,
   Loader2,
+  ArrowRight,
   AlignCenter,
   AlignRight,
   Palette,
