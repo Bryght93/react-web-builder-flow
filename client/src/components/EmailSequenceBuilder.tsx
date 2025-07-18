@@ -93,7 +93,11 @@ import {
   Brain,
   Activity,
   DollarSign,
-  Minus
+  Minus,
+  UserMinus,
+  TrendingDown,
+  Filter,
+  Moon
 } from 'lucide-react';
 
 interface EmailStep {
@@ -3537,161 +3541,495 @@ export default function EmailSequenceBuilder() {
             </Card>
           </TabsContent>
 
-          {/* Advanced Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Email Heatmaps */}
-              <Card className="lg:col-span-2">
+          {/* Enhanced Email Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Email Analytics Dashboard</h2>
+            
+            {/* Overview Metrics Panel */}
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">24.5%</p>
+                      <p className="text-muted-foreground text-sm">Open Rate</p>
+                      <p className="text-xs text-green-600">+5.2% vs last week</p>
+                    </div>
+                    <Mail className="w-8 h-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">5.2%</p>
+                      <p className="text-muted-foreground text-sm">Click Rate</p>
+                      <p className="text-xs text-green-600">+1.8% vs last week</p>
+                    </div>
+                    <Target className="w-8 h-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">3.6%</p>
+                      <p className="text-muted-foreground text-sm">Conversion Rate</p>
+                      <p className="text-xs text-green-600">+0.4% vs last week</p>
+                    </div>
+                    <BarChart3 className="w-8 h-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">1.8%</p>
+                      <p className="text-muted-foreground text-sm">Unsubscribe Rate</p>
+                      <p className="text-xs text-red-600">+0.2% vs last week</p>
+                    </div>
+                    <UserMinus className="w-8 h-8 text-red-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">$2,450</p>
+                      <p className="text-muted-foreground text-sm">Revenue Generated</p>
+                      <p className="text-xs text-green-600">+12.3% vs last week</p>
+                    </div>
+                    <DollarSign className="w-8 h-8 text-emerald-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-bold">12,400</p>
+                      <p className="text-muted-foreground text-sm">Emails Sent</p>
+                    </div>
+                    <Send className="w-6 h-6 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-bold">0.2%</p>
+                      <p className="text-muted-foreground text-sm">Spam Complaints</p>
+                    </div>
+                    <AlertTriangle className="w-6 h-6 text-yellow-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-bold">0.9%</p>
+                      <p className="text-muted-foreground text-sm">Bounce Rate</p>
+                    </div>
+                    <TrendingDown className="w-6 h-6 text-orange-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-bold">98.1%</p>
+                      <p className="text-muted-foreground text-sm">Deliverability Score</p>
+                    </div>
+                    <CheckCircle className="w-6 h-6 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Campaign Performance Table */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Campaign Performance</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">
+                      <Filter className="w-4 h-4 mr-2" />
+                      Filter
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Download className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-2">Campaign Name</th>
+                        <th className="text-left p-2">Type</th>
+                        <th className="text-left p-2">Sent Date</th>
+                        <th className="text-left p-2">Open Rate</th>
+                        <th className="text-left p-2">Click Rate</th>
+                        <th className="text-left p-2">Conversion</th>
+                        <th className="text-left p-2">Revenue</th>
+                        <th className="text-left p-2">Status</th>
+                        <th className="text-left p-2">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b">
+                        <td className="p-2 font-medium">Welcome Series</td>
+                        <td className="p-2"><Badge variant="outline">Automation</Badge></td>
+                        <td className="p-2 text-sm text-muted-foreground">Jan 15, 2025</td>
+                        <td className="p-2">32.4%</td>
+                        <td className="p-2">8.2%</td>
+                        <td className="p-2">4.1%</td>
+                        <td className="p-2 font-medium">$1,240</td>
+                        <td className="p-2"><Badge className="bg-green-100 text-green-800">Ongoing</Badge></td>
+                        <td className="p-2">
+                          <div className="flex space-x-1">
+                            <Button variant="ghost" size="sm"><Eye className="w-4 h-4" /></Button>
+                            <Button variant="ghost" size="sm"><BarChart3 className="w-4 h-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-2 font-medium">Product Launch</td>
+                        <td className="p-2"><Badge variant="outline">Broadcast</Badge></td>
+                        <td className="p-2 text-sm text-muted-foreground">Jan 12, 2025</td>
+                        <td className="p-2">28.7%</td>
+                        <td className="p-2">6.8%</td>
+                        <td className="p-2">3.2%</td>
+                        <td className="p-2 font-medium">$890</td>
+                        <td className="p-2"><Badge className="bg-blue-100 text-blue-800">Completed</Badge></td>
+                        <td className="p-2">
+                          <div className="flex space-x-1">
+                            <Button variant="ghost" size="sm"><Eye className="w-4 h-4" /></Button>
+                            <Button variant="ghost" size="sm"><BarChart3 className="w-4 h-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-2 font-medium">Re-engagement Campaign</td>
+                        <td className="p-2"><Badge variant="outline">Drip</Badge></td>
+                        <td className="p-2 text-sm text-muted-foreground">Jan 10, 2025</td>
+                        <td className="p-2">15.3%</td>
+                        <td className="p-2">3.2%</td>
+                        <td className="p-2">1.8%</td>
+                        <td className="p-2 font-medium">$320</td>
+                        <td className="p-2"><Badge className="bg-green-100 text-green-800">Ongoing</Badge></td>
+                        <td className="p-2">
+                          <div className="flex space-x-1">
+                            <Button variant="ghost" size="sm"><Eye className="w-4 h-4" /></Button>
+                            <Button variant="ghost" size="sm"><BarChart3 className="w-4 h-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Enhanced Heatmap Explorer */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Email Heatmap Explorer</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Select>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Select Campaign" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="welcome">Welcome Series</SelectItem>
+                        <SelectItem value="launch">Product Launch</SelectItem>
+                        <SelectItem value="reengagement">Re-engagement Campaign</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button variant="outline" size="sm">
+                      <Download className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="border rounded-lg p-4 bg-muted/20">
+                      <h4 className="font-medium mb-3">Email Preview</h4>
+                      <div className="border rounded-lg bg-white p-4 space-y-3">
+                        <div className="h-8 bg-blue-100 rounded flex items-center px-3 text-sm relative">
+                          Header Section
+                          <span className="absolute right-2 bg-red-500 text-white text-xs px-1 rounded">High</span>
+                        </div>
+                        <div className="h-12 bg-gray-100 rounded flex items-center px-3 text-sm relative">
+                          Main Content Body
+                          <span className="absolute right-2 bg-yellow-500 text-white text-xs px-1 rounded">Medium</span>
+                        </div>
+                        <div className="h-6 bg-green-100 rounded flex items-center px-3 text-sm relative">
+                          Primary CTA Button
+                          <span className="absolute right-2 bg-red-500 text-white text-xs px-1 rounded">High</span>
+                        </div>
+                        <div className="h-8 bg-purple-100 rounded flex items-center px-3 text-sm relative">
+                          Product Block
+                          <span className="absolute right-2 bg-gray-500 text-white text-xs px-1 rounded">Low</span>
+                        </div>
+                        <div className="h-6 bg-blue-100 rounded flex items-center px-3 text-sm relative">
+                          Footer Links
+                          <span className="absolute right-2 bg-yellow-500 text-white text-xs px-1 rounded">Medium</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-red-500 rounded"></div>
+                        <span>High Engagement</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                        <span>Medium Engagement</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-gray-500 rounded"></div>
+                        <span>Low Engagement</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Section Click Details</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center p-3 border rounded-lg">
+                        <span className="text-sm">Header Section</span>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">184 clicks</p>
+                          <p className="text-xs text-muted-foreground">Desktop: 67% | Mobile: 33%</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center p-3 border rounded-lg">
+                        <span className="text-sm">Primary CTA</span>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">429 clicks</p>
+                          <p className="text-xs text-muted-foreground">Desktop: 52% | Mobile: 48%</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center p-3 border rounded-lg">
+                        <span className="text-sm">Footer Links</span>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">89 clicks</p>
+                          <p className="text-xs text-muted-foreground">Desktop: 71% | Mobile: 29%</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Top Performing Emails and Revenue Attribution */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Top Performing Emails */}
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Activity className="w-5 h-5 mr-2" />
-                    Email Heatmaps
-                  </CardTitle>
-                  <CardDescription>See where subscribers click in your emails</CardDescription>
+                  <CardTitle>Top Performing Emails</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Select>
-                        <SelectTrigger className="w-64">
-                          <SelectValue placeholder="Select campaign" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="welcome">Welcome Series #1</SelectItem>
-                          <SelectItem value="promo">Spring Promotion</SelectItem>
-                          <SelectItem value="newsletter">Monthly Newsletter</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button variant="outline" size="sm">
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
+                    <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                      <div className="w-12 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded"></div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">Welcome Email #1</h4>
+                        <p className="text-xs text-muted-foreground">VIP Segment • Jan 15</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">42.3%</p>
+                        <p className="text-xs text-muted-foreground">$1,240</p>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <Star className="w-4 h-4" />
                       </Button>
                     </div>
-                    <div className="border rounded-lg p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-                      <div className="space-y-4">
-                        <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
-                          <div className="text-center">
-                            <h3 className="font-semibold text-blue-800 mb-2">Email Preview</h3>
-                            <div className="space-y-2">
-                              <div className="bg-red-100 p-2 rounded text-sm">
-                                <span className="font-medium">Header (45 clicks)</span>
-                              </div>
-                              <div className="bg-yellow-100 p-2 rounded text-sm">
-                                <span className="font-medium">Main Content (23 clicks)</span>
-                              </div>
-                              <div className="bg-green-100 p-2 rounded text-sm">
-                                <span className="font-medium">CTA Button (127 clicks)</span>
-                              </div>
-                              <div className="bg-blue-100 p-2 rounded text-sm">
-                                <span className="font-medium">Footer (8 clicks)</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="inline-flex items-center space-x-4 text-sm">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 bg-red-400 rounded mr-2"></div>
-                              <span>High Activity</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 bg-yellow-400 rounded mr-2"></div>
-                              <span>Medium Activity</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 bg-blue-400 rounded mr-2"></div>
-                              <span>Low Activity</span>
-                            </div>
-                          </div>
-                        </div>
+                    
+                    <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                      <div className="w-12 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded"></div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">Product Launch Announcement</h4>
+                        <p className="text-xs text-muted-foreground">All Subscribers • Jan 12</p>
                       </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">38.7%</p>
+                        <p className="text-xs text-muted-foreground">$890</p>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <Star className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                      <div className="w-12 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded"></div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">Flash Sale Alert</h4>
+                        <p className="text-xs text-muted-foreground">Recent Purchasers • Jan 8</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">35.2%</p>
+                        <p className="text-xs text-muted-foreground">$654</p>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <Star className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Analytics Summary */}
+              {/* Revenue Attribution Panel */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <BarChart3 className="w-5 h-5 mr-2" />
-                    Performance Summary
-                  </CardTitle>
+                  <CardTitle>Revenue Attribution</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">24.5%</div>
-                      <div className="text-sm text-muted-foreground">Open Rate</div>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-sm">Welcome Series</h4>
+                        <p className="text-xs text-muted-foreground">Avg. 2.3 days to conversion</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">$4,250</p>
+                        <p className="text-xs text-muted-foreground">12.3% conversion</p>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">5.2%</div>
-                      <div className="text-sm text-muted-foreground">Click Rate</div>
+                    
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-sm">Product Launch</h4>
+                        <p className="text-xs text-muted-foreground">Avg. 1.1 days to conversion</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">$8,900</p>
+                        <p className="text-xs text-muted-foreground">8.7% conversion</p>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">$2,450</div>
-                      <div className="text-sm text-muted-foreground">Revenue</div>
+                    
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-sm">Re-engagement</h4>
+                        <p className="text-xs text-muted-foreground">Avg. 4.7 days to conversion</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">$1,800</p>
+                        <p className="text-xs text-muted-foreground">15.1% conversion</p>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">1.8%</div>
-                      <div className="text-sm text-muted-foreground">Unsubscribe</div>
-                    </div>
-                  </div>
-                  <Separator />
-                  <div>
-                    <Label className="text-sm font-medium">Top Performing Emails</Label>
-                    <div className="mt-2 space-y-2">
-                      {[
-                        { name: "Welcome Email #1", rate: "32.1%", revenue: "$890" },
-                        { name: "Product Launch", rate: "28.7%", revenue: "$1,200" },
-                        { name: "Newsletter #12", rate: "19.3%", revenue: "$360" }
-                      ].map((email, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
-                          <div>
-                            <p className="text-sm font-medium">{email.name}</p>
-                            <p className="text-xs text-muted-foreground">{email.rate} open • {email.revenue}</p>
-                          </div>
-                          <Button size="sm" variant="ghost">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
+                    
+                    <div className="pt-3 border-t">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Average Order Value</span>
+                        <span className="font-medium">$87.50</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Revenue Attribution */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="w-5 h-5 mr-2" />
-                  Revenue Attribution
-                </CardTitle>
-                <CardDescription>Track revenue by email campaign and subscriber segment</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[
-                    { campaign: "Welcome Series", revenue: "$4,250", conversion: "12.3%" },
-                    { campaign: "Product Launch", revenue: "$8,900", conversion: "8.7%" },
-                    { campaign: "Newsletter", revenue: "$2,100", conversion: "3.2%" },
-                    { campaign: "Re-engagement", revenue: "$1,800", conversion: "15.1%" }
-                  ].map((item, index) => (
-                    <Card key={index}>
-                      <CardContent className="p-4">
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">{item.campaign}</h4>
-                          <div className="text-2xl font-bold text-green-600">{item.revenue}</div>
-                          <div className="text-sm text-muted-foreground">{item.conversion} conversion</div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Engagement Timeline and Smart Widgets */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Engagement Timeline */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Engagement Timeline</CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <Select>
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="7 Days" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="7">7 Days</SelectItem>
+                          <SelectItem value="30">30 Days</SelectItem>
+                          <SelectItem value="90">90 Days</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button variant="outline" size="sm">
+                        <Filter className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 flex items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                    <div className="text-center space-y-2">
+                      <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto" />
+                      <p className="text-sm text-muted-foreground">Interactive engagement timeline chart</p>
+                      <p className="text-xs text-muted-foreground">Open rates, clicks, and revenue over time</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Smart Insights Widgets */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Smart Insights</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Clock className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-medium">Best Send Time</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Tuesday 2:00 PM shows highest engagement</p>
+                  </div>
+                  
+                  <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Users className="w-4 h-4 text-green-600" />
+                      <span className="text-sm font-medium">Top Segment</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">VIP customers have 3x higher open rates</p>
+                  </div>
+                  
+                  <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Smartphone className="w-4 h-4 text-purple-600" />
+                      <span className="text-sm font-medium">Device Impact</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Mobile opens: 68% | Desktop: 32%</p>
+                  </div>
+                  
+                  <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Moon className="w-4 h-4 text-orange-600" />
+                      <span className="text-sm font-medium">Dark Mode</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">42% of opens use dark mode themes</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Audience Management Tab */}
