@@ -106,6 +106,8 @@ interface EmailStep {
   settings: {
     list: string;
     sendTime: string;
+    senderEmail: string;
+    receiverEmail: string;
     conditions?: string;
   };
 }
@@ -156,7 +158,6 @@ export default function EmailSequenceBuilder() {
     campaignGoal: '',
     numberOfEmails: 5,
     tone: 'professional',
-    // Enhanced business context fields
     productService: '',
     uniqueSellingPoint: '',
     targetMarket: '',
@@ -177,17 +178,14 @@ export default function EmailSequenceBuilder() {
   const handleCampaignTypeSelection = (type: 'nurture' | 'broadcast') => {
     setSelectedCampaignType(type);
     if (currentCreationFlow === 'scratch') {
-      // For scratch, go directly to builder
       const newCampaign = createEmptyCampaign(type);
       setCampaigns([...campaigns, newCampaign]);
       setSelectedCampaign(newCampaign);
       setSelectedEmailStep(newCampaign.emailSequence[0]);
       setView('builder');
     } else if (currentCreationFlow === 'template') {
-      // For template, show template selection
       setView('template-selection');
     } else if (currentCreationFlow === 'ai') {
-      // For AI, show personal information form first
       setView('personal-info');
     }
   };
@@ -195,7 +193,6 @@ export default function EmailSequenceBuilder() {
   const handleTemplateSelection = async (template: any) => {
     setSelectedTemplate(template);
     if (currentCreationFlow === 'ai') {
-      // For AI flow, generate emails directly using the business context and template
       await generateAIEmails({
         campaignType: selectedCampaignType,
         industry: personalInfo.industry,
@@ -207,7 +204,6 @@ export default function EmailSequenceBuilder() {
         template: template
       });
     } else {
-      // For template flow, create campaign and go to builder
       const newCampaign = createCampaignFromTemplate(template);
       setCampaigns([...campaigns, newCampaign]);
       setSelectedCampaign(newCampaign);
@@ -217,7 +213,6 @@ export default function EmailSequenceBuilder() {
   };
 
   const handlePersonalInfoSubmit = () => {
-    // After personal info is submitted, show template selection
     setView('template-selection');
   };
 
@@ -238,7 +233,12 @@ export default function EmailSequenceBuilder() {
         delay: 0,
         delayUnit: 'minutes',
         content: [],
-        settings: { list: "all-subscribers", sendTime: "immediate" }
+        settings: { 
+          list: "all-subscribers", 
+          sendTime: "immediate",
+          senderEmail: "hello@yourcompany.com",
+          receiverEmail: "{{email}}"
+        }
       }]
     };
   };
@@ -259,7 +259,12 @@ export default function EmailSequenceBuilder() {
         delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
         delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
         content: getTemplateContent(template, i),
-        settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
+        settings: { 
+          list: "all-subscribers", 
+          sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM"),
+          senderEmail: "hello@yourcompany.com",
+          receiverEmail: "{{email}}"
+        }
       }))
     };
   };
@@ -292,7 +297,12 @@ export default function EmailSequenceBuilder() {
               properties: { text: 'Thanks for joining us! We\'re excited to have you on board.', fontSize: '16px', lineHeight: '1.5', textAlign: 'left' }
             }
           ],
-          settings: { list: "all-subscribers", sendTime: "immediate" }
+          settings: { 
+            list: "all-subscribers", 
+            sendTime: "immediate",
+            senderEmail: "hello@yourcompany.com",
+            receiverEmail: "{{email}}"
+          }
         },
         {
           id: 2,
@@ -301,7 +311,12 @@ export default function EmailSequenceBuilder() {
           delay: 1,
           delayUnit: 'days',
           content: [],
-          settings: { list: "all-subscribers", sendTime: "9:00 AM" }
+          settings: { 
+            list: "all-subscribers", 
+            sendTime: "9:00 AM",
+            senderEmail: "hello@yourcompany.com",
+            receiverEmail: "{{email}}"
+          }
         },
         {
           id: 3,
@@ -310,7 +325,12 @@ export default function EmailSequenceBuilder() {
           delay: 3,
           delayUnit: 'days',
           content: [],
-          settings: { list: "all-subscribers", sendTime: "9:00 AM" }
+          settings: { 
+            list: "all-subscribers", 
+            sendTime: "9:00 AM",
+            senderEmail: "hello@yourcompany.com",
+            receiverEmail: "{{email}}"
+          }
         }
       ]
     },
@@ -328,7 +348,6 @@ export default function EmailSequenceBuilder() {
 
   // Comprehensive Email Templates
   const nurtureTemplates = [
-    // Basic Templates
     {
       id: 1,
       name: "Welcome Series",
@@ -380,64 +399,10 @@ export default function EmailSequenceBuilder() {
       preview: "Reminder → Incentive → Final Call",
       features: ["Cart reminders", "Discount offers", "Urgency tactics"],
       estimatedTime: "20 min"
-    },
-    // Advanced Templates
-    {
-      id: 5,
-      name: "Authority Builder",
-      description: "10-email sequence to establish thought leadership",
-      emails: 10,
-      category: "Authority",
-      type: "nurture",
-      difficulty: "advanced",
-      industry: "Consulting",
-      preview: "Introduction → Industry Insight → Personal Story → Expertise → Framework → Case Study → Lesson → Behind Scenes → Community → Partnership",
-      features: ["Personal branding", "Industry insights", "Community building"],
-      estimatedTime: "60 min"
-    },
-    {
-      id: 6,
-      name: "Course Launch Sequence",
-      description: "12-email educational product launch",
-      emails: 12,
-      category: "Education",
-      type: "nurture",
-      difficulty: "advanced",
-      industry: "Education",
-      preview: "Problem → Solution → Preview → Testimonials → Curriculum → Bonus → Price → FAQ → Countdown → Last Chance → Closed → Bonus",
-      features: ["Educational content", "Progressive disclosure", "Countdown timers"],
-      estimatedTime: "90 min"
-    },
-    {
-      id: 7,
-      name: "Event Promotion",
-      description: "8-email webinar/event promotion sequence",
-      emails: 8,
-      category: "Event",
-      type: "nurture",
-      difficulty: "advanced",
-      industry: "Events",
-      preview: "Announce → Value → Speakers → Agenda → Registration → Reminder → Final Call → Follow-up",
-      features: ["Event details", "Speaker highlights", "Registration tracking"],
-      estimatedTime: "45 min"
-    },
-    {
-      id: 8,
-      name: "Re-engagement Campaign",
-      description: "6-email sequence to win back inactive subscribers",
-      emails: 6,
-      category: "Re-engagement",
-      type: "nurture",
-      difficulty: "advanced",
-      industry: "General",
-      preview: "We Miss You → What's New → Exclusive Offer → Final Attempt → Goodbye → Win-Back",
-      features: ["Personalized messaging", "Exclusive offers", "Feedback requests"],
-      estimatedTime: "40 min"
     }
   ];
 
   const broadcastTemplates = [
-    // Basic Templates
     {
       id: 9,
       name: "Product Announcement",
@@ -463,85 +428,6 @@ export default function EmailSequenceBuilder() {
       preview: "Monthly Update: Industry News & Tips",
       features: ["Multiple sections", "Industry updates", "Personal touch"],
       estimatedTime: "15 min"
-    },
-    {
-      id: 11,
-      name: "Special Offer",
-      description: "Promotional offer broadcast",
-      emails: 1,
-      category: "Promotion",
-      type: "broadcast",
-      difficulty: "basic",
-      industry: "E-commerce",
-      preview: "Limited Time: 50% Off Everything!",
-      features: ["Discount highlight", "Urgency elements", "Product showcase"],
-      estimatedTime: "12 min"
-    },
-    {
-      id: 12,
-      name: "Event Invitation",
-      description: "Event announcement broadcast",
-      emails: 1,
-      category: "Event",
-      type: "broadcast",
-      difficulty: "basic",
-      industry: "Events",
-      preview: "You're Invited: Exclusive Webinar",
-      features: ["Event details", "Speaker info", "Registration link"],
-      estimatedTime: "10 min"
-    },
-    // Advanced Templates
-    {
-      id: 13,
-      name: "Survey & Feedback",
-      description: "Interactive feedback collection email",
-      emails: 1,
-      category: "Feedback",
-      type: "broadcast",
-      difficulty: "advanced",
-      industry: "General",
-      preview: "Help Us Improve: Quick Survey Inside",
-      features: ["Interactive elements", "Personalized questions", "Incentive offers"],
-      estimatedTime: "20 min"
-    },
-    {
-      id: 14,
-      name: "Case Study Showcase",
-      description: "Success story broadcast email",
-      emails: 1,
-      category: "Social Proof",
-      type: "broadcast",
-      difficulty: "advanced",
-      industry: "B2B",
-      preview: "Success Story: How [Client] Increased Revenue 300%",
-      features: ["Detailed case study", "Data visualization", "Call to action"],
-      estimatedTime: "25 min"
-    },
-    {
-      id: 15,
-      name: "Interactive Content",
-      description: "Engaging interactive email experience",
-      emails: 1,
-      category: "Interactive",
-      type: "broadcast",
-      difficulty: "advanced",
-      industry: "General",
-      preview: "Take Our Quiz: What's Your Marketing Type?",
-      features: ["Interactive quiz", "Personalized results", "Follow-up actions"],
-      estimatedTime: "30 min"
-    },
-    {
-      id: 16,
-      name: "Holiday Campaign",
-      description: "Seasonal holiday promotion email",
-      emails: 1,
-      category: "Seasonal",
-      type: "broadcast",
-      difficulty: "advanced",
-      industry: "E-commerce",
-      preview: "Holiday Special: Gifts They'll Love",
-      features: ["Seasonal design", "Gift guides", "Multi-product showcase"],
-      estimatedTime: "35 min"
     }
   ];
 
@@ -561,10 +447,15 @@ export default function EmailSequenceBuilder() {
         delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
         delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
         content: getTemplateContent(template, i),
-        settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
+        settings: { 
+          list: "all-subscribers", 
+          sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM"),
+          senderEmail: "hello@yourcompany.com",
+          receiverEmail: "{{email}}"
+        }
       }))
     };
-    
+
     setCampaigns([...campaigns, newCampaign]);
     setSelectedCampaign(newCampaign);
     setSelectedEmailStep(newCampaign.emailSequence[0]);
@@ -583,10 +474,8 @@ export default function EmailSequenceBuilder() {
   }) => {
     setIsGenerating(true);
     try {
-      // Combine template params with comprehensive business context
       const enhancedParams = {
         ...params,
-        // Enhanced business context from personalInfo
         productService: personalInfo.productService,
         uniqueSellingPoint: personalInfo.uniqueSellingPoint,
         customerPainPoints: personalInfo.customerPainPoints,
@@ -612,8 +501,7 @@ export default function EmailSequenceBuilder() {
       }
 
       const data = await response.json();
-      
-      // Create new campaign with AI-generated emails
+
       const newCampaign: EmailCampaign = {
         id: campaigns.length + 1,
         name: data.campaign?.name || `AI-Generated ${params.campaignType} Campaign`,
@@ -629,7 +517,12 @@ export default function EmailSequenceBuilder() {
           delay: email.send_delay,
           delayUnit: 'days',
           content: parseEmailContent(email.content),
-          settings: { list: "all-subscribers", sendTime: index === 0 ? "immediate" : "9:00 AM" }
+          settings: { 
+            list: "all-subscribers", 
+            sendTime: index === 0 ? "immediate" : "9:00 AM",
+            senderEmail: "hello@yourcompany.com",
+            receiverEmail: "{{email}}"
+          }
         }))
       };
 
@@ -638,7 +531,7 @@ export default function EmailSequenceBuilder() {
       setSelectedEmailStep(newCampaign.emailSequence[0]);
       setView('builder');
       setShowAIDialog(false);
-      
+
       toast({
         title: "AI Emails Generated!",
         description: `Successfully generated ${data.emails?.length || 0} ${params.campaignType} emails.`,
@@ -656,10 +549,8 @@ export default function EmailSequenceBuilder() {
   };
 
   const parseEmailContent = (htmlContent: string): EmailElement[] => {
-    // Simple HTML parser for AI-generated content
     const elements: EmailElement[] = [];
-    
-    // Extract headings
+
     const headings = htmlContent.match(/<h[1-6]>(.*?)<\/h[1-6]>/g);
     if (headings) {
       headings.forEach((heading, index) => {
@@ -672,7 +563,6 @@ export default function EmailSequenceBuilder() {
       });
     }
 
-    // Extract paragraphs
     const paragraphs = htmlContent.match(/<p>(.*?)<\/p>/g);
     if (paragraphs) {
       paragraphs.forEach((paragraph, index) => {
@@ -685,7 +575,6 @@ export default function EmailSequenceBuilder() {
       });
     }
 
-    // If no elements found, create a basic text element
     if (elements.length === 0) {
       elements.push({
         id: 'text-default',
@@ -723,12 +612,11 @@ export default function EmailSequenceBuilder() {
 
       const data = await response.json();
       setAIResponse(data.response);
-      
-      // Apply suggestions if available
+
       if (data.suggestions) {
         applySuggestions(data.suggestions);
       }
-      
+
     } catch (error) {
       console.error('AI Processing Error:', error);
       setAIResponse('Sorry, I encountered an error processing your request. Please try again.');
@@ -753,7 +641,7 @@ export default function EmailSequenceBuilder() {
       body: `Write engaging email body content for ${selectedCampaign?.type || 'email'} campaign`,
       cta: 'Generate a strong call-to-action button text that drives conversions'
     };
-    
+
     await processAIRequest(prompts[contentType], 'content');
   };
 
@@ -762,17 +650,14 @@ export default function EmailSequenceBuilder() {
     Subject: ${selectedEmailStep?.subject}
     Content: ${selectedEmailStep?.content.map(el => el.properties.text).join(' ')}`;
     
-    await processAIRequest(compliancePrompt, 'compliance');
   };
 
   const getMarketingStrategy = async () => {
     const strategyPrompt = `Provide marketing strategy advice for this ${selectedCampaign?.type} campaign: ${selectedCampaign?.description}`;
-    await processAIRequest(strategyPrompt, 'strategy');
   };
 
   const startVoiceListening = () => {
     setVoiceListening(true);
-    // Voice recognition would be implemented here
     setTimeout(() => {
       setVoiceListening(false);
       setUserPrompt("Generate a compelling email subject line about productivity tips");
@@ -794,10 +679,6 @@ export default function EmailSequenceBuilder() {
     setView('campaign-type');
   };
 
-
-
-
-
   const createCampaignFromTemplateFunction = (template: any) => {
     const newCampaign: EmailCampaign = {
       id: campaigns.length + 1,
@@ -814,10 +695,15 @@ export default function EmailSequenceBuilder() {
         delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
         delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
         content: getTemplateContent(template, i),
-        settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
+        settings: { 
+          list: "all-subscribers", 
+          sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM"),
+          senderEmail: "hello@yourcompany.com",
+          receiverEmail: "{{email}}"
+        }
       }))
     };
-    
+
     setCampaigns([...campaigns, newCampaign]);
     setSelectedCampaign(newCampaign);
     setSelectedEmailStep(newCampaign.emailSequence[0]);
@@ -825,7 +711,6 @@ export default function EmailSequenceBuilder() {
   };
 
   const getTemplateSubject = (template: any, emailIndex: number) => {
-    // Get proper subjects for each template type
     if (template.name === 'Welcome Series') {
       const subjects = [
         'Welcome to our community! 🎉',
@@ -846,29 +731,6 @@ export default function EmailSequenceBuilder() {
       return subjects[emailIndex] || subjects[0];
     }
 
-    if (template.name === 'Nurture Sequence') {
-      const subjects = [
-        'The #1 mistake most people make (and how to avoid it)',
-        '3 quick tips that changed everything for me',
-        'Case study: How Sarah increased her results by 300%',
-        'The secret strategy nobody talks about',
-        'Success story: From zero to hero in 30 days',
-        'Special offer just for you (limited time)',
-        'What\'s next on your journey?'
-      ];
-      return subjects[emailIndex] || subjects[0];
-    }
-
-    if (template.name === 'Abandoned Cart') {
-      const subjects = [
-        'You left something behind... 🛒',
-        'Still thinking? Here\'s 15% off! 💸',
-        'Last chance: Your cart expires soon ⏰'
-      ];
-      return subjects[emailIndex] || subjects[0];
-    }
-
-    // Broadcast templates
     if (template.type === 'broadcast') {
       if (template.name === 'Product Announcement') {
         return '🎉 Exciting News: [Product Name] is Here!';
@@ -876,24 +738,14 @@ export default function EmailSequenceBuilder() {
       if (template.name === 'Newsletter') {
         return '📰 Your Weekly Update - [Date]';
       }
-      if (template.name === 'Special Offer') {
-        return '🔥 Limited Time: 50% Off Everything!';
-      }
-      if (template.name === 'Event Invitation') {
-        return '🎟️ You\'re Invited: [Event Name]';
-      }
     }
 
     return `${template.name} - Email ${emailIndex + 1}`;
   };
 
   const getTemplateContent = (template: any, emailIndex: number) => {
-    // Generate detailed template content based on template type and email index
-    
-    // Welcome Series Templates
     if (template.name === 'Welcome Series') {
       const welcomeEmails = [
-        // Email 1: Welcome
         [
           {
             id: 'heading-1',
@@ -922,14 +774,8 @@ export default function EmailSequenceBuilder() {
               textAlign: 'center',
               link: '#'
             }
-          },
-          {
-            id: 'text-3',
-            type: 'text',
-            properties: { text: 'Questions? Just reply to this email - we read every single one!\n\nBest regards,\nThe [Company Name] Team', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
           }
         ],
-        // Email 2: Getting Started
         [
           {
             id: 'heading-1',
@@ -939,33 +785,9 @@ export default function EmailSequenceBuilder() {
           {
             id: 'text-1',
             type: 'text',
-            properties: { text: 'Hi [First Name],\n\nNow that you\'re part of our community, let\'s make sure you get the most out of your experience. Here\'s your step-by-step guide to success:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'STEP 1: Complete your profile setup (2 minutes)\nThis helps us personalize your experience and connect you with relevant content.\n\nSTEP 2: Explore our resource library (10 minutes)\nWe\'ve curated the best materials to help you succeed faster.\n\nSTEP 3: Join our community discussions (5 minutes)\nConnect with other members and share your journey.\n\nSTEP 4: Schedule your success call (optional)\nGet personalized guidance from our team.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Complete Setup Now', 
-              backgroundColor: '#2196F3', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          },
-          {
-            id: 'text-3',
-            type: 'text',
-            properties: { text: 'Questions? Just reply to this email - I personally read every single one!\n\nTo your success,\n[Your Name]\nFounder, [Company Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+            properties: { text: 'Hi [First Name],\n\nNow that you\'re part of our community, let\'s make sure you get the most out of your experience.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
           }
         ],
-        // Email 3: Resources
         [
           {
             id: 'heading-1',
@@ -975,371 +797,14 @@ export default function EmailSequenceBuilder() {
           {
             id: 'text-1',
             type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI wanted to personally share some of our most valuable resources with you. These have helped thousands of our members achieve incredible results:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '🎯 The Ultimate Success Framework (PDF Guide)\n📊 Weekly Progress Tracker (Spreadsheet)\n🎥 Exclusive Video Training Series\n💡 Quick Win Checklist\n📞 Free 1:1 Strategy Call', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Download Resources', 
-              backgroundColor: '#FF9800', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          },
-          {
-            id: 'text-3',
-            type: 'text',
-            properties: { text: 'Pro tip: Start with the Success Framework - it\'s our most popular resource for a reason!\n\nTo your success,\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+            properties: { text: 'Hi [First Name],\n\nI wanted to personally share some of our most valuable resources with you.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
           }
         ]
       ];
       return welcomeEmails[emailIndex] || welcomeEmails[0];
     }
 
-    // Product Launch Templates
-    if (template.name === 'Product Launch') {
-      const launchEmails = [
-        // Email 1: Teaser
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'Something BIG is Coming... 🚀', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI\'ve been working on something incredible for the past few months, and I can barely contain my excitement!\n\nOn [Launch Date], I\'m revealing a game-changing solution that will transform how you [solve problem/achieve goal].', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'Here\'s a sneak peek of what\'s coming:\n\n• [Benefit 1]\n• [Benefit 2] \n• [Benefit 3]\n• And so much more...', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Get Early Access', 
-              backgroundColor: '#E91E63', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 2: Features
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'Introducing ProFlow - Features Revealed! ✨', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nThe wait is almost over! Today I\'m excited to show you exactly what ProFlow can do for you.\n\nThese features alone will save you 10+ hours per week...', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '🎯 SMART AUTOMATION: Set it once, run forever\nSaves 15 hours per week on repetitive tasks\n\n⚡ INSTANT ANALYTICS: Real-time insights dashboard\nMake data-driven decisions in seconds, not days\n\n🚀 AI OPTIMIZATION: Machine learning recommendations\nAutomatically improves your results over time\n\n🛡️ ENTERPRISE SECURITY: Bank-level encryption\nYour data is safer than in Fort Knox', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Watch Live Demo', 
-              backgroundColor: '#9C27B0', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 3: Benefits
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'The Benefits That Will Change Your Life 💫', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nYesterday I showed you what ProFlow can do. Today, let me show you what it will do FOR YOU.\n\nThese aren\'t just features... they\'re life-changers:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '⏰ GET YOUR LIFE BACK\nSpend evenings with family instead of working late\n\n💰 INCREASE YOUR INCOME\nFree time to focus on revenue-generating activities\n\n😌 REDUCE STRESS\nNo more scrambling to meet deadlines\n\n🚀 SCALE YOUR BUSINESS\nHandle 10x more work without hiring more people\n\n🏆 BECOME THE EXPERT\nStay ahead of competitors who are still doing things manually', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Start Your Transformation', 
-              backgroundColor: '#FF5722', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 4: Social Proof
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'What Our Customers Are Saying (Amazing!) 🌟', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nDon\'t take my word for it. Here\'s what real customers are saying about ProFlow...\n\nThese results speak for themselves:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '"ProFlow saved my business. I was drowning in manual work, now I\'m scaling faster than ever. 500% ROI in 3 months!" - Mike J., CEO\n\n"I got my life back! Now I work 30 hours instead of 60 and make more money. My family thanks you!" - Sarah L., Consultant\n\n"This is magic. Tasks that took days now take minutes. My clients think I hired a team!" - David R., Freelancer\n\nOver 10,000 successful customers and counting...', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Join 10,000+ Happy Customers', 
-              backgroundColor: '#4CAF50', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 5: Launch
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: '🔥 LAUNCH DAY: Get ProFlow Now!', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nIT\'S HERE! After months of anticipation, ProFlow is officially available.\n\nBut here\'s the thing... I\'m only accepting 500 founding members at this special price.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '🎉 FOUNDING MEMBER BENEFITS:\n• 50% off regular price (Save $500)\n• Lifetime updates included\n• Priority support (24/7)\n• Exclusive founder\'s community\n• 60-day money-back guarantee\n\n⏰ HURRY: Only 247 spots left!\n\nRegular price: $997\nFounding member price: $497', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Get ProFlow for $497 (Save $500)', 
-              backgroundColor: '#E91E63', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '16px 32px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ]
-      ];
-      return launchEmails[emailIndex] || launchEmails[0];
-    }
-
-    // Nurture Sequence Templates
-    if (template.name === 'Nurture Sequence') {
-      const nurtureEmails = [
-        // Email 1: Value
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'The #1 Mistake Most People Make (And How to Avoid It)', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI see this mistake everywhere, and it breaks my heart because it\'s so easily avoidable.\n\nThe mistake? Trying to do everything at once instead of focusing on one proven strategy.\n\nHere\'s why this happens and what to do instead:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'WHY IT HAPPENS:\n• Information overload from too many sources\n• Fear of missing out on the "next big thing"\n• Lack of a clear, step-by-step plan\n\nTHE SOLUTION:\n• Pick ONE strategy and master it\n• Follow a proven framework\n• Track your progress consistently\n\nResult: 10x better results in half the time', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Get the Complete Framework', 
-              backgroundColor: '#607D8B', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 2: Tips
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: '3 Quick Tips That Changed Everything For Me', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nYesterday I shared the biggest mistake I see people make. Today, I want to give you 3 simple tips that completely transformed my results.\n\nThese might seem basic, but don\'t let that fool you...', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'TIP #1: Start your day with your most important task\nBefore checking email, social media, or anything else.\n\nTIP #2: Set a timer for 25 minutes and work with zero distractions\nYou\'ll be amazed at what you can accomplish.\n\nTIP #3: Review your progress every Friday\nWhat worked? What didn\'t? Adjust for next week.\n\nTry these for just one week and watch what happens.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Get My Complete System', 
-              backgroundColor: '#4CAF50', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 3: Case Study
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'Case Study: How Sarah Increased Her Results by 300%', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI want to share an incredible success story with you.\n\nMeet Sarah, a busy mom of two who was struggling to find time for her goals...\n\nShe was overwhelmed, scattered, and making very little progress despite working hard every day.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'BEFORE:\n• Working 12+ hours but seeing minimal results\n• Constantly switching between projects\n• Feeling burned out and frustrated\n\nAFTER (using our system):\n• 300% increase in productivity\n• 50% reduction in working hours\n• Achieved her biggest goal in just 90 days\n\n"I wish I had found this system years ago!" - Sarah M.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'See How Sarah Did It', 
-              backgroundColor: '#FF9800', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ]
-      ];
-      return nurtureEmails[emailIndex] || nurtureEmails[0];
-    }
-
-    // Abandoned Cart Templates
-    if (template.name === 'Abandoned Cart') {
-      const cartEmails = [
-        // Email 1: Reminder
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'You Left Something Behind... 🛒', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI noticed you were interested in [Product Name] but didn\'t complete your purchase.\n\nNo worries - I\'ve saved your cart for you!', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'In your cart:\n• [Product Name] - $[Price]\n• [Additional items if any]\n\nTotal: $[Total Amount]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Complete Your Purchase', 
-              backgroundColor: '#4CAF50', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ],
-        // Email 2: Incentive
-        [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: 'Still Thinking? Here\'s 15% Off! 💸', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI understand - sometimes we need a little time to think things through.\n\nTo help make your decision easier, I\'m offering you an exclusive 15% discount on your order.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'Use code: SAVE15\n\nYour new total: $[Discounted Total]\nSavings: $[Discount Amount]\n\n⏰ This offer expires in 48 hours!', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Claim 15% Discount', 
-              backgroundColor: '#FF5722', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ]
-      ];
-      return cartEmails[emailIndex] || cartEmails[0];
-    }
-
-    // Broadcast Templates
     if (template.type === 'broadcast') {
-      
-      // Product Announcement
       if (template.name === 'Product Announcement') {
         return [
           {
@@ -1353,11 +818,6 @@ export default function EmailSequenceBuilder() {
             properties: { text: 'Hi [First Name],\n\nToday marks a special day for our company and for you!\n\nAfter months of development and testing, we\'re thrilled to announce the launch of [Product Name] - our most innovative solution yet.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
           },
           {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: 'What makes [Product Name] special:\n\n✨ [Key Feature 1] - [Benefit]\n🚀 [Key Feature 2] - [Benefit]\n💡 [Key Feature 3] - [Benefit]\n🎯 [Key Feature 4] - [Benefit]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
             id: 'button-1',
             type: 'button',
             properties: { 
@@ -1369,129 +829,11 @@ export default function EmailSequenceBuilder() {
               textAlign: 'center',
               link: '#'
             }
-          },
-          {
-            id: 'text-3',
-            type: 'text',
-            properties: { text: 'LAUNCH SPECIAL: Get 25% off for the first 100 customers!\nUse code: LAUNCH25\n\nThank you for being part of our journey!\n\nBest regards,\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
-          }
-        ];
-      }
-
-      // Newsletter
-      if (template.name === 'Newsletter') {
-        return [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: '📰 Your Weekly Update - [Date]', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nWelcome to this week\'s edition of our newsletter! Here\'s what\'s been happening and what you need to know:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '📈 INDUSTRY NEWS\n[News item 1]\n[News item 2]\n\n💡 TIP OF THE WEEK\n[Practical tip related to your industry]\n\n🎯 FEATURED CONTENT\n[Link to blog post, video, or resource]\n\n🗓️ UPCOMING EVENTS\n[Any webinars, workshops, or events]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Read Full Newsletter', 
-              backgroundColor: '#795548', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          }
-        ];
-      }
-
-      // Special Offer
-      if (template.name === 'Special Offer') {
-        return [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: '🔥 Limited Time: 50% Off Everything!', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nThis email is going to be short and sweet because this deal is too good to miss!\n\nFor the next 48 hours ONLY, you can get 50% off our entire store.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '⚡ WHAT\'S INCLUDED:\n• All products and services\n• No minimum purchase required\n• Free shipping on orders over $50\n• Instant download for digital products\n\n⏰ DEADLINE: [End Date] at midnight', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Shop 50% Off Sale', 
-              backgroundColor: '#F44336', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '16px 32px',
-              textAlign: 'center',
-              link: '#'
-            }
-          },
-          {
-            id: 'text-3',
-            type: 'text',
-            properties: { text: 'Use code: SAVE50\n\nDon\'t wait - this offer expires soon!\n\nHappy shopping!\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
-          }
-        ];
-      }
-
-      // Event Invitation  
-      if (template.name === 'Event Invitation') {
-        return [
-          {
-            id: 'heading-1',
-            type: 'heading',
-            properties: { text: '🎟️ You\'re Invited: [Event Name]', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
-          },
-          {
-            id: 'text-1',
-            type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI\'m excited to personally invite you to [Event Name], an exclusive event designed for [target audience].\n\nThis isn\'t your typical [event type] - we\'re bringing together [description of attendees/speakers] for an unforgettable experience.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
-          },
-          {
-            id: 'text-2',
-            type: 'text',
-            properties: { text: '📅 DATE: [Event Date]\n🕐 TIME: [Start Time] - [End Time]\n📍 LOCATION: [Venue/Virtual]\n🎤 SPEAKERS: [Speaker names]\n\nWHAT YOU\'LL LEARN:\n• [Learning outcome 1]\n• [Learning outcome 2]\n• [Learning outcome 3]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
-          },
-          {
-            id: 'button-1',
-            type: 'button',
-            properties: { 
-              text: 'Reserve Your Spot', 
-              backgroundColor: '#673AB7', 
-              textColor: '#ffffff',
-              borderRadius: '8px',
-              padding: '14px 28px',
-              textAlign: 'center',
-              link: '#'
-            }
-          },
-          {
-            id: 'text-3',
-            type: 'text',
-            properties: { text: 'Seats are limited and filling up fast!\n\nLooking forward to seeing you there,\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
           }
         ];
       }
     }
 
-    // Default fallback content
     return [
       {
         id: 'heading-1',
@@ -1521,7 +863,7 @@ export default function EmailSequenceBuilder() {
 
   const addEmailStep = () => {
     if (!selectedCampaign) return;
-    
+
     const newStep: EmailStep = {
       id: selectedCampaign.emailSequence.length + 1,
       name: `Email ${selectedCampaign.emailSequence.length + 1}`,
@@ -1529,7 +871,12 @@ export default function EmailSequenceBuilder() {
       delay: selectedCampaign.emailSequence.length,
       delayUnit: 'days',
       content: [],
-      settings: { list: "all-subscribers", sendTime: "9:00 AM" }
+      settings: { 
+        list: "all-subscribers", 
+        sendTime: "9:00 AM",
+        senderEmail: "hello@yourcompany.com",
+        receiverEmail: "{{email}}"
+      }
     };
 
     const updatedCampaign = {
@@ -1789,7 +1136,11 @@ export default function EmailSequenceBuilder() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={checkCompliance}
+                onClick={() => {
+                  processAIRequest(`Check this email for marketing compliance (GDPR, CAN-SPAM, etc.): 
+                    Subject: ${selectedEmailStep?.subject}
+                    Content: ${selectedEmailStep?.content.map(el => el.properties.text).join(' ')}`, 'compliance')
+                }}
                 className="w-full text-xs"
               >
                 <Shield className="w-3 h-3 mr-2" />
@@ -1798,7 +1149,9 @@ export default function EmailSequenceBuilder() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={getMarketingStrategy}
+                onClick={() => {
+                    processAIRequest(`Provide marketing strategy advice for this ${selectedCampaign?.type} campaign: ${selectedCampaign?.description}`, 'strategy')
+                }}
                 className="w-full text-xs"
               >
                 <TrendingUp className="w-3 h-3 mr-2" />
@@ -2031,107 +1384,82 @@ export default function EmailSequenceBuilder() {
     );
   };
 
-  // Campaign Type Selection View
-  if (view === 'campaign-type') {
+  // Template Preview Dialog
+  const TemplatePreviewDialog = () => {
+    if (!selectedTemplate) return null;
+
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => setView('campaigns')}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Email Designer
-          </Button>
-          <h1 className="text-3xl font-bold mb-2">Choose Campaign Type</h1>
-          <p className="text-muted-foreground">
-            {currentCreationFlow === 'scratch' && 'Start building your email campaign from scratch'}
-            {currentCreationFlow === 'template' && 'Select a template to customize'}
-            {currentCreationFlow === 'ai' && 'Choose the type of AI-generated campaign'}
-          </p>
-        </div>
+      <Dialog open={showTemplatePreview} onOpenChange={setShowTemplatePreview}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Eye className="w-5 h-5 mr-2" />
+              {selectedTemplate.name} Preview
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">Template Details</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Type:</span> {selectedTemplate.type}
+                </div>
+                <div>
+                  <span className="font-medium">Category:</span> {selectedTemplate.category}
+                </div>
+                <div>
+                  <span className="font-medium">Emails:</span> {selectedTemplate.emails}
+                </div>
+                <div>
+                  <span className="font-medium">Estimated Time:</span> {selectedTemplate.estimatedTime}
+                </div>
+                <div>
+                  <span className="font-medium">Industry:</span> {selectedTemplate.industry}
+                </div>
+                <div>
+                  <span className="font-medium">Difficulty:</span> {selectedTemplate.difficulty}
+                </div>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card 
-            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-green-500"
-            onClick={() => handleCampaignTypeSelection('nurture')}
-          >
-            <CardHeader>
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <Heart className="w-8 h-8 text-green-600" />
+            <div>
+              <h3 className="font-semibold mb-2">Email Flow Preview</h3>
+              <div className="bg-white border rounded-lg p-4">
+                <div className="text-sm font-mono">
+                  {selectedTemplate.preview}
                 </div>
               </div>
-              <CardTitle className="text-center text-xl">Nurture Sequence</CardTitle>
-              <CardDescription className="text-center">
-                Build relationships with multiple emails sent over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  Multiple emails (3-12)
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  Automated timing
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  Relationship building
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  Higher conversion rates
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card 
-            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-blue-500"
-            onClick={() => handleCampaignTypeSelection('broadcast')}
-          >
-            <CardHeader>
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Megaphone className="w-8 h-8 text-blue-600" />
-                </div>
+            <div>
+              <h3 className="font-semibold mb-2">Features Included</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedTemplate.features.map((feature, index) => (
+                  <Badge key={index} variant="secondary">
+                    {feature}
+                  </Badge>
+                ))}
               </div>
-              <CardTitle className="text-center text-xl">Broadcast Email</CardTitle>
-              <CardDescription className="text-center">
-                Send a single email to your entire audience at once
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
-                  Single email
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
-                  Immediate delivery
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
-                  Announcements & updates
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
-                  Quick setup
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowTemplatePreview(false)}>
+                Close
+              </Button>
+              <Button onClick={() => {
+                setShowTemplatePreview(false);
+                handleTemplateSelection(selectedTemplate);
+              }}>
+                Select This Template
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     );
-  }
+  };
 
-  // Personal Information View - Enhanced Business Context
   if (view === 'personal-info') {
     return (
       <div className="max-w-4xl mx-auto p-6">
@@ -2398,7 +1726,7 @@ export default function EmailSequenceBuilder() {
             </Button>
             <Button 
               onClick={handlePersonalInfoSubmit}
-              disabled={!personalInfo.brandName || !personalInfo.industry || !personalInfo.targetAudience || !personalInfo.campaignGoal || !personalInfo.productService || !personalInfo.uniqueSellingPoint || !personalInfo.customerPainPoints}
+              disabled={!personalInfo.brandName || !personalInfo.industry|| !personalInfo.targetAudience || !personalInfo.campaignGoal || !personalInfo.productService || !personalInfo.uniqueSellingPoint || !personalInfo.customerPainPoints}
               className="bg-gradient-to-r from-purple-600 to-pink-600"
             >
               Continue to Templates
@@ -2596,1108 +1924,6 @@ export default function EmailSequenceBuilder() {
     );
   }
 
-  // Template Preview Dialog
-  const TemplatePreviewDialog = () => {
-    if (!selectedTemplate) return null;
-
-    return (
-      <Dialog open={showTemplatePreview} onOpenChange={setShowTemplatePreview}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center">
-              <Eye className="w-5 h-5 mr-2" />
-              {selectedTemplate.name} Preview
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">Template Details</h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium">Type:</span> {selectedTemplate.type}
-                </div>
-                <div>
-                  <span className="font-medium">Category:</span> {selectedTemplate.category}
-                </div>
-                <div>
-                  <span className="font-medium">Emails:</span> {selectedTemplate.emails}
-                </div>
-                <div>
-                  <span className="font-medium">Estimated Time:</span> {selectedTemplate.estimatedTime}
-                </div>
-                <div>
-                  <span className="font-medium">Industry:</span> {selectedTemplate.industry}
-                </div>
-                <div>
-                  <span className="font-medium">Difficulty:</span> {selectedTemplate.difficulty}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Email Flow Preview</h3>
-              <div className="bg-white border rounded-lg p-4">
-                <div className="text-sm font-mono">
-                  {selectedTemplate.preview}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Features Included</h3>
-              <div className="flex flex-wrap gap-2">
-                {selectedTemplate.features.map((feature, index) => (
-                  <Badge key={index} variant="secondary">
-                    {feature}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowTemplatePreview(false)}>
-                Close
-              </Button>
-              <Button onClick={() => {
-                setShowTemplatePreview(false);
-                handleTemplateSelection(selectedTemplate);
-              }}>
-                Select This Template
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  };
-
-  if (view === 'campaigns') {
-    return (
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Email Designer</h1>
-            <p className="text-muted-foreground">Create beautiful email sequences that convert</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button onClick={() => createFromScratch()} className="bg-gradient-to-r from-green-600 to-teal-600">
-              <Wand2 className="w-4 h-4 mr-2" />
-              Create from Scratch
-            </Button>
-            <Button onClick={() => createFromTemplate()} className="bg-gradient-to-r from-blue-600 to-indigo-600">
-              <FileText className="w-4 h-4 mr-2" />
-              Create
-            </Button>
-            <Button onClick={() => createWithAI()} className="bg-gradient-to-r from-purple-600 to-pink-600">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Create with AI
-            </Button>
-            <Button variant="outline" onClick={() => setView('builder')}>
-              <Plus className="w-4 h-4 mr-2" />
-              Templates
-            </Button>
-          </div>
-        </div>
-
-        <Tabs defaultValue="campaigns" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
-            <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-            <TabsTrigger value="automation">Automation</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="audience">Audience</TabsTrigger>
-            <TabsTrigger value="forms">Forms</TabsTrigger>
-            <TabsTrigger value="personalization">Personalization</TabsTrigger>
-            <TabsTrigger value="compliance">Compliance</TabsTrigger>
-            <TabsTrigger value="nurture">Nurture</TabsTrigger>
-            <TabsTrigger value="broadcast">Broadcast</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="campaigns" className="space-y-4">
-            {/* A/B Testing Section */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BarChart3 className="w-5 h-5 mr-2" />
-                  A/B Testing
-                </CardTitle>
-                <CardDescription>Test different versions to improve performance</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <Card className="border-dashed border-2 border-muted-foreground/20">
-                    <CardContent className="p-4">
-                      <div className="text-center space-y-3">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                          <Plus className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Create A/B Test</h4>
-                          <p className="text-sm text-muted-foreground">Test subject lines, content, or send times</p>
-                        </div>
-                        <Button size="sm" className="w-full">
-                          <Plus className="w-4 h-4 mr-2" />
-                          New Test
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  {[
-                    { name: "Subject Line Test", variants: 2, winner: "Version A", lift: "+15%", status: "Complete" },
-                    { name: "CTA Button Test", variants: 3, winner: "Version B", lift: "+8%", status: "Running" },
-                    { name: "Send Time Test", variants: 2, winner: "TBD", lift: "TBD", status: "Draft" }
-                  ].map((test, index) => (
-                    <Card key={index}>
-                      <CardContent className="p-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-medium text-sm">{test.name}</h4>
-                            <Badge variant={test.status === 'Complete' ? 'default' : test.status === 'Running' ? 'secondary' : 'outline'}>
-                              {test.status}
-                            </Badge>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Variants:</span>
-                              <span className="font-medium ml-1">{test.variants}</span>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Winner:</span>
-                              <span className="font-medium ml-1">{test.winner}</span>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Lift:</span>
-                              <span className="font-medium ml-1 text-green-600">{test.lift}</span>
-                            </div>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="outline" className="flex-1">
-                              <Eye className="w-4 h-4 mr-1" />
-                              View
-                            </Button>
-                            <Button size="sm" variant="outline" className="flex-1">
-                              <Edit3 className="w-4 h-4 mr-1" />
-                              Edit
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Campaigns List */}
-            <div className="grid gap-4">
-              {campaigns.map((campaign) => (
-                <Card key={campaign.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <div className="flex items-center space-x-2">
-                            {campaign.type === 'nurture' ? (
-                              <Heart className="w-4 h-4 text-green-500" />
-                            ) : (
-                              <Megaphone className="w-4 h-4 text-blue-500" />
-                            )}
-                            <h3 className="text-lg sm:text-xl font-semibold">{campaign.name}</h3>
-                          </div>
-                          <Badge variant={campaign.status === 'active' ? 'default' : campaign.status === 'draft' ? 'secondary' : 'outline'}>
-                            {campaign.status}
-                          </Badge>
-                          <Badge variant="outline" className="text-xs">
-                            {campaign.type}
-                          </Badge>
-                        </div>
-                        <p className="text-muted-foreground mb-3">{campaign.description}</p>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span>{campaign.emailSequence.length} emails</span>
-                          <span>•</span>
-                          <span>{campaign.subscribers.toLocaleString()} subscribers</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        <div className="flex space-x-4">
-                          <div className="text-center">
-                            <p className="text-lg sm:text-2xl font-bold text-blue-600">{campaign.stats.opens}</p>
-                            <p className="text-xs text-muted-foreground">Open Rate</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-lg sm:text-2xl font-bold text-green-600">{campaign.stats.clicks}</p>
-                            <p className="text-xs text-muted-foreground">Click Rate</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-lg sm:text-2xl font-bold text-purple-600">{campaign.stats.revenue}</p>
-                            <p className="text-xs text-muted-foreground">Revenue</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              setSelectedCampaign(campaign);
-                              setSelectedEmailStep(campaign.emailSequence[0]);
-                              setView('builder');
-                            }}
-                          >
-                            <Edit3 className="w-4 h-4 mr-2" />
-                            Edit
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            {campaign.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <BarChart3 className="w-4 h-4 mr-2" />
-                            A/B Test
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="nurture" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {nurtureTemplates.map((template, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createCampaignFromTemplateFunction(template)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                        <Heart className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-sm">{template.name}</h3>
-                        <Badge variant="secondary" className="text-xs">{template.category}</Badge>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{template.emails} emails</span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="broadcast" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {broadcastTemplates.map((template, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createCampaignFromTemplateFunction(template)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                        <Megaphone className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-sm">{template.name}</h3>
-                        <Badge variant="secondary" className="text-xs">{template.category}</Badge>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{template.emails} email</span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* Visual Automation Builder Tab */}
-          <TabsContent value="automation" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Automation Canvas */}
-              <Card className="lg:col-span-3">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Zap className="w-5 h-5 mr-2" />
-                    Automation Canvas
-                  </CardTitle>
-                  <CardDescription>Build visual automation flows with drag-and-drop</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 h-96 flex items-center justify-center">
-                    <div className="text-center space-y-4">
-                      <Zap className="w-12 h-12 mx-auto text-muted-foreground/40" />
-                      <div>
-                        <h3 className="font-semibold text-lg">Visual Flow Builder</h3>
-                        <p className="text-sm text-muted-foreground">Drag elements to create automation sequences</p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <Button size="sm" className="bg-blue-500 hover:bg-blue-600">
-                          <Mail className="w-4 h-4 mr-2" />
-                          Email Trigger
-                        </Button>
-                        <Button size="sm" className="bg-green-500 hover:bg-green-600">
-                          <Users className="w-4 h-4 mr-2" />
-                          Tag Added
-                        </Button>
-                        <Button size="sm" className="bg-purple-500 hover:bg-purple-600">
-                          <Target className="w-4 h-4 mr-2" />
-                          Purchase Made
-                        </Button>
-                        <Button size="sm" className="bg-orange-500 hover:bg-orange-600">
-                          <Clock className="w-4 h-4 mr-2" />
-                          Time Delay
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Automation Blocks */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Layers className="w-5 h-5 mr-2" />
-                    Automation Blocks
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-sm font-medium">Trigger Blocks</Label>
-                    <div className="mt-2 space-y-2">
-                      {[
-                        { name: "New Subscriber", icon: Users, color: "bg-blue-500" },
-                        { name: "Tag Added", icon: Target, color: "bg-green-500" },
-                        { name: "Email Opened", icon: Eye, color: "bg-purple-500" },
-                        { name: "Link Clicked", icon: MousePointer, color: "bg-orange-500" }
-                      ].map((block, index) => (
-                        <div key={index} className="flex items-center p-2 bg-muted rounded-lg cursor-pointer hover:bg-muted/80">
-                          <div className={`w-8 h-8 ${block.color} rounded flex items-center justify-center mr-3`}>
-                            <block.icon className="w-4 h-4 text-white" />
-                          </div>
-                          <span className="text-sm font-medium">{block.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <Separator />
-                  <div>
-                    <Label className="text-sm font-medium">Action Blocks</Label>
-                    <div className="mt-2 space-y-2">
-                      {[
-                        { name: "Send Email", icon: Mail, color: "bg-red-500" },
-                        { name: "Add Tag", icon: Target, color: "bg-cyan-500" },
-                        { name: "Wait", icon: Clock, color: "bg-yellow-500" },
-                        { name: "Condition", icon: CheckCircle, color: "bg-indigo-500" }
-                      ].map((block, index) => (
-                        <div key={index} className="flex items-center p-2 bg-muted rounded-lg cursor-pointer hover:bg-muted/80">
-                          <div className={`w-8 h-8 ${block.color} rounded flex items-center justify-center mr-3`}>
-                            <block.icon className="w-4 h-4 text-white" />
-                          </div>
-                          <span className="text-sm font-medium">{block.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Sequence Library */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BookOpen className="w-5 h-5 mr-2" />
-                  Sequence Library
-                </CardTitle>
-                <CardDescription>Ready-to-use automation sequences</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    { name: "Welcome Series", desc: "5-email welcome sequence", emails: 5, icon: Heart },
-                    { name: "Cart Abandonment", desc: "Recover abandoned carts", emails: 3, icon: Target },
-                    { name: "Post-Purchase", desc: "Thank you & feedback", emails: 2, icon: CheckCircle },
-                    { name: "Lead Nurture", desc: "Warm up cold leads", emails: 7, icon: Target },
-                    { name: "Re-engagement", desc: "Win back inactive users", emails: 4, icon: RefreshCw },
-                    { name: "Product Launch", desc: "Build anticipation", emails: 6, icon: Zap }
-                  ].map((sequence, index) => (
-                    <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                            <sequence.icon className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-sm">{sequence.name}</h4>
-                            <p className="text-xs text-muted-foreground">{sequence.desc}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">{sequence.emails} emails</span>
-                          <Button size="sm" variant="outline">Use Template</Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Advanced Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Email Heatmaps */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Activity className="w-5 h-5 mr-2" />
-                    Email Heatmaps
-                  </CardTitle>
-                  <CardDescription>See where subscribers click in your emails</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Select>
-                        <SelectTrigger className="w-64">
-                          <SelectValue placeholder="Select campaign" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="welcome">Welcome Series #1</SelectItem>
-                          <SelectItem value="promo">Spring Promotion</SelectItem>
-                          <SelectItem value="newsletter">Monthly Newsletter</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button variant="outline" size="sm">
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
-                      </Button>
-                    </div>
-                    <div className="border rounded-lg p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-                      <div className="space-y-4">
-                        <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
-                          <div className="text-center">
-                            <h3 className="font-semibold text-blue-800 mb-2">Email Preview</h3>
-                            <div className="space-y-2">
-                              <div className="bg-red-100 p-2 rounded text-sm">
-                                <span className="font-medium">Header (45 clicks)</span>
-                              </div>
-                              <div className="bg-yellow-100 p-2 rounded text-sm">
-                                <span className="font-medium">Main Content (23 clicks)</span>
-                              </div>
-                              <div className="bg-green-100 p-2 rounded text-sm">
-                                <span className="font-medium">CTA Button (127 clicks)</span>
-                              </div>
-                              <div className="bg-blue-100 p-2 rounded text-sm">
-                                <span className="font-medium">Footer (8 clicks)</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="inline-flex items-center space-x-4 text-sm">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 bg-red-400 rounded mr-2"></div>
-                              <span>High Activity</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 bg-yellow-400 rounded mr-2"></div>
-                              <span>Medium Activity</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 bg-blue-400 rounded mr-2"></div>
-                              <span>Low Activity</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Analytics Summary */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <BarChart3 className="w-5 h-5 mr-2" />
-                    Performance Summary
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">24.5%</div>
-                      <div className="text-sm text-muted-foreground">Open Rate</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">5.2%</div>
-                      <div className="text-sm text-muted-foreground">Click Rate</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">$2,450</div>
-                      <div className="text-sm text-muted-foreground">Revenue</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">1.8%</div>
-                      <div className="text-sm text-muted-foreground">Unsubscribe</div>
-                    </div>
-                  </div>
-                  <Separator />
-                  <div>
-                    <Label className="text-sm font-medium">Top Performing Emails</Label>
-                    <div className="mt-2 space-y-2">
-                      {[
-                        { name: "Welcome Email #1", rate: "32.1%", revenue: "$890" },
-                        { name: "Product Launch", rate: "28.7%", revenue: "$1,200" },
-                        { name: "Newsletter #12", rate: "19.3%", revenue: "$360" }
-                      ].map((email, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
-                          <div>
-                            <p className="text-sm font-medium">{email.name}</p>
-                            <p className="text-xs text-muted-foreground">{email.rate} open • {email.revenue}</p>
-                          </div>
-                          <Button size="sm" variant="ghost">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Revenue Attribution */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="w-5 h-5 mr-2" />
-                  Revenue Attribution
-                </CardTitle>
-                <CardDescription>Track revenue by email campaign and subscriber segment</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[
-                    { campaign: "Welcome Series", revenue: "$4,250", conversion: "12.3%" },
-                    { campaign: "Product Launch", revenue: "$8,900", conversion: "8.7%" },
-                    { campaign: "Newsletter", revenue: "$2,100", conversion: "3.2%" },
-                    { campaign: "Re-engagement", revenue: "$1,800", conversion: "15.1%" }
-                  ].map((item, index) => (
-                    <Card key={index}>
-                      <CardContent className="p-4">
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">{item.campaign}</h4>
-                          <div className="text-2xl font-bold text-green-600">{item.revenue}</div>
-                          <div className="text-sm text-muted-foreground">{item.conversion} conversion</div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Audience Management Tab */}
-          <TabsContent value="audience" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Subscribers Table */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Users className="w-5 h-5 mr-2" />
-                    Subscribers
-                  </CardTitle>
-                  <CardDescription>Manage your email subscribers and segments</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <Button size="sm">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Subscriber
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Upload className="w-4 h-4 mr-2" />
-                        Import CSV
-                      </Button>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Input placeholder="Search subscribers..." className="w-64" />
-                      <Button size="sm" variant="outline">
-                        <Sliders className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="border rounded-lg">
-                    <table className="w-full">
-                      <thead className="bg-muted">
-                        <tr>
-                          <th className="text-left p-3 text-sm font-medium">Email</th>
-                          <th className="text-left p-3 text-sm font-medium">Name</th>
-                          <th className="text-left p-3 text-sm font-medium">Tags</th>
-                          <th className="text-left p-3 text-sm font-medium">Status</th>
-                          <th className="text-left p-3 text-sm font-medium">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { email: "john@example.com", name: "John Doe", tags: ["VIP", "Customer"], status: "Active" },
-                          { email: "jane@example.com", name: "Jane Smith", tags: ["Lead"], status: "Active" },
-                          { email: "mike@example.com", name: "Mike Johnson", tags: ["Prospect"], status: "Unsubscribed" }
-                        ].map((subscriber, index) => (
-                          <tr key={index} className="border-t">
-                            <td className="p-3 text-sm">{subscriber.email}</td>
-                            <td className="p-3 text-sm">{subscriber.name}</td>
-                            <td className="p-3 text-sm">
-                              <div className="flex gap-1">
-                                {subscriber.tags.map((tag, tagIndex) => (
-                                  <Badge key={tagIndex} variant="secondary" className="text-xs">
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="p-3 text-sm">
-                              <Badge variant={subscriber.status === "Active" ? "default" : "secondary"}>
-                                {subscriber.status}
-                              </Badge>
-                            </td>
-                            <td className="p-3 text-sm">
-                              <div className="flex items-center space-x-2">
-                                <Button size="sm" variant="ghost">
-                                  <Edit3 className="w-4 h-4" />
-                                </Button>
-                                <Button size="sm" variant="ghost">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Segments and Tags */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Target className="w-5 h-5 mr-2" />
-                    Segments & Tags
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-sm font-medium">Create Segment</Label>
-                    <div className="mt-2 space-y-2">
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select condition" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="tag">Has Tag</SelectItem>
-                          <SelectItem value="opened">Opened Email</SelectItem>
-                          <SelectItem value="clicked">Clicked Link</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button className="w-full" size="sm">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Create Segment
-                      </Button>
-                    </div>
-                  </div>
-                  <Separator />
-                  <div>
-                    <Label className="text-sm font-medium">Manage Tags</Label>
-                    <div className="mt-2 space-y-2">
-                      {["VIP", "Customer", "Lead", "Prospect"].map((tag) => (
-                        <div key={tag} className="flex items-center justify-between p-2 bg-muted rounded">
-                          <span className="text-sm">{tag}</span>
-                          <Button size="sm" variant="ghost">
-                            <Edit3 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <Button className="w-full" size="sm" variant="outline">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Tag
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Forms & Landing Pages Tab */}
-          <TabsContent value="forms" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <FileText className="w-5 h-5 mr-2" />
-                    Email Forms
-                  </CardTitle>
-                  <CardDescription>Create and manage signup forms</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-center h-24 bg-muted rounded-lg mb-3">
-                          <FileText className="w-8 h-8 text-muted-foreground" />
-                        </div>
-                        <h4 className="font-medium text-sm">Embedded Form</h4>
-                        <p className="text-xs text-muted-foreground">Add to any website</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-center h-24 bg-muted rounded-lg mb-3">
-                          <Globe className="w-8 h-8 text-muted-foreground" />
-                        </div>
-                        <h4 className="font-medium text-sm">Popup Form</h4>
-                        <p className="text-xs text-muted-foreground">Exit intent & timed</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  <Button className="w-full">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Form
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Globe className="w-5 h-5 mr-2" />
-                    Landing Pages
-                  </CardTitle>
-                  <CardDescription>Standalone pages for lead capture</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    {[
-                      { name: "Free Guide Landing", visits: 1250, conversion: "24%" },
-                      { name: "Webinar Signup", visits: 890, conversion: "18%" },
-                      { name: "Newsletter Signup", visits: 560, conversion: "31%" }
-                    ].map((page, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                        <div>
-                          <p className="text-sm font-medium">{page.name}</p>
-                          <p className="text-xs text-muted-foreground">{page.visits} visits • {page.conversion} conversion</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button size="sm" variant="ghost">
-                            <Edit3 className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <Button className="w-full">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Landing Page
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Personalization Tab */}
-          <TabsContent value="personalization" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <User className="w-5 h-5 mr-2" />
-                    Merge Tags
-                  </CardTitle>
-                  <CardDescription>Personalize emails with subscriber data</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      "{{name}}", "{{email}}", "{{company}}", "{{city}}", 
-                      "{{purchase_date}}", "{{last_click}}", "{{custom_field}}", "{{score}}"
-                    ].map((tag) => (
-                      <Button key={tag} variant="outline" size="sm" className="font-mono text-xs">
-                        {tag}
-                      </Button>
-                    ))}
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Example Usage</Label>
-                    <div className="mt-2 p-3 bg-muted rounded-lg">
-                      <p className="text-sm">Hi <code className="bg-background px-1 rounded">&#123;&#123;name&#125;&#125;</code>,</p>
-                      <p className="text-sm">Thanks for joining from <code className="bg-background px-1 rounded">&#123;&#123;city&#125;&#125;</code>!</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Layers className="w-5 h-5 mr-2" />
-                    Conditional Content
-                  </CardTitle>
-                  <CardDescription>Show different content based on subscriber data</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-sm font-medium">Condition Rules</Label>
-                    <div className="mt-2 space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Select>
-                          <SelectTrigger className="w-32">
-                            <SelectValue placeholder="Field" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="tag">Tag</SelectItem>
-                            <SelectItem value="location">Location</SelectItem>
-                            <SelectItem value="purchase">Purchase</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Select>
-                          <SelectTrigger className="w-20">
-                            <SelectValue placeholder="Is" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="is">Is</SelectItem>
-                            <SelectItem value="is-not">Is Not</SelectItem>
-                            <SelectItem value="contains">Contains</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Input placeholder="Value" className="flex-1" />
-                      </div>
-                      <Button size="sm" className="w-full">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Condition
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Smart AI Features */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Persona-Driven Content */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Brain className="w-5 h-5 mr-2" />
-                    AI Persona Content
-                  </CardTitle>
-                  <CardDescription>Automatically adapt content tone by audience</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                      <div>
-                        <p className="text-sm font-medium">Gen Z Audience</p>
-                        <p className="text-xs text-muted-foreground">Fun, casual, emoji-rich</p>
-                      </div>
-                      <Switch defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                      <div>
-                        <p className="text-sm font-medium">Professionals</p>
-                        <p className="text-xs text-muted-foreground">Formal, authoritative</p>
-                      </div>
-                      <Switch defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                      <div>
-                        <p className="text-sm font-medium">Seniors</p>
-                        <p className="text-xs text-muted-foreground">Clear, respectful</p>
-                      </div>
-                      <Switch />
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Configure Personas
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Smart Send Time */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Clock className="w-5 h-5 mr-2" />
-                    Smart Send Time
-                  </CardTitle>
-                  <CardDescription>AI learns best send time for each contact</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Enable Smart Timing</span>
-                      <Switch defaultChecked />
-                    </div>
-                    <div className="bg-blue-50 p-3 rounded-lg">
-                      <h4 className="font-medium text-sm mb-2">Current Insights</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span>Best hour:</span>
-                          <span className="font-medium">9-10 AM</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Best day:</span>
-                          <span className="font-medium">Tuesday</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Improvement:</span>
-                          <span className="font-medium text-green-600">+23%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    <Brain className="w-4 h-4 mr-2" />
-                    View Analysis
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Smart Tagging */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Target className="w-5 h-5 mr-2" />
-                    Smart Tagging
-                  </CardTitle>
-                  <CardDescription>AI recommends tags based on behavior</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="p-3 bg-green-50 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Suggested Rule</span>
-                        <Badge variant="outline">New</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        Add "hot-lead" tag if user clicks 3+ emails
-                      </p>
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="outline">Accept</Button>
-                        <Button size="sm" variant="ghost">Dismiss</Button>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Active Rule</span>
-                        <Badge variant="default">Running</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Tag "engaged" if opens 5+ emails in 30 days
-                      </p>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Rule
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          
-
-          {/* Compliance Tab */}
-          <TabsContent value="compliance" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Shield className="w-5 h-5 mr-2" />
-                    Compliance Checklist
-                  </CardTitle>
-                  <CardDescription>GDPR & CAN-SPAM compliance</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {[
-                      { item: "Unsubscribe link in all emails", status: "complete" },
-                      { item: "Physical address in footer", status: "complete" },
-                      { item: "Clear sender identification", status: "complete" },
-                      { item: "Double opt-in process", status: "pending" },
-                      { item: "Data retention policy", status: "pending" }
-                    ].map((check, index) => (
-                      <div key={index} className="flex items-center space-x-3">
-                        <div className={`w-4 h-4 rounded-full ${check.status === 'complete' ? 'bg-green-500' : 'bg-yellow-500'}`}>
-                          {check.status === 'complete' && <CheckCircle className="w-4 h-4 text-white" />}
-                        </div>
-                        <span className="text-sm">{check.item}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Button className="w-full">
-                    <HelpCircle className="w-4 h-4 mr-2" />
-                    Compliance Guide
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Edit3 className="w-5 h-5 mr-2" />
-                    Email Footer
-                  </CardTitle>
-                  <CardDescription>Required footer information</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-sm font-medium">Company Name</Label>
-                    <Input placeholder="Your Company Name" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Physical Address</Label>
-                    <Textarea placeholder="123 Main St, City, State 12345" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Unsubscribe Text</Label>
-                    <Input placeholder="Click here to unsubscribe" className="mt-1" />
-                  </div>
-                  <Button className="w-full">
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Footer
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          
-        </Tabs>
-        
-        <AIGenerationDialog />
-        <TemplatePreviewDialog />
-      </div>
-    );
-  }
-
   // Builder view - Clean organized layout
   return (
     <div className="h-screen flex flex-col max-w-full">
@@ -3816,7 +2042,8 @@ export default function EmailSequenceBuilder() {
                             fontSize: element.properties.fontSize,
                             lineHeight: element.properties.lineHeight,
                             textAlign: element.properties.textAlign,
-                            margin: '0'
+                            margin: '0',
+                            whiteSpace: 'pre-wrap'
                           }}
                         >
                           {element.properties.text}
@@ -3884,504 +2111,408 @@ export default function EmailSequenceBuilder() {
               </div>
             </div>
           </div>
-
-          {/* Element Toolbar - Moved to bottom */}
-          <div className="border-t p-3 bg-background shrink-0">
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => addElement('heading')}>
-                <Type className="w-4 h-4 mr-2" />
-                Heading
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('text')}>
-                <PenTool className="w-4 h-4 mr-2" />
-                Text
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('button')}>
-                <Target className="w-4 h-4 mr-2" />
-                Button
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('image')}>
-                <ImageIcon className="w-4 h-4 mr-2" />
-                Image
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('divider')}>
-                <Minus className="w-4 h-4 mr-2" />
-                Divider
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('spacer')}>
-                <Move className="w-4 h-4 mr-2" />
-                Spacer
-              </Button>
-            </div>
-          </div>
         </div>
 
         {/* Right Panel - Organized Sections */}
-        {showAIAssistant ? (
-          <AIAssistantPanel />
-        ) : (
-          <div className="w-80 border-l bg-background overflow-y-auto shrink-0">
-            <Tabs defaultValue="settings" className="w-full h-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="settings">Settings</TabsTrigger>
-                <TabsTrigger value="design">Design</TabsTrigger>
-                <TabsTrigger value="ai">AI</TabsTrigger>
-              </TabsList>
+        <div className="w-80 border-l bg-background overflow-y-auto shrink-0">
+          <Tabs defaultValue="settings" className="w-full h-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="design">Design</TabsTrigger>
+              <TabsTrigger value="ai">AI</TabsTrigger>
+            </TabsList>
 
-              {/* Settings Tab */}
-              <TabsContent value="settings" className="p-4 space-y-4">
-                {selectedEmailStep && (
-                  <>
-                    <div>
-                      <h3 className="font-semibold mb-3 flex items-center">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Email Settings
-                      </h3>
-                      
-                      <div className="space-y-3">
-                        <div>
-                          <Label className="text-sm font-medium">Email Name</Label>
-                          <Input 
-                            value={selectedEmailStep.name}
-                            onChange={(e) => updateEmailStep({ name: e.target.value })}
-                            className="mt-1"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label className="text-sm font-medium">Subject Line</Label>
-                          <Input 
-                            value={selectedEmailStep.subject}
-                            onChange={(e) => updateEmailStep({ subject: e.target.value })}
-                            className="mt-1"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label className="text-sm font-medium">Preview Text</Label>
-                          <Input 
-                            placeholder="Add preview text..."
-                            className="mt-1"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label className="text-sm font-medium">Background Color</Label>
-                          <Input 
-                            type="color"
-                            defaultValue="#ffffff"
-                            className="mt-1 h-10"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label className="text-sm font-medium">Send Delay</Label>
-                          <div className="flex space-x-2 mt-1">
-                            <Input 
-                              type="number"
-                              value={selectedEmailStep.delay}
-                              onChange={(e) => updateEmailStep({ delay: parseInt(e.target.value) || 0 })}
-                              className="w-20"
-                            />
-                            <Select value={selectedEmailStep.delayUnit} onValueChange={(value: any) => updateEmailStep({ delayUnit: value })}>
-                              <SelectTrigger className="w-24">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="minutes">min</SelectItem>
-                                <SelectItem value="hours">hrs</SelectItem>
-                                <SelectItem value="days">days</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-                
-                {!selectedEmailStep && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Select an email to edit settings</p>
-                  </div>
-                )}
-              </TabsContent>
+            {/* Settings Tab */}
+            <TabsContent value="settings" className="p-4 space-y-4">
+              {selectedEmailStep && (
+                <>
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Email Settings
+                    </h3>
 
-              {/* Design Tab */}
-              <TabsContent value="design" className="p-4 space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-3 flex items-center">
-                    <Palette className="w-4 h-4 mr-2" />
-                    Layout & Components
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Layout Grid</Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button variant="outline" size="sm" className="h-12 flex flex-col">
-                          <div className="w-6 h-6 border rounded grid grid-cols-1 gap-0.5 mb-1">
-                            <div className="bg-muted rounded-sm"></div>
-                          </div>
-                          <span className="text-xs">1 Column</span>
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-12 flex flex-col">
-                          <div className="w-6 h-6 border rounded grid grid-cols-2 gap-0.5 mb-1">
-                            <div className="bg-muted rounded-sm"></div>
-                            <div className="bg-muted rounded-sm"></div>
-                          </div>
-                          <span className="text-xs">2 Column</span>
-                        </Button>
-                      </div>
-                      <div className="mt-2">
-                        <Button variant="outline" size="sm" className="w-full h-12 flex flex-col">
-                          <div className="w-6 h-6 border rounded grid grid-cols-3 gap-0.5 mb-1">
-                            <div className="bg-muted rounded-sm"></div>
-                            <div className="bg-muted rounded-sm"></div>
-                            <div className="bg-muted rounded-sm"></div>
-                          </div>
-                          <span className="text-xs">3 Column</span>
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Flexbox Controls</Label>
-                      <div className="space-y-2">
-                        <Button variant="outline" size="sm" className="w-full">
-                          <AlignLeft className="w-4 h-4 mr-2" />
-                          Align Left
-                        </Button>
-                        <Button variant="outline" size="sm" className="w-full">
-                          <AlignCenter className="w-4 h-4 mr-2" />
-                          Align Center
-                        </Button>
-                        <Button variant="outline" size="sm" className="w-full">
-                          <AlignRight className="w-4 h-4 mr-2" />
-                          Align Right
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Content Components</Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button variant="outline" size="sm" onClick={() => addElement('heading')}>
-                          <Type className="w-4 h-4 mr-1" />
-                          Text
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => addElement('image')}>
-                          <ImageIcon className="w-4 h-4 mr-1" />
-                          Image
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => addElement('button')}>
-                          <Target className="w-4 h-4 mr-1" />
-                          Button
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => addElement('divider')}>
-                          <Minus className="w-4 h-4 mr-1" />
-                          Divider
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {selectedElement && (
-                  <div className="border-t pt-4">
-                    <h4 className="font-semibold mb-3 flex items-center">
-                      <Edit3 className="w-4 h-4 mr-2" />
-                      Element Properties
-                    </h4>
-                    
                     <div className="space-y-3">
-                      {(selectedElement.type === 'heading' || selectedElement.type === 'text') && (
-                        <>
-                          <div>
-                            <Label className="text-sm">Text Content</Label>
-                            <Textarea
-                              value={selectedElement.properties.text}
-                              onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
-                              className="mt-1 h-20"
-                              rows={3}
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm">Font Size</Label>
-                            <Input
-                              value={selectedElement.properties.fontSize}
-                              onChange={(e) => updateElement(selectedElement.id, { fontSize: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm">Text Align</Label>
-                            <Select value={selectedElement.properties.textAlign} onValueChange={(value) => updateElement(selectedElement.id, { textAlign: value })}>
-                              <SelectTrigger className="mt-1">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="left">Left</SelectItem>
-                                <SelectItem value="center">Center</SelectItem>
-                                <SelectItem value="right">Right</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </>
-                      )}
+                      <div>
+                        <Label className="text-sm font-medium">Email Name</Label>
+                        <Input 
+                          value={selectedEmailStep.name}
+                          onChange={(e) => updateEmailStep({ name: e.target.value })}
+                          className="mt-1"
+                        />
+                      </div>
 
-                      {selectedElement.type === 'button' && (
-                        <>
-                          <div>
-                            <Label className="text-sm">Button Text</Label>
-                            <Input
-                              value={selectedElement.properties.text}
-                              onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm">Link URL</Label>
-                            <Input
-                              value={selectedElement.properties.link}
-                              onChange={(e) => updateElement(selectedElement.id, { link: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm">Background Color</Label>
-                            <Input
-                              type="color"
-                              value={selectedElement.properties.backgroundColor}
-                              onChange={(e) => updateElement(selectedElement.id, { backgroundColor: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                        </>
-                      )}
+                      <div>
+                        <Label className="text-sm font-medium">Subject Line</Label>
+                        <Input 
+                          value={selectedEmailStep.subject}
+                          onChange={(e) => updateEmailStep({ subject: e.target.value })}
+                          className="mt-1"
+                        />
+                      </div>
 
-                      {selectedElement.type === 'image' && (
-                        <>
-                          <div>
-                            <Label className="text-sm">Image URL</Label>
-                            <Input
-                              value={selectedElement.properties.src}
-                              onChange={(e) => updateElement(selectedElement.id, { src: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm">Alt Text</Label>
-                            <Input
-                              value={selectedElement.properties.alt}
-                              onChange={(e) => updateElement(selectedElement.id, { alt: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                        </>
-                      )}
-                      
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => deleteElement(selectedElement.id)}
-                        className="w-full"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete Element
+                      <div>
+                        <Label className="text-sm font-medium">Preview Text</Label>
+                        <Input 
+                          placeholder="Add preview text..."
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">Background Color</Label>
+                        <Input 
+                          type="color"
+                          defaultValue="#ffffff"
+                          className="mt-1 h-10"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">Sender Email</Label>
+                        <Input 
+                          value={selectedEmailStep.settings.senderEmail}
+                          onChange={(e) => updateEmailStep({ 
+                            settings: { ...selectedEmailStep.settings, senderEmail: e.target.value }
+                          })}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">Receiver Email</Label>
+                        <Input 
+                          value={selectedEmailStep.settings.receiverEmail}
+                          onChange={(e) => updateEmailStep({ 
+                            settings: { ...selectedEmailStep.settings, receiverEmail: e.target.value }
+                          })}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">Email List</Label>
+                        <Select 
+                          value={selectedEmailStep.settings.list} 
+                          onValueChange={(value) => updateEmailStep({ 
+                            settings: { ...selectedEmailStep.settings, list: value }
+                          })}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all-subscribers">All Subscribers</SelectItem>
+                            <SelectItem value="new-leads">New Leads</SelectItem>
+                            <SelectItem value="customers">Customers</SelectItem>
+                            <SelectItem value="vip-list">VIP List</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">Send Delay</Label>
+                        <div className="flex space-x-2 mt-1">
+                          <Input 
+                            type="number"
+                            value={selectedEmailStep.delay}
+                            onChange={(e) => updateEmailStep({ delay: parseInt(e.target.value) || 0 })}
+                            className="w-20"
+                          />
+                          <Select value={selectedEmailStep.delayUnit} onValueChange={(value: any) => updateEmailStep({ delayUnit: value })}>
+                            <SelectTrigger className="w-24">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="minutes">min</SelectItem>
+                              <SelectItem value="hours">hrs</SelectItem>
+                              <SelectItem value="days">days</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {!selectedEmailStep && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Select an email to edit settings</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Design Tab */}
+            <TabsContent value="design" className="p-4 space-y-4">
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center">
+                  <Palette className="w-4 h-4 mr-2" />
+                  Email Elements
+                </h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Content Elements</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="outline" size="sm" onClick={() => addElement('heading')} className="h-12 flex flex-col">
+                        <Type className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Heading</span>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => addElement('text')} className="h-12 flex flex-col">
+                        <PenTool className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Text</span>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => addElement('button')} className="h-12 flex flex-col">
+                        <Target className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Button</span>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => addElement('image')} className="h-12 flex flex-col">
+                        <ImageIcon className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Image</span>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => addElement('divider')} className="h-12 flex flex-col">
+                        <Minus className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Divider</span>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => addElement('spacer')} className="h-12 flex flex-col">
+                        <Move className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Spacer</span>
                       </Button>
                     </div>
                   </div>
-                )}
-              </TabsContent>
 
-              {/* AI Tab */}
-              <TabsContent value="ai" className="p-4 space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-3 flex items-center">
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    AI Features
-                  </h3>
-                  
-                  <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Layout Options</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="outline" size="sm" className="h-12 flex flex-col">
+                        <div className="w-6 h-6 border rounded grid grid-cols-1 gap-0.5 mb-1">
+                          <div className="bg-muted rounded-sm"></div>
+                        </div>
+                        <span className="text-xs">1 Column</span>
+                      </Button>
+                      <Button variant="outline" size="sm" className="h-12 flex flex-col">
+                        <div className="w-6 h-6 border rounded grid grid-cols-2 gap-0.5 mb-1">
+                          <div className="bg-muted rounded-sm"></div>
+                          <div className="bg-muted rounded-sm"></div>
+                        </div>
+                        <span className="text-xs">2 Column</span>
+                      </Button>
+                    </div>
+                    <div className="mt-2">
+                      <Button variant="outline" size="sm" className="w-full h-12 flex flex-col">
+                        <div className="w-6 h-6 border rounded grid grid-cols-3 gap-0.5 mb-1">
+                          <div className="bg-muted rounded-sm"></div>
+                          <div className="bg-muted rounded-sm"></div>
+                          <div className="bg-muted rounded-sm"></div>
+                        </div>
+                        <span className="text-xs">3 Column</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {selectedElement && (
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-3 flex items-center">
+                    <Edit3 className="w-4 h-4 mr-2" />
+                    Element Properties
+                  </h4>
+
+                  <div className="space-y-3">
+                    {(selectedElement.type === 'heading' || selectedElement.type === 'text') && (
+                      <>
+                        <div>
+                          <Label className="text-sm">Text Content</Label>
+                          <Textarea
+                            value={selectedElement.properties.text}
+                            onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
+                            className="mt-1 h-20"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm">Font Size</Label>
+                          <Input
+                            value={selectedElement.properties.fontSize}
+                            onChange={(e) => updateElement(selectedElement.id, { fontSize: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm">Text Align</Label>
+                          <Select value={selectedElement.properties.textAlign} onValueChange={(value) => updateElement(selectedElement.id, { textAlign: value })}>
+                            <SelectTrigger className="mt-1">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="left">Left</SelectItem>
+                              <SelectItem value="center">Center</SelectItem>
+                              <SelectItem value="right">Right</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedElement.type === 'button' && (
+                      <>
+                        <div>
+                          <Label className="text-sm">Button Text</Label>
+                          <Input
+                            value={selectedElement.properties.text}
+                            onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm">Link URL</Label>
+                          <Input
+                            value={selectedElement.properties.link}
+                            onChange={(e) => updateElement(selectedElement.id, { link: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm">Background Color</Label>
+                          <Input
+                            type="color"
+                            value={selectedElement.properties.backgroundColor}
+                            onChange={(e) => updateElement(selectedElement.id, { backgroundColor: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {selectedElement.type === 'image' && (
+                      <>
+                        <div>
+                          <Label className="text-sm">Image URL</Label>
+                          <Input
+                            value={selectedElement.properties.src}
+                            onChange={(e) => updateElement(selectedElement.id, { src: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm">Alt Text</Label>
+                          <Input
+                            value={selectedElement.properties.alt}
+                            onChange={(e) => updateElement(selectedElement.id, { alt: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => deleteElement(selectedElement.id)}
+                      className="w-full"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Element
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* AI Tab */}
+            <TabsContent value="ai" className="p-4 space-y-4">
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  AI Features
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2">
                     <Button 
                       variant="outline" 
-                      className="w-full h-12 flex flex-col"
-                      onClick={() => setShowAIAssistant(true)}
+                      size="sm" 
+                      className="h-12 flex flex-col"
+                      onClick={() => generateAIContent('subject')}
                     >
-                      <Brain className="w-5 h-5 mb-1" />
-                      <span className="text-xs">AI Assistant</span>
+                      <FileText className="w-4 h-4 mb-1" />
+                      <span className="text-xs">Subject Line</span>
                     </Button>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="h-12 flex flex-col"
-                        onClick={() => {
-                          setAIAssistantMode('content');
-                          setShowAIAssistant(true);
-                          setUserPrompt('Generate engaging email content');
-                        }}
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-12 flex flex-col"
+                      onClick={() => generateAIContent('headline')}
+                    >
+                      <Type className="w-4 h-4 mb-1" />
+                      <span className="text-xs">Headline</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-12 flex flex-col"
+                      onClick={() => generateAIContent('body')}
+                    >
+                      <PenTool className="w-4 h-4 mb-1" />
+                      <span className="text-xs">Body Content</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-12 flex flex-col"
+                      onClick={() => generateAIContent('cta')}
+                    >
+                      <Target className="w-4 h-4 mb-1" />
+                      <span className="text-xs">Call to Action</span>
+                    </Button>
+                  </div>
+
+                  <Separator />
+
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">AI Assistant</Label>
+                    <div className="space-y-2">
+                      <Textarea
+                        placeholder="Ask AI to help with your email content..."
+                        value={userPrompt}
+                        onChange={(e) => setUserPrompt(e.target.value)}
+                        className="h-20 text-xs"
+                        rows={3}
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => processAIRequest(userPrompt, 'content')}
+                        disabled={isProcessingAI || !userPrompt.trim()}
+                        className="w-full"
                       >
-                        <Wand2 className="w-4 h-4 mb-1" />
-                        <span className="text-xs">Generate</span>
+                        {isProcessingAI ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                        )}
+                        {isProcessingAI ? 'Processing...' : 'Ask AI'}
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="h-12 flex flex-col"
-                        onClick={() => {
-                          setAIAssistantMode('edit');
-                          setShowAIAssistant(true);
-                          setUserPrompt('Improve this email content');
-                        }}
-                      >
-                        <Edit3 className="w-4 h-4 mb-1" />
-                        <span className="text-xs">Improve</span>
-                      </Button>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="h-12 flex flex-col"
-                        onClick={() => {
-                          setAIAssistantMode('strategy');
-                          setShowAIAssistant(true);
-                          setUserPrompt('Provide marketing strategy advice');
-                        }}
-                      >
-                        <TrendingUp className="w-4 h-4 mb-1" />
-                        <span className="text-xs">Strategy</span>
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="h-12 flex flex-col"
-                        onClick={() => {
-                          setAIAssistantMode('compliance');
-                          setShowAIAssistant(true);
-                          setUserPrompt('Check compliance requirements');
-                        }}
-                      >
-                        <Shield className="w-4 h-4 mb-1" />
-                        <span className="text-xs">Compliance</span>
-                      </Button>
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Content Generation</Label>
-                      <div className="space-y-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('content');
-                            setShowAIAssistant(true);
-                            setUserPrompt(`Generate an engaging subject line for this ${selectedCampaign?.type} email`);
-                          }}
-                        >
-                          <FileText className="w-4 h-4 mr-2" />
-                          Subject Line
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('content');
-                            setShowAIAssistant(true);
-                            setUserPrompt('Generate a compelling headline');
-                          }}
-                        >
-                          <Type className="w-4 h-4 mr-2" />
-                          Headline
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('content');
-                            setShowAIAssistant(true);
-                            setUserPrompt('Generate email body content');
-                          }}
-                        >
-                          <PenTool className="w-4 h-4 mr-2" />
-                          Body Content
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('content');
-                            setShowAIAssistant(true);
-                            setUserPrompt('Generate a strong call-to-action');
-                          }}
-                        >
-                          <Target className="w-4 h-4 mr-2" />
-                          Call to Action
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Marketing Tools</Label>
-                      <div className="space-y-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('content');
-                            setShowAIAssistant(true);
-                            setUserPrompt('Generate an image for this email');
-                          }}
-                        >
-                          <Camera className="w-4 h-4 mr-2" />
-                          Generate Image
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('strategy');
-                            setShowAIAssistant(true);
-                            setUserPrompt('Check email deliverability');
-                          }}
-                        >
-                          <BarChart className="w-4 h-4 mr-2" />
-                          Deliverability
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => {
-                            setAIAssistantMode('strategy');
-                            setShowAIAssistant(true);
-                            setUserPrompt('Show best practices');
-                          }}
-                        >
-                          <BookOpen className="w-4 h-4 mr-2" />
-                          Best Practices
-                        </Button>
-                      </div>
                     </div>
                   </div>
+
+                  {aiResponse && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">AI Response</Label>
+                      <div className="bg-muted rounded-lg p-3 border">
+                        <p className="text-xs text-muted-foreground whitespace-pre-wrap">
+                          {aiResponse}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
