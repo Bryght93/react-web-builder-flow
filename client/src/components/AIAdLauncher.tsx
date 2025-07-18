@@ -1585,107 +1585,488 @@ export default function AIAdLauncher() {
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold">Campaign Analytics</h2>
-            <Button variant="outline">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Export Report
-            </Button>
+            <h2 className="text-2xl font-semibold">Ad Analytics Dashboard</h2>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Export Report
+              </Button>
+              <Button variant="outline" size="sm">
+                📊 Schedule Reports
+              </Button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {/* Smart Summary Panel */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Total Spend</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">$2,847</div>
-                <p className="text-xs text-muted-foreground">This month</p>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">$2,847</p>
+                    <p className="text-muted-foreground text-sm">Total Spend</p>
+                    <p className="text-xs text-green-600">+12% vs last month</p>
+                  </div>
+                  <DollarSign className="w-8 h-8 text-green-500" />
+                </div>
               </CardContent>
             </Card>
+            
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Conversions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">142</div>
-                <p className="text-xs text-muted-foreground">+18% from last month</p>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">4.2x</p>
+                    <p className="text-muted-foreground text-sm">ROAS</p>
+                    <p className="text-xs text-green-600">+18% improvement</p>
+                  </div>
+                  <TrendingUp className="w-8 h-8 text-blue-500" />
+                </div>
               </CardContent>
             </Card>
+            
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">ROAS</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">4.2x</div>
-                <p className="text-xs text-muted-foreground">Return on ad spend</p>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">$12.50</p>
+                    <p className="text-muted-foreground text-sm">CPA</p>
+                    <p className="text-xs text-red-600">-15% reduction</p>
+                  </div>
+                  <Target className="w-8 h-8 text-purple-500" />
+                </div>
               </CardContent>
             </Card>
+            
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Cost per Lead</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">$12.50</div>
-                <p className="text-xs text-muted-foreground">-15% improvement</p>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">2.4%</p>
+                    <p className="text-muted-foreground text-sm">CTR</p>
+                    <p className="text-xs text-green-600">+0.3% vs industry</p>
+                  </div>
+                  <Eye className="w-8 h-8 text-orange-500" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">8.7%</p>
+                    <p className="text-muted-foreground text-sm">CVR</p>
+                    <p className="text-xs text-green-600">Above benchmark</p>
+                  </div>
+                  <CheckCircle className="w-8 h-8 text-emerald-500" />
+                </div>
               </CardContent>
             </Card>
           </div>
 
+          {/* AI Smart Insights */}
+          <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg">🧠</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold">AI Performance Insights</h3>
+                  <p className="text-sm text-muted-foreground">Smart analysis of your campaign performance</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="text-sm font-medium">🎯 Best Performer</p>
+                  <p className="text-xs text-muted-foreground">TikTok ads converting 2x better for male 25-34 audience</p>
+                </div>
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="text-sm font-medium">⏰ Optimal Timing</p>
+                  <p className="text-xs text-muted-foreground">Tuesday evenings outperform Monday mornings by 34%</p>
+                </div>
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="text-sm font-medium">📱 Platform Alert</p>
+                  <p className="text-xs text-muted-foreground">Instagram Story placements are underperforming</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Deep Dive */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Performance Deep Dive</CardTitle>
+                <div className="flex items-center space-x-2">
+                  <Select>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Last 7D" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="7d">Last 7D</SelectItem>
+                      <SelectItem value="14d">Last 14D</SelectItem>
+                      <SelectItem value="30d">Last 30D</SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" size="sm">Filters</Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-3">Campaign</th>
+                      <th className="text-left p-3">Platform</th>
+                      <th className="text-left p-3">Impressions</th>
+                      <th className="text-left p-3">Clicks</th>
+                      <th className="text-left p-3">Conversions</th>
+                      <th className="text-left p-3">CPC</th>
+                      <th className="text-left p-3">ROAS</th>
+                      <th className="text-left p-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 font-medium">Lead Magnet Campaign</td>
+                      <td className="p-3">
+                        <div className="flex items-center space-x-1">
+                          <span>📘</span>
+                          <span>📸</span>
+                        </div>
+                      </td>
+                      <td className="p-3">12,547</td>
+                      <td className="p-3">234</td>
+                      <td className="p-3">18</td>
+                      <td className="p-3">$0.64</td>
+                      <td className="p-3 font-medium text-green-600">4.8x</td>
+                      <td className="p-3"><Badge className="bg-green-100 text-green-800">Active</Badge></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 font-medium">Product Launch Ads</td>
+                      <td className="p-3">
+                        <div className="flex items-center space-x-1">
+                          <span>📘</span>
+                          <span>🔍</span>
+                        </div>
+                      </td>
+                      <td className="p-3">8,932</td>
+                      <td className="p-3">167</td>
+                      <td className="p-3">12</td>
+                      <td className="p-3">$0.89</td>
+                      <td className="p-3 font-medium text-green-600">3.9x</td>
+                      <td className="p-3"><Badge className="bg-green-100 text-green-800">Active</Badge></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 font-medium">Retargeting Campaign</td>
+                      <td className="p-3">
+                        <div className="flex items-center space-x-1">
+                          <span>📸</span>
+                          <span>🎵</span>
+                        </div>
+                      </td>
+                      <td className="p-3">6,421</td>
+                      <td className="p-3">189</td>
+                      <td className="p-3">24</td>
+                      <td className="p-3">$0.45</td>
+                      <td className="p-3 font-medium text-green-600">5.2x</td>
+                      <td className="p-3"><Badge className="bg-blue-100 text-blue-800">Optimizing</Badge></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Audience Behavior & Creative Performance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Audience Segmentation */}
             <Card>
               <CardHeader>
-                <CardTitle>Performance Overview</CardTitle>
+                <CardTitle>Audience Behavior & Segmentation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-medium mb-3">Demographics Performance</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center p-3 border rounded-lg">
+                        <span className="text-sm">Male 25-34</span>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">$8.20 CPA</p>
+                          <p className="text-xs text-green-600">Best performer</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center p-3 border rounded-lg">
+                        <span className="text-sm">Female 35-44</span>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">$12.80 CPA</p>
+                          <p className="text-xs text-muted-foreground">Above average</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center p-3 border rounded-lg">
+                        <span className="text-sm">Male 45-54</span>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">$18.50 CPA</p>
+                          <p className="text-xs text-red-600">Underperforming</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium mb-3">Device Performance</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Mobile</span>
+                        <span>68% (Best CVR: 9.2%)</span>
+                      </div>
+                      <Progress value={68} className="h-2" />
+                      <div className="flex justify-between text-sm">
+                        <span>Desktop</span>
+                        <span>28% (CVR: 7.1%)</span>
+                      </div>
+                      <Progress value={28} className="h-2" />
+                      <div className="flex justify-between text-sm">
+                        <span>Tablet</span>
+                        <span>4% (CVR: 5.8%)</span>
+                      </div>
+                      <Progress value={4} className="h-2" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Creative Performance */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Creative Performance Analytics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Click-through Rate</span>
-                      <span>2.4%</span>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-3">
+                      <div className="w-full h-24 bg-gradient-to-r from-blue-400 to-purple-500 rounded mb-2"></div>
+                      <p className="text-sm font-medium">Hook A: "Stop Wasting Time"</p>
+                      <p className="text-xs text-green-600">CTR: 3.2% (+67% vs Hook B)</p>
                     </div>
-                    <Progress value={24} className="h-2" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Conversion Rate</span>
-                      <span>8.7%</span>
+                    <div className="border rounded-lg p-3">
+                      <div className="w-full h-24 bg-gradient-to-r from-green-400 to-blue-500 rounded mb-2"></div>
+                      <p className="text-sm font-medium">Hook B: "Get Results Fast"</p>
+                      <p className="text-xs text-red-600">CTR: 1.9% (-33% vs Hook A)</p>
                     </div>
-                    <Progress value={87} className="h-2" />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Ad Relevance Score</span>
-                      <span>9.2/10</span>
+
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-lg">🧠</span>
+                      <span className="text-sm font-medium">AI Creative Insight</span>
                     </div>
-                    <Progress value={92} className="h-2" />
+                    <p className="text-xs text-muted-foreground">Hook A performs 4x better than Hook B - consider scaling it across all campaigns</p>
                   </div>
+
+                  <div>
+                    <h4 className="font-medium mb-3">Video Performance (Hook A)</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>0-25% watched</span>
+                        <span>100%</span>
+                      </div>
+                      <Progress value={100} className="h-2" />
+                      <div className="flex justify-between text-sm">
+                        <span>25-50% watched</span>
+                        <span>72%</span>
+                      </div>
+                      <Progress value={72} className="h-2" />
+                      <div className="flex justify-between text-sm">
+                        <span>50-75% watched</span>
+                        <span>45%</span>
+                      </div>
+                      <Progress value={45} className="h-2" />
+                      <div className="flex justify-between text-sm">
+                        <span>75-100% watched</span>
+                        <span>28%</span>
+                      </div>
+                      <Progress value={28} className="h-2" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Revenue Attribution & A/B Test Results */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Revenue Attribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Attribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-sm">Direct Ad Revenue</h4>
+                      <p className="text-xs text-muted-foreground">First-click attribution</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold">$8,450</p>
+                      <p className="text-xs text-muted-foreground">65% of total</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-sm">Retargeting Revenue</h4>
+                      <p className="text-xs text-muted-foreground">Multi-touch attribution</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold">$3,890</p>
+                      <p className="text-xs text-muted-foreground">30% of total</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-sm">Cross-channel</h4>
+                      <p className="text-xs text-muted-foreground">Ad → Email → Sale</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold">$650</p>
+                      <p className="text-xs text-muted-foreground">5% of total</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">Average LTV</span>
+                      <span className="font-bold text-lg">$124.50</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Real-Time Monitoring & Optimization */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Real-Time Monitoring & Optimization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">🟢 System Status</span>
+                      <span className="text-xs text-green-600">All campaigns running</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Last updated: 2 minutes ago</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium mb-3">AI Optimization Suggestions</h4>
+                    <div className="space-y-2">
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">💰 Budget Optimization</span>
+                          <Button size="sm" variant="outline">Apply</Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Shift 20% budget from Campaign B to Campaign A (better ROAS)</p>
+                      </div>
+                      
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">🎯 Audience Alert</span>
+                          <Button size="sm" variant="outline">Review</Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Lead Magnet audience size too narrow (only 50K)</p>
+                      </div>
+                      
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">🔄 Creative Fatigue</span>
+                          <Button size="sm" variant="outline">Refresh</Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Hook A showing fatigue - CTR dropped 15%</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Smart Benchmarks & Export Tools */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Smart Benchmarks</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Industry Average ROAS</span>
+                    <span className="text-sm font-medium">3.7x</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Your Performance</span>
+                    <span className="text-sm font-bold text-green-600">4.2x (+12%)</span>
+                  </div>
+                  <Progress value={112} className="h-2" />
+                  <p className="text-xs text-green-600">You're performing 12% better than industry average</p>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Platform Performance</CardTitle>
+                <CardTitle>Export & Sharing</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { platform: "Facebook", spend: "$1,420", conversions: "67", roas: "4.8x" },
-                    { platform: "Instagram", spend: "$892", conversions: "34", roas: "3.9x" },
-                    { platform: "Google", spend: "$535", conversions: "41", roas: "4.1x" }
-                  ].map((platform, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{platform.platform}</p>
-                        <p className="text-sm text-muted-foreground">{platform.spend} spent</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{platform.conversions} conversions</p>
-                        <p className="text-sm text-muted-foreground">{platform.roas} ROAS</p>
-                      </div>
-                    </div>
-                  ))}
+              <CardContent className="space-y-3">
+                <Button variant="outline" className="w-full">
+                  📄 Download PDF Report
+                </Button>
+                <Button variant="outline" className="w-full">
+                  📊 Export CSV Data
+                </Button>
+                <Button variant="outline" className="w-full">
+                  🔗 Share Report Link
+                </Button>
+                <div className="pt-2 border-t">
+                  <Label className="text-xs">Auto-scheduled Reports</Label>
+                  <Select>
+                    <SelectTrigger className="w-full mt-1">
+                      <SelectValue placeholder="None" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Goals</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-sm">Target ROAS</Label>
+                  <Input type="number" placeholder="4.0" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm">Max CPA</Label>
+                  <Input type="number" placeholder="15.00" />
+                </div>
+                <Switch className="w-full" />
+                <Label className="text-xs">Auto-pause when below threshold</Label>
               </CardContent>
             </Card>
           </div>
