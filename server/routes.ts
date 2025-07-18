@@ -3,6 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { aiEmailService } from "./ai-email-service";
 import { AIEmailTemplateService } from "./ai-email-template-service";
+import { aiSMSService } from "./ai-sms-service";
+import { aiSocialService } from "./ai-social-service";
+import { aiFollowUpOrchestrator } from "./ai-followup-orchestrator";
 import { 
   insertFunnelSchema, 
   insertPageSchema, 
@@ -1137,6 +1140,152 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Copy variation error:', error);
       res.status(500).json({ error: "Failed to generate copy variations" });
+    }
+  });
+
+  // SMS Service API Routes
+  app.post("/api/sms/send", async (req, res) => {
+    try {
+      const { to, message, campaignId } = req.body;
+      const result = await aiSMSService.sendSMS(to, message, campaignId);
+      res.json(result);
+    } catch (error) {
+      console.error('SMS send error:', error);
+      res.status(500).json({ error: "Failed to send SMS" });
+    }
+  });
+
+  app.post("/api/sms/bulk-send", async (req, res) => {
+    try {
+      const { recipients, message, campaignId } = req.body;
+      const results = await aiSMSService.sendBulkSMS(recipients, message, campaignId);
+      res.json(results);
+    } catch (error) {
+      console.error('Bulk SMS send error:', error);
+      res.status(500).json({ error: "Failed to send bulk SMS" });
+    }
+  });
+
+  app.post("/api/sms/schedule", async (req, res) => {
+    try {
+      const { recipients, message, sendTime, campaignId } = req.body;
+      const result = await aiSMSService.scheduleMessage(recipients, message, sendTime, campaignId);
+      res.json(result);
+    } catch (error) {
+      console.error('SMS schedule error:', error);
+      res.status(500).json({ error: "Failed to schedule SMS" });
+    }
+  });
+
+  app.get("/api/sms/analytics/:campaignId", async (req, res) => {
+    try {
+      const { campaignId } = req.params;
+      const analytics = await aiSMSService.getAnalytics(campaignId);
+      res.json(analytics);
+    } catch (error) {
+      console.error('SMS analytics error:', error);
+      res.status(500).json({ error: "Failed to get SMS analytics" });
+    }
+  });
+
+  // Social Media Service API Routes
+  app.post("/api/social/send-dm", async (req, res) => {
+    try {
+      const { platform, recipient, message, campaignId } = req.body;
+      const result = await aiSocialService.sendDirectMessage(platform, recipient, message, campaignId);
+      res.json(result);
+    } catch (error) {
+      console.error('Social DM send error:', error);
+      res.status(500).json({ error: "Failed to send direct message" });
+    }
+  });
+
+  app.post("/api/social/bulk-dm", async (req, res) => {
+    try {
+      const { platform, recipients, message, campaignId } = req.body;
+      const results = await aiSocialService.sendBulkDirectMessages(platform, recipients, message, campaignId);
+      res.json(results);
+    } catch (error) {
+      console.error('Bulk social DM error:', error);
+      res.status(500).json({ error: "Failed to send bulk direct messages" });
+    }
+  });
+
+  app.post("/api/social/schedule-dm", async (req, res) => {
+    try {
+      const { platform, recipients, message, sendTime, campaignId } = req.body;
+      const result = await aiSocialService.scheduleDirectMessage(platform, recipients, message, sendTime, campaignId);
+      res.json(result);
+    } catch (error) {
+      console.error('Social DM schedule error:', error);
+      res.status(500).json({ error: "Failed to schedule direct message" });
+    }
+  });
+
+  app.get("/api/social/analytics/:platform/:campaignId", async (req, res) => {
+    try {
+      const { platform, campaignId } = req.params;
+      const analytics = await aiSocialService.getAnalytics(platform, campaignId);
+      res.json(analytics);
+    } catch (error) {
+      console.error('Social analytics error:', error);
+      res.status(500).json({ error: "Failed to get social media analytics" });
+    }
+  });
+
+  // Follow-Up Orchestrator API Routes
+  app.post("/api/followup/start-sequence", async (req, res) => {
+    try {
+      const { leadId, sequenceType, channels, customization } = req.body;
+      const result = await aiFollowUpOrchestrator.startFollowUpSequence(leadId, sequenceType, channels, customization);
+      res.json(result);
+    } catch (error) {
+      console.error('Follow-up sequence start error:', error);
+      res.status(500).json({ error: "Failed to start follow-up sequence" });
+    }
+  });
+
+  app.post("/api/followup/stop-sequence", async (req, res) => {
+    try {
+      const { leadId, sequenceId } = req.body;
+      const result = await aiFollowUpOrchestrator.stopFollowUpSequence(leadId, sequenceId);
+      res.json(result);
+    } catch (error) {
+      console.error('Follow-up sequence stop error:', error);
+      res.status(500).json({ error: "Failed to stop follow-up sequence" });
+    }
+  });
+
+  app.get("/api/followup/status/:leadId", async (req, res) => {
+    try {
+      const { leadId } = req.params;
+      const status = await aiFollowUpOrchestrator.getFollowUpStatus(leadId);
+      res.json(status);
+    } catch (error) {
+      console.error('Follow-up status error:', error);
+      res.status(500).json({ error: "Failed to get follow-up status" });
+    }
+  });
+
+  app.get("/api/followup/analytics/:campaignId", async (req, res) => {
+    try {
+      const { campaignId } = req.params;
+      const analytics = await aiFollowUpOrchestrator.getFollowUpAnalytics(campaignId);
+      res.json(analytics);
+    } catch (error) {
+      console.error('Follow-up analytics error:', error);
+      res.status(500).json({ error: "Failed to get follow-up analytics" });
+    }
+  });
+
+  app.post("/api/followup/optimize", async (req, res) => {
+    try {
+      const { campaignId, performanceData } = req.body;
+      const recommendations = await aiFollowUpOrchestrator.optimizeFollowUpSequence(campaignId, performanceData);
+      res.json(recommendations);
+    } catch (error) {
+      console.error('Follow-up optimization error:', error);
+      res.status(500).json({ error: "Failed to optimize follow-up sequence" });
     }
   });
 
