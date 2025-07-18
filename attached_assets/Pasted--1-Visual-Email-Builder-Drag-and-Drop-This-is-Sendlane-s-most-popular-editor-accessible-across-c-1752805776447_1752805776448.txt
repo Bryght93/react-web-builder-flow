@@ -1,0 +1,100 @@
+ 1. Visual Email Builder (Drag‑and‑Drop)
+This is Sendlane’s most popular editor, accessible across campaigns, automations, and template creation.
+Reddit
++15
+help.sendlane.com
++15
+sendlane.com
++15
+help.sendlane.com
++1
+help.sendlane.com
++1
+
+A. Layout Blocks (Containers in rows/columns)
+Create content structures in 1–4 column layouts
+
+Customize:
+
+Background color / image (cover, contain, auto, position, repeat)
+
+Full-width background toggle
+
+Borders (color, style, width, spacing, position)
+
+Stacking options (prevent/reverse stacking on mobile)
+Reddit
++6
+help.sendlane.com
++6
+sendlane.com
++6
+
+B. Content Elements
+Add these inside layout blocks:
+
+Standard Elements:
+Text: Styles include font, size, color, alignment, spacing
+
+Title/Header: Prominent header text with style options
+
+Image: Supports JPEG, PNG, GIF, WEBP; alt-text; sizing; corner radius; clickable with optional tagging on click
+
+Button: Customizable CTA buttons with styling and tag-on-click features
+
+Divider: Horizontal line with styling options
+
+Spacer: Blank space separator
+
+Social: Social icon links; customizable icons and styles
+
+HTML: Insert custom HTML/CSS code blocks inline
+
+Media: Embed video thumbnail link (YouTube/Vimeo)
+
+Link Bar: Add a horizontal list of links (navigation bar style)
+
+Text Wrap Image: Wrap text around an image element
+help.sendlane.com
++1
+sendlane.com
++1
+
+Dynamic Elements (E‑commerce only):
+Available when store integration (Shopify, BigCommerce, etc.) is connected:
+
+Product Block: Dynamically display products
+
+Testimonial Block: Display customer reviews
+
+Review Request Block: Trigger review emails after purchases
+
+Abandoned Cart / Browse Block: Shows cart contents in recovery emails
+
+Price Drop Block: Highlight products with price changes
+SMB Guide
++12
+help.sendlane.com
++12
+sendlane.com
++12
+
+C. Global & Template Settings
+Styles Tab: Set default fonts, button styles, link colors globally; override at element level
+
+Email Settings: Set email-wide background color/image, border, global spacing
+help.sendlane.com
+
+Template Settings (gear icon):
+
+Save as new template
+
+Change template (choose from library)
+
+Clear template to blank
+help.sendlane.com
++2
+help.sendlane.com
++2
+help.sendlane.com
++2
