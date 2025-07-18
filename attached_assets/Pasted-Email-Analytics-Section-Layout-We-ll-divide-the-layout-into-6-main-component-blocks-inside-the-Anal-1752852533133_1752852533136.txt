@@ -1,0 +1,104 @@
+Email Analytics Section Layout
+We’ll divide the layout into 6 main component blocks inside the Analytics dashboard:
+________________________________________
+🔵 1. Overview Metrics Panel (Top Cards Section)
+🧠 Purpose: Quick snapshot of essential KPIs to immediately understand performance.
+👨‍💻 Layout: Horizontal row of cards with bold stats, sparkline charts, and icons.
+Metrics to Include:
+•	Open Rate (e.g., 24.5%)
+•	Click Rate (e.g., 5.2%)
+•	Conversion Rate (e.g., 3.6%)
+•	Unsubscribe Rate (e.g., 1.8%)
+•	Spam Complaints (e.g., 0.2%)
+•	Bounce Rate (e.g., 0.9%)
+•	Revenue Generated (e.g., $2,450)
+•	Emails Sent (e.g., 12,400)
+•	Deliverability Score (e.g., 98.1%)
+You can show the change % from previous period (e.g., +5.2% vs last week).
+________________________________________
+🔵 2. Campaign Performance Table (Main Table Section)
+🧠 Purpose: List all recent campaigns and their performance for easy comparison.
+👨‍💻 Layout: Table view with filter/sort controls and clickable rows.
+Columns to Include:
+•	Campaign Name
+•	Type (Broadcast / Automation / Drip)
+•	Sent Date & Time
+•	Open Rate
+•	Click Rate
+•	Conversion Rate
+•	Revenue
+•	Status (Completed / Ongoing / Draft)
+•	View Heatmap 🔥
+•	View Report 📊
+You can also let users filter by campaign type, date, or audience tag.
+________________________________________
+🔵 3. Heatmap Explorer (Your existing content, refined)
+🧠 Purpose: Visual analysis of email engagement by section.
+👨‍💻 Layout:
+•	Display preview of the actual email
+•	Overlay with color-coded click activity (like your current: High / Medium / Low)
+•	Scrollable and interactive
+Components:
+•	Header (clicks)
+•	Main Body
+•	CTAs
+•	Product Blocks
+•	Footer
+•	Navigation Links
+•	Social Icons
+•	Embedded Media
+You can allow click on each section to open detailed insights (device type, segment, time clicked, etc.).
+✅ Keep your existing:
+•	“Select Campaign” dropdown
+•	Export Button
+•	Click data
+•	High/Medium/Low overlay
+•	Email Preview toggle
+________________________________________
+🔵 4. Top Performing Emails (Card Gallery Section)
+🧠 Purpose: Highlight best performers at a glance.
+👨‍💻 Layout: Carousel or grid of 3–5 top emails with performance badges.
+Info per card:
+•	Email Name
+•	Preview Thumbnail
+•	Open % • Revenue generated
+•	Sent date
+•	Audience tag or segment
+Maybe include a star 🌟 icon to “pin” favorite performers for easy team reference.
+________________________________________
+🔵 5. Revenue Attribution Panel
+🧠 Purpose: Track revenue by sequence, segment, or campaign.
+👨‍💻 Layout:
+•	Bar chart or segmented table
+•	Campaign / Sequence name
+•	Revenue earned
+•	Conversion %
+•	Average Order Value
+•	Time to Conversion (avg. hours/days)
+You can sort this by:
+•	Email Series (Welcome, Re-engagement, Product Launch)
+•	Audience Segment (VIP, New Users, Abandoned Cart)
+•	Funnel Stage (Top/Mid/Bottom)
+✅ Keep your current examples:
+•	Welcome Series → $4,250 • 12.3%
+•	Product Launch → $8,900 • 8.7%
+•	Re-engagement → $1,800 • 15.1%
+Consider integrating eCommerce or product catalog sync for dynamic attribution.
+________________________________________
+🔵 6. Engagement Timeline / Trend Graphs
+🧠 Purpose: View performance changes over time.
+👨‍💻 Layout:
+•	Line or bar charts
+•	Filters for: Campaign Type, Time Range, Segment, Country, Device
+Graph Ideas:
+•	Daily Open/Click Trends
+•	Revenue Over Time
+•	Unsubscribes Over Time
+•	Click-through Path (what links they click in what order)
+•	Device Type vs Engagement
+________________________________________
+Widgets You Can Add 
+•	Best Sending Time Suggestion: AI recommends best hours/days to send.
+•	Segment Engagement Heatmap: Matrix showing engagement by audience segment.
+•	Device + Email Client Report: Gmail vs Apple Mail vs Outlook
+•	Dark Mode Impact: How emails render on dark vs light themes.
