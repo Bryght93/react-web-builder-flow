@@ -2682,60 +2682,131 @@ export default function EmailSequenceBuilder() {
         </div>
 
         {/* Campaign Creation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {/* Use Template Card */}
           <Card 
-            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-blue-500 relative"
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-blue-500 relative overflow-hidden"
             onClick={() => createFromTemplate()}
           >
-            <CardContent className="p-6 text-center space-y-4">
-              <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto">
-                <FileText className="w-8 h-8 text-blue-600" />
+            <CardContent className="p-0">
+              {/* Template Preview Image */}
+              <div className="h-48 bg-gradient-to-br from-blue-50 to-blue-100 relative flex items-center justify-center border-b">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-black text-white text-xs px-2 py-1 rounded">Recommended</span>
+                </div>
+                {/* Template Preview Grid */}
+                <div className="grid grid-cols-2 gap-2 p-4 w-full max-w-xs">
+                  <div className="bg-white rounded shadow-sm p-3 space-y-2">
+                    <div className="h-2 bg-blue-200 rounded"></div>
+                    <div className="h-1 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-1 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-blue-500 rounded text-xs text-white flex items-center justify-center">CTA</div>
+                  </div>
+                  <div className="bg-white rounded shadow-sm p-3 space-y-2">
+                    <div className="h-2 bg-green-200 rounded"></div>
+                    <div className="h-1 bg-gray-200 rounded w-2/3"></div>
+                    <div className="h-1 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-green-500 rounded text-xs text-white flex items-center justify-center">CTA</div>
+                  </div>
+                  <div className="bg-white rounded shadow-sm p-3 space-y-2 col-span-2">
+                    <div className="h-2 bg-purple-200 rounded"></div>
+                    <div className="h-1 bg-gray-200 rounded w-full"></div>
+                    <div className="h-1 bg-gray-200 rounded w-4/5"></div>
+                    <div className="h-4 bg-purple-500 rounded text-xs text-white flex items-center justify-center">CTA</div>
+                  </div>
+                </div>
               </div>
-              <div>
+              
+              {/* Card Content */}
+              <div className="p-6 text-center space-y-3">
                 <h3 className="text-xl font-semibold text-gray-900">Use Template</h3>
-                <p className="text-gray-600 mt-2">Start with professionally designed email templates</p>
-              </div>
-              <div className="absolute top-4 right-4">
-                <span className="bg-black text-white text-xs px-2 py-1 rounded">Recommended</span>
+                <p className="text-gray-600 text-sm">Start with professionally designed email templates</p>
               </div>
             </CardContent>
           </Card>
 
           {/* AI Generated Card */}
           <Card 
-            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-purple-500 relative"
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-purple-500 relative overflow-hidden"
             onClick={() => createWithAI()}
           >
-            <CardContent className="p-6 text-center space-y-4">
-              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mx-auto">
-                <Sparkles className="w-8 h-8 text-purple-600" />
+            <CardContent className="p-0">
+              {/* AI Preview Image */}
+              <div className="h-48 bg-gradient-to-br from-purple-50 to-purple-100 relative flex items-center justify-center border-b">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">Most Popular</span>
+                </div>
+                {/* AI Magic Animation */}
+                <div className="relative">
+                  <div className="w-24 h-32 bg-white rounded-lg shadow-lg p-3 space-y-2 relative">
+                    <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
+                    <div className="h-1 bg-gray-200 rounded w-3/4 animate-pulse delay-100"></div>
+                    <div className="h-1 bg-gray-200 rounded w-1/2 animate-pulse delay-200"></div>
+                    <div className="h-4 bg-purple-500 rounded text-xs text-white flex items-center justify-center">AI</div>
+                    <div className="absolute -top-2 -right-2">
+                      <Sparkles className="w-6 h-6 text-purple-500 animate-pulse" />
+                    </div>
+                  </div>
+                  {/* Magic sparkles */}
+                  <div className="absolute -top-4 -left-2">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping"></div>
+                  </div>
+                  <div className="absolute -bottom-2 -right-4">
+                    <div className="w-1 h-1 bg-purple-300 rounded-full animate-ping delay-300"></div>
+                  </div>
+                </div>
               </div>
-              <div>
+              
+              {/* Card Content */}
+              <div className="p-6 text-center space-y-3">
                 <h3 className="text-xl font-semibold text-gray-900">AI Generated</h3>
-                <p className="text-gray-600 mt-2">Let AI create personalized email sequences for your business</p>
-              </div>
-              <div className="absolute top-4 right-4">
-                <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">Most Popular</span>
+                <p className="text-gray-600 text-sm">Let AI create personalized email sequences for your business</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Start from Scratch Card */}
           <Card 
-            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-green-500 relative"
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-green-500 relative overflow-hidden"
             onClick={() => createFromScratch()}
           >
-            <CardContent className="p-6 text-center space-y-4">
-              <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto">
-                <Plus className="w-8 h-8 text-green-600" />
+            <CardContent className="p-0">
+              {/* Blank Canvas Preview */}
+              <div className="h-48 bg-gradient-to-br from-green-50 to-green-100 relative flex items-center justify-center border-b">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Full Control</span>
+                </div>
+                {/* Blank Canvas with Grid */}
+                <div className="relative">
+                  <div className="w-24 h-32 bg-white rounded-lg shadow-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative">
+                    <Plus className="w-8 h-8 text-gray-400" />
+                    {/* Grid pattern */}
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="grid grid-cols-4 grid-rows-6 h-full w-full">
+                        {Array.from({ length: 24 }).map((_, i) => (
+                          <div key={i} className="border-r border-b border-gray-300 last:border-r-0"></div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Design tools */}
+                  <div className="absolute -top-2 -left-2">
+                    <div className="w-4 h-4 bg-green-500 rounded flex items-center justify-center">
+                      <PenTool className="w-2 h-2 text-white" />
+                    </div>
+                  </div>
+                  <div className="absolute -bottom-2 -right-2">
+                    <div className="w-4 h-4 bg-green-400 rounded flex items-center justify-center">
+                      <FileText className="w-2 h-2 text-white" />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
+              
+              {/* Card Content */}
+              <div className="p-6 text-center space-y-3">
                 <h3 className="text-xl font-semibold text-gray-900">Start from Scratch</h3>
-                <p className="text-gray-600 mt-2">Build your email sequence from the ground up</p>
-              </div>
-              <div className="absolute top-4 right-4">
-                <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Full Control</span>
+                <p className="text-gray-600 text-sm">Build your email sequence from the ground up</p>
               </div>
             </CardContent>
           </Card>
