@@ -2443,25 +2443,82 @@ export default function EmailSequenceBuilder() {
           </TabsList>
 
           <TabsContent value="basic" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {basicTemplates.map((template) => (
-                <Card key={template.id} className="cursor-pointer hover:shadow-lg transition-all">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{template.name}</CardTitle>
-                      <Badge variant="outline">{template.category}</Badge>
+                <Card key={template.id} className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden border-2 hover:border-blue-500">
+                  {/* Email Template Visual Preview */}
+                  <div className="h-64 bg-gradient-to-br from-blue-50 to-purple-50 relative overflow-hidden">
+                    <div className="absolute top-2 right-2 z-10">
+                      <Badge variant="outline" className="bg-white/90">{template.category}</Badge>
                     </div>
-                    <CardDescription className="text-sm">{template.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="text-sm">
-                        <span className="font-medium">Preview:</span>
-                        <div className="bg-gray-50 p-2 rounded text-xs mt-1">
-                          {template.preview}
+                    
+                    {/* Mini Email Preview */}
+                    <div className="p-4 h-full flex items-center justify-center">
+                      <div className="w-full max-w-[200px] bg-white rounded-lg shadow-lg border overflow-hidden">
+                        {/* Email Header */}
+                        <div className="h-6 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center px-2">
+                          <div className="flex space-x-1">
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                          </div>
+                        </div>
+                        
+                        {/* Email Content Preview */}
+                        <div className="p-3 space-y-2">
+                          {/* Subject Line */}
+                          <div className="h-2 bg-gray-800 rounded w-3/4"></div>
+                          
+                          {/* Header Image Placeholder */}
+                          {template.name.includes('Welcome') && (
+                            <div className="h-8 bg-gradient-to-r from-green-200 to-blue-200 rounded"></div>
+                          )}
+                          {template.name.includes('Product') && (
+                            <div className="h-8 bg-gradient-to-r from-orange-200 to-red-200 rounded"></div>
+                          )}
+                          {template.name.includes('Newsletter') && (
+                            <div className="h-8 bg-gradient-to-r from-purple-200 to-pink-200 rounded"></div>
+                          )}
+                          {template.name.includes('Nurture') && (
+                            <div className="h-8 bg-gradient-to-r from-yellow-200 to-orange-200 rounded"></div>
+                          )}
+                          {template.name.includes('Cart') && (
+                            <div className="h-8 bg-gradient-to-r from-red-200 to-pink-200 rounded"></div>
+                          )}
+                          
+                          {/* Content Lines */}
+                          <div className="space-y-1">
+                            <div className="h-1 bg-gray-300 rounded w-full"></div>
+                            <div className="h-1 bg-gray-300 rounded w-5/6"></div>
+                            <div className="h-1 bg-gray-300 rounded w-4/6"></div>
+                          </div>
+                          
+                          {/* CTA Button */}
+                          <div className="mt-2">
+                            <div className="h-4 bg-blue-500 rounded text-white flex items-center justify-center">
+                              <span className="text-[8px] font-medium">Call to Action</span>
+                            </div>
+                          </div>
+                          
+                          {/* Footer */}
+                          <div className="space-y-0.5 pt-1">
+                            <div className="h-0.5 bg-gray-200 rounded w-2/3"></div>
+                            <div className="h-0.5 bg-gray-200 rounded w-1/2"></div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between text-sm">
+                    </div>
+                  </div>
+                  
+                  {/* Template Info */}
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1">{template.name}</h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">{template.description}</p>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-500">
                         <span className="flex items-center">
                           <Mail className="w-4 h-4 mr-1" />
                           {template.emails} Email{template.emails > 1 ? 's' : ''}
@@ -2471,40 +2528,38 @@ export default function EmailSequenceBuilder() {
                           {template.estimatedTime}
                         </span>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {template.features.map((feature, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {feature}
-                          </Badge>
-                        ))}
-                      </div>
+                      
                       <div className="flex gap-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setSelectedTemplate(template);
                             setShowTemplatePreview(true);
                           }}
-                          className="flex-1"
+                          className="flex-1 hover:bg-blue-50 hover:border-blue-300"
                         >
-                          <Eye className="w-4 h-4 mr-2" />
+                          <Eye className="w-4 h-4 mr-1" />
                           Preview
                         </Button>
                         <Button 
                           size="sm" 
-                          onClick={() => handleTemplateSelection(template)}
-                          className="flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTemplateSelection(template);
+                          }}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700"
                           disabled={isGenerating}
                         >
                           {isGenerating ? (
                             <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Generating...
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                              Loading...
                             </>
                           ) : (
                             <>
-                              <Edit3 className="w-4 h-4 mr-2" />
+                              <Edit3 className="w-4 h-4 mr-1" />
                               Select
                             </>
                           )}
@@ -2518,25 +2573,93 @@ export default function EmailSequenceBuilder() {
           </TabsContent>
 
           <TabsContent value="advanced" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {advancedTemplates.map((template) => (
-                <Card key={template.id} className="cursor-pointer hover:shadow-lg transition-all">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{template.name}</CardTitle>
-                      <Badge variant="outline">{template.category}</Badge>
+                <Card key={template.id} className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden border-2 hover:border-purple-500">
+                  {/* Email Template Visual Preview */}
+                  <div className="h-64 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+                    <div className="absolute top-2 right-2 z-10">
+                      <Badge variant="outline" className="bg-white/90 border-purple-300">{template.category}</Badge>
                     </div>
-                    <CardDescription className="text-sm">{template.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="text-sm">
-                        <span className="font-medium">Preview:</span>
-                        <div className="bg-gray-50 p-2 rounded text-xs mt-1">
-                          {template.preview}
+                    
+                    {/* Advanced Template Preview */}
+                    <div className="p-4 h-full flex items-center justify-center">
+                      <div className="w-full max-w-[200px] bg-white rounded-lg shadow-lg border overflow-hidden">
+                        {/* Email Header with Advanced Styling */}
+                        <div className="h-6 bg-gradient-to-r from-purple-600 to-pink-600 flex items-center px-2">
+                          <div className="flex space-x-1">
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                          </div>
+                        </div>
+                        
+                        {/* Advanced Email Content Preview */}
+                        <div className="p-3 space-y-2">
+                          {/* Advanced Subject Line */}
+                          <div className="h-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded w-4/5"></div>
+                          
+                          {/* Advanced Header Image with More Detail */}
+                          <div className="space-y-1">
+                            {template.name.includes('Advanced') && (
+                              <div className="h-8 bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 rounded relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                              </div>
+                            )}
+                            {template.name.includes('E-commerce') && (
+                              <div className="h-8 bg-gradient-to-r from-emerald-200 via-teal-200 to-cyan-200 rounded relative">
+                                <div className="absolute top-1 left-1 w-2 h-2 bg-white/60 rounded"></div>
+                                <div className="absolute bottom-1 right-1 w-1 h-1 bg-white/60 rounded"></div>
+                              </div>
+                            )}
+                            {template.name.includes('SaaS') && (
+                              <div className="h-8 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 rounded relative">
+                                <div className="absolute inset-1 border border-white/30 rounded"></div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Advanced Content Structure */}
+                          <div className="space-y-1">
+                            <div className="h-1 bg-gray-400 rounded w-full"></div>
+                            <div className="h-1 bg-gray-300 rounded w-5/6"></div>
+                            <div className="h-1 bg-gray-300 rounded w-4/6"></div>
+                            <div className="h-0.5 bg-gray-200 rounded w-3/4"></div>
+                          </div>
+                          
+                          {/* Multiple CTA Buttons for Advanced */}
+                          <div className="space-y-1">
+                            <div className="h-3 bg-purple-500 rounded text-white flex items-center justify-center">
+                              <span className="text-[7px] font-medium">Primary CTA</span>
+                            </div>
+                            <div className="h-2 bg-purple-300 rounded text-white flex items-center justify-center">
+                              <span className="text-[6px] font-medium">Secondary</span>
+                            </div>
+                          </div>
+                          
+                          {/* Advanced Footer with Social Icons */}
+                          <div className="space-y-0.5 pt-1 border-t border-gray-200">
+                            <div className="flex space-x-0.5 justify-center">
+                              <div className="w-1 h-1 bg-blue-400 rounded-full"></div>
+                              <div className="w-1 h-1 bg-purple-400 rounded-full"></div>
+                              <div className="w-1 h-1 bg-pink-400 rounded-full"></div>
+                            </div>
+                            <div className="h-0.5 bg-gray-200 rounded w-2/3 mx-auto"></div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between text-sm">
+                    </div>
+                  </div>
+                  
+                  {/* Template Info */}
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1">{template.name}</h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">{template.description}</p>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-500">
                         <span className="flex items-center">
                           <Mail className="w-4 h-4 mr-1" />
                           {template.emails} Email{template.emails > 1 ? 's' : ''}
@@ -2546,40 +2669,38 @@ export default function EmailSequenceBuilder() {
                           {template.estimatedTime}
                         </span>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {template.features.map((feature, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {feature}
-                          </Badge>
-                        ))}
-                      </div>
+                      
                       <div className="flex gap-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setSelectedTemplate(template);
                             setShowTemplatePreview(true);
                           }}
-                          className="flex-1"
+                          className="flex-1 hover:bg-purple-50 hover:border-purple-300"
                         >
-                          <Eye className="w-4 h-4 mr-2" />
+                          <Eye className="w-4 h-4 mr-1" />
                           Preview
                         </Button>
                         <Button 
                           size="sm" 
-                          onClick={() => handleTemplateSelection(template)}
-                          className="flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTemplateSelection(template);
+                          }}
+                          className="flex-1 bg-purple-600 hover:bg-purple-700"
                           disabled={isGenerating}
                         >
                           {isGenerating ? (
                             <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Generating...
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                              Loading...
                             </>
                           ) : (
                             <>
-                              <Edit3 className="w-4 h-4 mr-2" />
+                              <Edit3 className="w-4 h-4 mr-1" />
                               Select
                             </>
                           )}
@@ -2600,72 +2721,249 @@ export default function EmailSequenceBuilder() {
   const TemplatePreviewDialog = () => {
     if (!selectedTemplate) return null;
 
+    // Get sample content for the template preview
+    const getSampleEmailContent = (template: any) => {
+      if (template.name.includes('Welcome')) {
+        return {
+          subject: "Welcome to [Your Company] - Let's Get Started! 🎉",
+          content: (
+            <div className="bg-white max-w-lg mx-auto border rounded-lg overflow-hidden shadow-lg">
+              {/* Email Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-6 text-center">
+                <h1 className="text-2xl font-bold mb-2">Welcome to [Your Company]!</h1>
+                <p className="text-blue-100">We're thrilled to have you on board</p>
+              </div>
+              
+              {/* Email Body */}
+              <div className="p-6 space-y-4">
+                <div className="text-gray-800">
+                  <p className="mb-3">Hi [First Name],</p>
+                  <p className="mb-3">Welcome to our amazing community! We're excited to help you achieve your goals and can't wait to show you what we have in store.</p>
+                  
+                  <div className="bg-gray-50 p-4 rounded-lg my-4">
+                    <h3 className="font-semibold mb-2">What you can expect:</h3>
+                    <ul className="space-y-1 text-sm">
+                      <li>✅ Weekly tips and strategies</li>
+                      <li>✅ Exclusive member content</li>
+                      <li>✅ Direct access to our support team</li>
+                      <li>✅ Community of like-minded individuals</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="text-center my-6">
+                    <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                      Get Started Now
+                    </button>
+                  </div>
+                  
+                  <p className="text-sm">Best regards,<br />The [Your Company] Team</p>
+                </div>
+              </div>
+              
+              {/* Email Footer */}
+              <div className="bg-gray-100 p-4 text-center text-xs text-gray-600">
+                <div className="flex justify-center space-x-4 mb-2">
+                  <div className="w-6 h-6 bg-blue-500 rounded"></div>
+                  <div className="w-6 h-6 bg-green-500 rounded"></div>
+                  <div className="w-6 h-6 bg-purple-500 rounded"></div>
+                </div>
+                <p>[Your Company] | [Address] | <a href="#" className="text-blue-600 underline">Unsubscribe</a></p>
+              </div>
+            </div>
+          )
+        };
+      }
+      
+      if (template.name.includes('Product')) {
+        return {
+          subject: "🚀 Introducing [Product Name] - Get Ready to Be Amazed!",
+          content: (
+            <div className="bg-white max-w-lg mx-auto border rounded-lg overflow-hidden shadow-lg">
+              {/* Product Launch Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 text-center">
+                <h1 className="text-2xl font-bold mb-2">Something BIG is Coming...</h1>
+                <p className="text-purple-100">Get ready for [Product Name]</p>
+              </div>
+              
+              {/* Product Image Placeholder */}
+              <div className="h-48 bg-gradient-to-r from-orange-200 to-red-200 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-24 h-24 bg-white rounded-lg shadow-lg mx-auto mb-2 flex items-center justify-center">
+                    <span className="text-2xl">📱</span>
+                  </div>
+                  <p className="text-gray-700 font-medium">[Product Image]</p>
+                </div>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div className="text-gray-800">
+                  <p className="mb-3">Hi [First Name],</p>
+                  <p className="mb-3">After months of development, we're finally ready to introduce [Product Name] - the solution you've been waiting for!</p>
+                  
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
+                    <h3 className="font-semibold text-yellow-800 mb-2">🌟 Key Features:</h3>
+                    <ul className="space-y-1 text-sm text-yellow-700">
+                      <li>• Revolutionary [Feature 1]</li>
+                      <li>• Advanced [Feature 2]</li>
+                      <li>• Seamless [Feature 3]</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="text-center my-6">
+                    <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                      Learn More
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-100 p-4 text-center text-xs text-gray-600">
+                <p>[Your Company] | <a href="#" className="text-blue-600 underline">Unsubscribe</a></p>
+              </div>
+            </div>
+          )
+        };
+      }
+      
+      // Default template
+      return {
+        subject: `${template.name} - Professional Email Template`,
+        content: (
+          <div className="bg-white max-w-lg mx-auto border rounded-lg overflow-hidden shadow-lg">
+            <div className="bg-gradient-to-r from-gray-600 to-gray-800 text-white p-6 text-center">
+              <h1 className="text-2xl font-bold mb-2">{template.name}</h1>
+              <p className="text-gray-200">Professional email template</p>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <p className="text-gray-800">This is a sample preview of the {template.name} template. The actual content will be customized based on your business needs and brand.</p>
+              
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-2">Template includes:</h3>
+                <ul className="space-y-1 text-sm">
+                  {template.features.map((feature: string, index: number) => (
+                    <li key={index}>• {feature}</li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="text-center">
+                <button className="bg-blue-600 text-white px-6 py-2 rounded font-medium">
+                  Call to Action
+                </button>
+              </div>
+            </div>
+            
+            <div className="bg-gray-100 p-4 text-center text-xs text-gray-600">
+              <p>[Your Company] | <a href="#" className="text-blue-600 underline">Unsubscribe</a></p>
+            </div>
+          </div>
+        )
+      };
+    };
+
+    const sampleEmail = getSampleEmailContent(selectedTemplate);
+
     return (
       <Dialog open={showTemplatePreview} onOpenChange={setShowTemplatePreview}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center">
-              <Eye className="w-5 h-5 mr-2" />
-              {selectedTemplate.name} Preview
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center">
+                <Eye className="w-5 h-5 mr-2" />
+                {selectedTemplate.name} Preview
+              </DialogTitle>
+              <div className="flex items-center space-x-2">
+                <Badge variant="outline">{selectedTemplate.category}</Badge>
+                <Badge variant="secondary">{selectedTemplate.difficulty}</Badge>
+              </div>
+            </div>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">Template Details</h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium">Type:</span> {selectedTemplate.type}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Side - Email Preview */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email Preview
+                </h3>
+                
+                {/* Subject Line Preview */}
+                <div className="bg-gray-50 p-3 rounded-lg mb-4">
+                  <div className="text-sm text-gray-600 mb-1">Subject Line:</div>
+                  <div className="font-medium">{sampleEmail.subject}</div>
                 </div>
-                <div>
-                  <span className="font-medium">Category:</span> {selectedTemplate.category}
-                </div>
-                <div>
-                  <span className="font-medium">Emails:</span> {selectedTemplate.emails}
-                </div>
-                <div>
-                  <span className="font-medium">Estimated Time:</span> {selectedTemplate.estimatedTime}
-                </div>
-                <div>
-                  <span className="font-medium">Industry:</span> {selectedTemplate.industry}
-                </div>
-                <div>
-                  <span className="font-medium">Difficulty:</span> {selectedTemplate.difficulty}
+                
+                {/* Email Content Preview */}
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  {sampleEmail.content}
                 </div>
               </div>
             </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Email Flow Preview</h3>
-              <div className="bg-white border rounded-lg p-4">
-                <div className="text-sm font-mono">
-                  {selectedTemplate.preview}
+            
+            {/* Right Side - Template Details */}
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-3">Template Details</h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-600">Type:</span>
+                    <div className="capitalize">{selectedTemplate.type}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Emails:</span>
+                    <div>{selectedTemplate.emails} email{selectedTemplate.emails > 1 ? 's' : ''}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Duration:</span>
+                    <div>{selectedTemplate.estimatedTime}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Industry:</span>
+                    <div>{selectedTemplate.industry}</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <h3 className="font-semibold mb-2">Features Included</h3>
-              <div className="flex flex-wrap gap-2">
-                {selectedTemplate.features.map((feature, index) => (
-                  <Badge key={index} variant="secondary">
-                    {feature}
-                  </Badge>
-                ))}
+              <div>
+                <h3 className="font-semibold mb-3">Features Included</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedTemplate.features.map((feature, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-2 text-blue-800">What happens next?</h3>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Customize content for your brand</li>
+                  <li>• Edit with our drag-and-drop editor</li>
+                  <li>• Use AI to generate personalized copy</li>
+                  <li>• Preview and test before sending</li>
+                </ul>
               </div>
             </div>
+          </div>
 
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowTemplatePreview(false)}>
-                Close
-              </Button>
-              <Button onClick={() => {
+          <div className="flex justify-end space-x-3 pt-4 border-t">
+            <Button variant="outline" onClick={() => setShowTemplatePreview(false)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Templates
+            </Button>
+            <Button 
+              onClick={() => {
                 setShowTemplatePreview(false);
                 handleTemplateSelection(selectedTemplate);
-              }}>
-                Select This Template
-              </Button>
-            </div>
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Edit3 className="w-4 h-4 mr-2" />
+              Select & Customize
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

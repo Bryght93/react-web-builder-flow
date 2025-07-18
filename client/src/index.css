@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Line clamp utility for template descriptions */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
 /* LeadGenius AI Design System - Professional Lead Generation Platform
 All colors MUST be HSL.
 */
