@@ -2443,7 +2443,7 @@ export default function EmailSequenceBuilder() {
           </TabsList>
 
           <TabsContent value="basic" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {basicTemplates.map((template) => (
                 <Card key={template.id} className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden border-2 hover:border-blue-500">
                   {/* Email Template Visual Preview */}
@@ -2573,7 +2573,7 @@ export default function EmailSequenceBuilder() {
           </TabsContent>
 
           <TabsContent value="advanced" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {advancedTemplates.map((template) => (
                 <Card key={template.id} className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden border-2 hover:border-purple-500">
                   {/* Email Template Visual Preview */}
@@ -2774,7 +2774,7 @@ export default function EmailSequenceBuilder() {
         };
       }
       
-      if (template.name.includes('Product')) {
+      if (template.name.includes('Product') || template.name.includes('Launch')) {
         return {
           subject: "🚀 Introducing [Product Name] - Get Ready to Be Amazed!",
           content: (
@@ -2812,6 +2812,133 @@ export default function EmailSequenceBuilder() {
                   <div className="text-center my-6">
                     <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
                       Learn More
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-100 p-4 text-center text-xs text-gray-600">
+                <p>[Your Company] | <a href="#" className="text-blue-600 underline">Unsubscribe</a></p>
+              </div>
+            </div>
+          )
+        };
+      }
+      
+      // Nurture Templates
+      if (template.name.includes('Lead') || template.name.includes('Nurture')) {
+        return {
+          subject: "Your journey continues - here's what's next 🎯",
+          content: (
+            <div className="bg-white max-w-lg mx-auto border rounded-lg overflow-hidden shadow-lg">
+              {/* Nurture Header */}
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6 text-center">
+                <h1 className="text-2xl font-bold mb-2">Next Steps in Your Journey</h1>
+                <p className="text-green-100">We're here to help you succeed</p>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div className="text-gray-800">
+                  <p className="mb-3">Hi [First Name],</p>
+                  <p className="mb-3">I hope you found value in our previous email. Today, I want to share some insights that will help you take the next step forward.</p>
+                  
+                  <div className="bg-green-50 border-l-4 border-green-400 p-4 my-4">
+                    <h3 className="font-semibold text-green-800 mb-2">🌱 Growth Tip:</h3>
+                    <p className="text-sm text-green-700">Consistency is key to achieving your goals. Small daily actions compound over time.</p>
+                  </div>
+                  
+                  <div className="text-center my-6">
+                    <button className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                      Continue Your Journey
+                    </button>
+                  </div>
+                  
+                  <p className="text-sm">Best regards,<br />Your Success Team</p>
+                </div>
+              </div>
+              
+              <div className="bg-gray-100 p-4 text-center text-xs text-gray-600">
+                <p>[Your Company] | <a href="#" className="text-green-600 underline">Unsubscribe</a></p>
+              </div>
+            </div>
+          )
+        };
+      }
+      
+      // Customer Templates
+      if (template.name.includes('Customer') || template.name.includes('Onboarding')) {
+        return {
+          subject: "Welcome aboard! Let's get you started 🚀",
+          content: (
+            <div className="bg-white max-w-lg mx-auto border rounded-lg overflow-hidden shadow-lg">
+              {/* Customer Onboarding Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center">
+                <h1 className="text-2xl font-bold mb-2">Welcome to the Family!</h1>
+                <p className="text-blue-100">Your success is our priority</p>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div className="text-gray-800">
+                  <p className="mb-3">Hi [First Name],</p>
+                  <p className="mb-3">Welcome! We're excited to have you as our customer and can't wait to help you achieve amazing results.</p>
+                  
+                  <div className="bg-blue-50 p-4 rounded-lg my-4">
+                    <h3 className="font-semibold mb-2">🎯 Your Next Steps:</h3>
+                    <ul className="space-y-1 text-sm">
+                      <li>✅ Complete your profile setup</li>
+                      <li>✅ Explore key features</li>
+                      <li>✅ Schedule your onboarding call</li>
+                      <li>✅ Join our community</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="text-center my-6">
+                    <button className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                      Get Started Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-100 p-4 text-center text-xs text-gray-600">
+                <p>[Your Company] | <a href="#" className="text-blue-600 underline">Unsubscribe</a></p>
+              </div>
+            </div>
+          )
+        };
+      }
+      
+      // Newsletter Templates
+      if (template.name.includes('Newsletter') || template.name.includes('Weekly')) {
+        return {
+          subject: "Weekly insights: What you need to know this week 📰",
+          content: (
+            <div className="bg-white max-w-lg mx-auto border rounded-lg overflow-hidden shadow-lg">
+              {/* Newsletter Header */}
+              <div className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-6 text-center">
+                <h1 className="text-2xl font-bold mb-2">This Week's Insights</h1>
+                <p className="text-indigo-100">Stay ahead with expert insights</p>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div className="text-gray-800">
+                  <p className="mb-3">Hi [First Name],</p>
+                  <p className="mb-3">Here are this week's top insights and updates you won't want to miss.</p>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-blue-400 pl-4">
+                      <h4 className="font-semibold text-blue-800">📈 Trending Topic</h4>
+                      <p className="text-sm text-gray-600">Key insight about industry trends...</p>
+                    </div>
+                    <div className="border-l-4 border-green-400 pl-4">
+                      <h4 className="font-semibold text-green-800">💡 Pro Tip</h4>
+                      <p className="text-sm text-gray-600">Expert advice to improve your results...</p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center my-6">
+                    <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                      Read Full Newsletter
                     </button>
                   </div>
                 </div>
@@ -3276,23 +3403,112 @@ export default function EmailSequenceBuilder() {
           </TabsContent>
 
           <TabsContent value="nurture" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {nurtureTemplates.map((template, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createCampaignFromTemplateFunction(template)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                        <Heart className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-sm">{template.name}</h3>
-                        <Badge variant="secondary" className="text-xs">{template.category}</Badge>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {nurtureTemplates.map((template) => (
+                <Card key={template.id} className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden border-2 hover:border-green-500">
+                  {/* Email Template Visual Preview */}
+                  <div className="h-64 bg-gradient-to-br from-green-50 to-emerald-50 relative overflow-hidden">
+                    <div className="absolute top-2 right-2 z-10">
+                      <Badge variant="outline" className="bg-white/90">{template.category}</Badge>
+                    </div>
+                    
+                    {/* Mini Email Preview for Nurture */}
+                    <div className="p-4 h-full flex items-center justify-center">
+                      <div className="w-full max-w-[200px] bg-white rounded-lg shadow-lg border overflow-hidden">
+                        {/* Email Header */}
+                        <div className="h-6 bg-gradient-to-r from-green-500 to-emerald-500 flex items-center px-2">
+                          <div className="flex space-x-1">
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                          </div>
+                        </div>
+                        
+                        {/* Email Content Preview */}
+                        <div className="p-3 space-y-2">
+                          {/* Subject Line */}
+                          <div className="h-2 bg-gray-800 rounded w-3/4"></div>
+                          
+                          {/* Header Image Placeholder - Nurture specific */}
+                          {template.name.includes('Welcome') && (
+                            <div className="h-8 bg-gradient-to-r from-green-200 to-emerald-200 rounded"></div>
+                          )}
+                          {template.name.includes('Lead') && (
+                            <div className="h-8 bg-gradient-to-r from-green-200 to-teal-200 rounded"></div>
+                          )}
+                          {template.name.includes('Customer') && (
+                            <div className="h-8 bg-gradient-to-r from-emerald-200 to-green-300 rounded"></div>
+                          )}
+                          
+                          {/* Content Lines */}
+                          <div className="space-y-1">
+                            <div className="h-1 bg-gray-300 rounded w-full"></div>
+                            <div className="h-1 bg-gray-300 rounded w-5/6"></div>
+                            <div className="h-1 bg-gray-300 rounded w-4/6"></div>
+                          </div>
+                          
+                          {/* CTA Button */}
+                          <div className="mt-2">
+                            <div className="h-4 bg-green-500 rounded text-white flex items-center justify-center">
+                              <span className="text-[8px] font-medium">Nurture CTA</span>
+                            </div>
+                          </div>
+                          
+                          {/* Footer */}
+                          <div className="space-y-0.5 pt-1">
+                            <div className="h-0.5 bg-gray-200 rounded w-2/3"></div>
+                            <div className="h-0.5 bg-gray-200 rounded w-1/2"></div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{template.emails} emails</span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                  
+                  {/* Template Info */}
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1">{template.name}</h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">{template.description}</p>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <span className="flex items-center">
+                          <Heart className="w-4 h-4 mr-1" />
+                          {template.emails} Email{template.emails > 1 ? 's' : ''}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {template.estimatedTime}
+                        </span>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTemplate(template);
+                            setShowTemplatePreview(true);
+                          }}
+                          className="flex-1 hover:bg-green-50 hover:border-green-300"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          Preview
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            createCampaignFromTemplateFunction(template);
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          <Heart className="w-4 h-4 mr-1" />
+                          Use Template
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -3301,23 +3517,112 @@ export default function EmailSequenceBuilder() {
           </TabsContent>
 
           <TabsContent value="broadcast" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {broadcastTemplates.map((template, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createCampaignFromTemplateFunction(template)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                        <Megaphone className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-sm">{template.name}</h3>
-                        <Badge variant="secondary" className="text-xs">{template.category}</Badge>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {broadcastTemplates.map((template) => (
+                <Card key={template.id} className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden border-2 hover:border-blue-500">
+                  {/* Email Template Visual Preview */}
+                  <div className="h-64 bg-gradient-to-br from-blue-50 to-cyan-50 relative overflow-hidden">
+                    <div className="absolute top-2 right-2 z-10">
+                      <Badge variant="outline" className="bg-white/90">{template.category}</Badge>
+                    </div>
+                    
+                    {/* Mini Email Preview for Broadcast */}
+                    <div className="p-4 h-full flex items-center justify-center">
+                      <div className="w-full max-w-[200px] bg-white rounded-lg shadow-lg border overflow-hidden">
+                        {/* Email Header */}
+                        <div className="h-6 bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center px-2">
+                          <div className="flex space-x-1">
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                            <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                          </div>
+                        </div>
+                        
+                        {/* Email Content Preview */}
+                        <div className="p-3 space-y-2">
+                          {/* Subject Line */}
+                          <div className="h-2 bg-gray-800 rounded w-3/4"></div>
+                          
+                          {/* Header Image Placeholder - Broadcast specific */}
+                          {template.name.includes('Product') && (
+                            <div className="h-8 bg-gradient-to-r from-blue-200 to-cyan-200 rounded"></div>
+                          )}
+                          {template.name.includes('Newsletter') && (
+                            <div className="h-8 bg-gradient-to-r from-cyan-200 to-blue-300 rounded"></div>
+                          )}
+                          {template.name.includes('Announcement') && (
+                            <div className="h-8 bg-gradient-to-r from-blue-300 to-indigo-200 rounded"></div>
+                          )}
+                          
+                          {/* Content Lines */}
+                          <div className="space-y-1">
+                            <div className="h-1 bg-gray-300 rounded w-full"></div>
+                            <div className="h-1 bg-gray-300 rounded w-5/6"></div>
+                            <div className="h-1 bg-gray-300 rounded w-4/6"></div>
+                          </div>
+                          
+                          {/* CTA Button */}
+                          <div className="mt-2">
+                            <div className="h-4 bg-blue-500 rounded text-white flex items-center justify-center">
+                              <span className="text-[8px] font-medium">Broadcast CTA</span>
+                            </div>
+                          </div>
+                          
+                          {/* Footer */}
+                          <div className="space-y-0.5 pt-1">
+                            <div className="h-0.5 bg-gray-200 rounded w-2/3"></div>
+                            <div className="h-0.5 bg-gray-200 rounded w-1/2"></div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{template.emails} email</span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                  
+                  {/* Template Info */}
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1">{template.name}</h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">{template.description}</p>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <span className="flex items-center">
+                          <Megaphone className="w-4 h-4 mr-1" />
+                          {template.emails} Email{template.emails > 1 ? 's' : ''}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {template.estimatedTime}
+                        </span>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTemplate(template);
+                            setShowTemplatePreview(true);
+                          }}
+                          className="flex-1 hover:bg-blue-50 hover:border-blue-300"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          Preview
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            createCampaignFromTemplateFunction(template);
+                          }}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700"
+                        >
+                          <Megaphone className="w-4 h-4 mr-1" />
+                          Use Template
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
