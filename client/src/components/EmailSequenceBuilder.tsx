@@ -92,7 +92,8 @@ import {
   MousePointer,
   Brain,
   Activity,
-  DollarSign
+  DollarSign,
+  Minus
 } from 'lucide-react';
 
 interface EmailStep {
