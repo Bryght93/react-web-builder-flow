@@ -824,8 +824,451 @@ export default function EmailSequenceBuilder() {
   };
 
   const getTemplateContent = (template: any, emailIndex: number) => {
-    // Basic template content structure
-    const content = [
+    // Generate detailed template content based on template type and email index
+    
+    // Welcome Series Templates
+    if (template.name === 'Welcome Series') {
+      const welcomeEmails = [
+        // Email 1: Welcome
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Welcome to Our Community! 🎉', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nWelcome to our amazing community! We\'re thrilled to have you on board and can\'t wait to help you achieve your goals.\n\nHere\'s what you can expect from us:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '✅ Weekly tips and strategies\n✅ Exclusive member content\n✅ Direct access to our support team\n✅ Community of like-minded individuals', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Access Your Dashboard', 
+              backgroundColor: '#4CAF50', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          },
+          {
+            id: 'text-3',
+            type: 'text',
+            properties: { text: 'Questions? Just reply to this email - we read every single one!\n\nBest regards,\nThe [Company Name] Team', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+          }
+        ],
+        // Email 2: Getting Started
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Ready to Get Started? Here\'s Your Roadmap 🗺️', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nNow that you\'re part of our community, let\'s make sure you get the most out of your experience. Here\'s your step-by-step guide to success:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'STEP 1: Complete your profile setup\nThis helps us personalize your experience and connect you with relevant content.\n\nSTEP 2: Explore our resource library\nWe\'ve curated the best materials to help you succeed.\n\nSTEP 3: Join our community discussions\nConnect with other members and share your journey.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Complete Setup Now', 
+              backgroundColor: '#2196F3', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 3: Resources
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Your Free Resource Library Awaits 📚', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI wanted to personally share some of our most valuable resources with you. These have helped thousands of our members achieve incredible results:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '🎯 The Ultimate Success Framework (PDF Guide)\n📊 Weekly Progress Tracker (Spreadsheet)\n🎥 Exclusive Video Training Series\n💡 Quick Win Checklist\n📞 Free 1:1 Strategy Call', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Download Resources', 
+              backgroundColor: '#FF9800', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          },
+          {
+            id: 'text-3',
+            type: 'text',
+            properties: { text: 'Pro tip: Start with the Success Framework - it\'s our most popular resource for a reason!\n\nTo your success,\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+          }
+        ]
+      ];
+      return welcomeEmails[emailIndex] || welcomeEmails[0];
+    }
+
+    // Product Launch Templates
+    if (template.name === 'Product Launch') {
+      const launchEmails = [
+        // Email 1: Teaser
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Something BIG is Coming... 🚀', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI\'ve been working on something incredible for the past few months, and I can barely contain my excitement!\n\nOn [Launch Date], I\'m revealing a game-changing solution that will transform how you [solve problem/achieve goal].', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'Here\'s a sneak peek of what\'s coming:\n\n• [Benefit 1]\n• [Benefit 2] \n• [Benefit 3]\n• And so much more...', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Get Early Access', 
+              backgroundColor: '#E91E63', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 2: Features
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Introducing [Product Name] - Features Revealed! ✨', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nThe wait is almost over! Today I\'m excited to show you exactly what [Product Name] can do for you.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '🎯 FEATURE 1: [Detailed description]\nHow it helps: [Specific benefit]\n\n⚡ FEATURE 2: [Detailed description] \nHow it helps: [Specific benefit]\n\n🚀 FEATURE 3: [Detailed description]\nHow it helps: [Specific benefit]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'See Full Demo', 
+              backgroundColor: '#9C27B0', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ]
+      ];
+      return launchEmails[emailIndex] || launchEmails[0];
+    }
+
+    // Nurture Sequence Templates
+    if (template.name === 'Nurture Sequence') {
+      const nurtureEmails = [
+        // Email 1: Value
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'The #1 Mistake Most People Make (And How to Avoid It)', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI see this mistake everywhere, and it breaks my heart because it\'s so easily avoidable.\n\nThe mistake? [Describe the common mistake in your industry]\n\nHere\'s why this happens and what to do instead:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'WHY IT HAPPENS:\n[Reason 1]\n[Reason 2]\n[Reason 3]\n\nTHE SOLUTION:\n[Your solution/approach]\n[Specific steps]\n[Expected results]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Learn the Full Strategy', 
+              backgroundColor: '#607D8B', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ]
+      ];
+      return nurtureEmails[emailIndex] || nurtureEmails[0];
+    }
+
+    // Abandoned Cart Templates
+    if (template.name === 'Abandoned Cart') {
+      const cartEmails = [
+        // Email 1: Reminder
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'You Left Something Behind... 🛒', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI noticed you were interested in [Product Name] but didn\'t complete your purchase.\n\nNo worries - I\'ve saved your cart for you!', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'In your cart:\n• [Product Name] - $[Price]\n• [Additional items if any]\n\nTotal: $[Total Amount]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Complete Your Purchase', 
+              backgroundColor: '#4CAF50', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 2: Incentive
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Still Thinking? Here\'s 15% Off! 💸', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI understand - sometimes we need a little time to think things through.\n\nTo help make your decision easier, I\'m offering you an exclusive 15% discount on your order.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'Use code: SAVE15\n\nYour new total: $[Discounted Total]\nSavings: $[Discount Amount]\n\n⏰ This offer expires in 48 hours!', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Claim 15% Discount', 
+              backgroundColor: '#FF5722', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ]
+      ];
+      return cartEmails[emailIndex] || cartEmails[0];
+    }
+
+    // Broadcast Templates
+    if (template.type === 'broadcast') {
+      
+      // Product Announcement
+      if (template.name === 'Product Announcement') {
+        return [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: '🎉 Exciting News: [Product Name] is Here!', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nToday marks a special day for our company and for you!\n\nAfter months of development and testing, we\'re thrilled to announce the launch of [Product Name] - our most innovative solution yet.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'What makes [Product Name] special:\n\n✨ [Key Feature 1] - [Benefit]\n🚀 [Key Feature 2] - [Benefit]\n💡 [Key Feature 3] - [Benefit]\n🎯 [Key Feature 4] - [Benefit]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Explore [Product Name]', 
+              backgroundColor: '#3F51B5', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          },
+          {
+            id: 'text-3',
+            type: 'text',
+            properties: { text: 'LAUNCH SPECIAL: Get 25% off for the first 100 customers!\nUse code: LAUNCH25\n\nThank you for being part of our journey!\n\nBest regards,\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+          }
+        ];
+      }
+
+      // Newsletter
+      if (template.name === 'Newsletter') {
+        return [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: '📰 Your Weekly Update - [Date]', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nWelcome to this week\'s edition of our newsletter! Here\'s what\'s been happening and what you need to know:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '📈 INDUSTRY NEWS\n[News item 1]\n[News item 2]\n\n💡 TIP OF THE WEEK\n[Practical tip related to your industry]\n\n🎯 FEATURED CONTENT\n[Link to blog post, video, or resource]\n\n🗓️ UPCOMING EVENTS\n[Any webinars, workshops, or events]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Read Full Newsletter', 
+              backgroundColor: '#795548', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ];
+      }
+
+      // Special Offer
+      if (template.name === 'Special Offer') {
+        return [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: '🔥 Limited Time: 50% Off Everything!', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nThis email is going to be short and sweet because this deal is too good to miss!\n\nFor the next 48 hours ONLY, you can get 50% off our entire store.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '⚡ WHAT\'S INCLUDED:\n• All products and services\n• No minimum purchase required\n• Free shipping on orders over $50\n• Instant download for digital products\n\n⏰ DEADLINE: [End Date] at midnight', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Shop 50% Off Sale', 
+              backgroundColor: '#F44336', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '16px 32px',
+              textAlign: 'center',
+              link: '#'
+            }
+          },
+          {
+            id: 'text-3',
+            type: 'text',
+            properties: { text: 'Use code: SAVE50\n\nDon\'t wait - this offer expires soon!\n\nHappy shopping!\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+          }
+        ];
+      }
+
+      // Event Invitation  
+      if (template.name === 'Event Invitation') {
+        return [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: '🎟️ You\'re Invited: [Event Name]', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI\'m excited to personally invite you to [Event Name], an exclusive event designed for [target audience].\n\nThis isn\'t your typical [event type] - we\'re bringing together [description of attendees/speakers] for an unforgettable experience.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '📅 DATE: [Event Date]\n🕐 TIME: [Start Time] - [End Time]\n📍 LOCATION: [Venue/Virtual]\n🎤 SPEAKERS: [Speaker names]\n\nWHAT YOU\'LL LEARN:\n• [Learning outcome 1]\n• [Learning outcome 2]\n• [Learning outcome 3]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Reserve Your Spot', 
+              backgroundColor: '#673AB7', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          },
+          {
+            id: 'text-3',
+            type: 'text',
+            properties: { text: 'Seats are limited and filling up fast!\n\nLooking forward to seeing you there,\n[Your Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
+          }
+        ];
+      }
+    }
+
+    // Default fallback content
+    return [
       {
         id: 'heading-1',
         type: 'heading',
@@ -834,13 +1277,13 @@ export default function EmailSequenceBuilder() {
       {
         id: 'text-1',
         type: 'text',
-        properties: { text: 'This is a template email. Customize this content to match your brand and message.', fontSize: '16px', lineHeight: '1.5', textAlign: 'left' }
+        properties: { text: 'This is a customizable email template. Edit this content to match your brand and message, or use our AI assistant to help you create compelling copy.', fontSize: '16px', lineHeight: '1.5', textAlign: 'left' }
       },
       {
         id: 'button-1',
         type: 'button',
         properties: { 
-          text: 'Learn More', 
+          text: 'Call to Action', 
           backgroundColor: '#0066cc', 
           textColor: '#ffffff',
           borderRadius: '5px',
@@ -850,8 +1293,6 @@ export default function EmailSequenceBuilder() {
         }
       }
     ];
-    
-    return content;
   };
 
   const addEmailStep = () => {
