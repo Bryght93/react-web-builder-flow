@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { EmailTemplateEditor } from './EmailTemplateEditor';
+import AdvancedEmailEditor from './AdvancedEmailEditor';
 import { 
   Mail, 
   Zap, 
@@ -480,8 +481,77 @@ const EmailDesigner: React.FC = () => {
   });
 
   const handleEditTemplate = (template: EmailTemplate) => {
-    setSelectedTemplate(template);
+    // Convert to advanced editor format
+    const advancedTemplate = {
+      id: template.id,
+      name: template.name,
+      subject: template.content[0]?.subject || '',
+      preheader: template.content[0]?.preheader || '',
+      elements: template.content[0]?.body?.map(element => ({
+        id: element.id,
+        type: mapElementType(element.type as string),
+        content: convertElementContent(element.content, element.type as string),
+        styles: element.styles || {},
+        children: undefined
+      })) || [],
+      settings: {
+        width: 600,
+        backgroundColor: '#ffffff',
+        fontFamily: 'Arial, sans-serif',
+        previewText: template.content[0]?.preheader || ''
+      }
+    };
+    
+    setSelectedTemplate(advancedTemplate as any);
     setIsEditorOpen(true);
+  };
+
+  const mapElementType = (oldType: string): any => {
+    const typeMap: Record<string, string> = {
+      'content': 'text',
+      'cta': 'button',
+      'hero': 'text',
+      'welcome_hero': 'container',
+      'header': 'header',
+      'footer': 'footer',
+      'feature_grid': 'container',
+      'social_proof': 'container',
+      'video_embed': 'video',
+      'pricing_table': 'container',
+      'spacer': 'spacer',
+      'divider': 'divider'
+    };
+    return typeMap[oldType] || 'text';
+  };
+
+  const convertElementContent = (content: any, type: string) => {
+    switch (type) {
+      case 'content':
+        return { html: content.text || 'Click to edit text' };
+      case 'cta':
+        return { 
+          text: content.text || 'Button', 
+          href: content.link || '#',
+          backgroundColor: content.backgroundColor || '#007bff',
+          textColor: content.textColor || '#ffffff'
+        };
+      case 'welcome_hero':
+        return { 
+          html: `<h1>${content.title || 'Welcome'}</h1><p>${content.subtitle || 'Subtitle'}</p>` 
+        };
+      case 'video_embed':
+        return {
+          url: content.videoUrl || '',
+          thumbnail: content.thumbnail || '/api/placeholder/600/400',
+          title: content.title || 'Video'
+        };
+      case 'spacer':
+        return { height: content.height || 40 };
+      case 'divider':
+        return { style: 'solid', color: '#e5e5e5', thickness: 1 };
+      default:
+        return content;
+    }
   };
 
   const handleSaveTemplate = (updatedTemplate: EmailTemplate) => {
@@ -651,11 +721,14 @@ const EmailDesigner: React.FC = () => {
         )}
       </div>
 
-      {/* Email Template Editor */}
+      {/* Advanced Email Template Editor */}
       {isEditorOpen && selectedTemplate && (
-        <EmailTemplateEditor
-          template={selectedTemplate}
-          onSave={handleSaveTemplate}
+        <AdvancedEmailEditor
+          template={selectedTemplate as any}
+          onSave={(updatedTemplate: any) => {
+            // Convert back to old format if needed
+            handleSaveTemplate(updatedTemplate);
+          }}
           onClose={() => {
             setIsEditorOpen(false);
             setSelectedTemplate(null);
