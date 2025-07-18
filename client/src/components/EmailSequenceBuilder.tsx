@@ -2674,30 +2674,71 @@ export default function EmailSequenceBuilder() {
 
   if (view === 'campaigns') {
     return (
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Email Designer</h1>
-            <p className="text-muted-foreground">Create beautiful email sequences that convert</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button onClick={() => createFromScratch()} className="bg-gradient-to-r from-green-600 to-teal-600">
-              <Wand2 className="w-4 h-4 mr-2" />
-              Create from Scratch
-            </Button>
-            <Button onClick={() => createFromTemplate()} className="bg-gradient-to-r from-blue-600 to-indigo-600">
-              <FileText className="w-4 h-4 mr-2" />
-              Create
-            </Button>
-            <Button onClick={() => createWithAI()} className="bg-gradient-to-r from-purple-600 to-pink-600">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Create with AI
-            </Button>
-            <Button variant="outline" onClick={() => setView('builder')}>
-              <Plus className="w-4 h-4 mr-2" />
-              Templates
-            </Button>
-          </div>
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Header Section */}
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-bold">Create Your Email Campaign</h1>
+          <p className="text-muted-foreground text-lg">Choose how you'd like to create your email sequence</p>
+        </div>
+
+        {/* Campaign Creation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {/* Use Template Card */}
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-blue-500 relative"
+            onClick={() => createFromTemplate()}
+          >
+            <CardContent className="p-6 text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto">
+                <FileText className="w-8 h-8 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Use Template</h3>
+                <p className="text-gray-600 mt-2">Start with professionally designed email templates</p>
+              </div>
+              <div className="absolute top-4 right-4">
+                <span className="bg-black text-white text-xs px-2 py-1 rounded">Recommended</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* AI Generated Card */}
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-purple-500 relative"
+            onClick={() => createWithAI()}
+          >
+            <CardContent className="p-6 text-center space-y-4">
+              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mx-auto">
+                <Sparkles className="w-8 h-8 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">AI Generated</h3>
+                <p className="text-gray-600 mt-2">Let AI create personalized email sequences for your business</p>
+              </div>
+              <div className="absolute top-4 right-4">
+                <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">Most Popular</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Start from Scratch Card */}
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-green-500 relative"
+            onClick={() => createFromScratch()}
+          >
+            <CardContent className="p-6 text-center space-y-4">
+              <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto">
+                <Plus className="w-8 h-8 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Start from Scratch</h3>
+                <p className="text-gray-600 mt-2">Build your email sequence from the ground up</p>
+              </div>
+              <div className="absolute top-4 right-4">
+                <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Full Control</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs defaultValue="campaigns" className="space-y-4">
