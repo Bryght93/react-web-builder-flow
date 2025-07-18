@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { aiEmailService } from "./ai-email-service";
+import { AIEmailTemplateService } from "./ai-email-template-service";
 import { 
   insertFunnelSchema, 
   insertPageSchema, 
@@ -1080,6 +1081,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error fetching stats:', error);
       res.status(500).json({ message: 'Failed to fetch stats' });
+    }
+  });
+
+  // Email Template AI Routes
+  app.post("/api/ai/email-templates/generate", async (req, res) => {
+    try {
+      const params = req.body;
+      const generatedContent = await AIEmailTemplateService.generateContentForTemplate(params);
+      res.json(generatedContent);
+    } catch (error) {
+      console.error('Email template generation error:', error);
+      res.status(500).json({ error: "Failed to generate email template content" });
+    }
+  });
+
+  app.post("/api/ai/email-templates/generate-sequence", async (req, res) => {
+    try {
+      const params = req.body;
+      const sequenceContent = await AIEmailTemplateService.generateSequenceContent(params);
+      res.json(sequenceContent);
+    } catch (error) {
+      console.error('Email sequence generation error:', error);
+      res.status(500).json({ error: "Failed to generate email sequence" });
+    }
+  });
+
+  app.post("/api/ai/email-templates/optimize", async (req, res) => {
+    try {
+      const { content, optimizationGoal } = req.body;
+      const optimizedContent = await AIEmailTemplateService.optimizeExistingContent(content, optimizationGoal);
+      res.json({ optimizedContent });
+    } catch (error) {
+      console.error('Email optimization error:', error);
+      res.status(500).json({ error: "Failed to optimize email content" });
+    }
+  });
+
+  app.post("/api/ai/email-templates/colors", async (req, res) => {
+    try {
+      const { brandDescription, industry } = req.body;
+      const colors = await AIEmailTemplateService.generateColorPalette(brandDescription, industry);
+      res.json({ colors });
+    } catch (error) {
+      console.error('Color generation error:', error);
+      res.status(500).json({ error: "Failed to generate color palette" });
+    }
+  });
+
+  app.post("/api/ai/email-templates/copy-variations", async (req, res) => {
+    try {
+      const { originalText, variationCount } = req.body;
+      const variations = await AIEmailTemplateService.generateCopyVariations(originalText, variationCount);
+      res.json({ variations });
+    } catch (error) {
+      console.error('Copy variation error:', error);
+      res.status(500).json({ error: "Failed to generate copy variations" });
     }
   });
 
