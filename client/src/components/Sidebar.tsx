@@ -43,12 +43,18 @@ const navigation = [
     ]
   },
   {
-    name: "Marketing Tools",
+    name: "Email Marketing",
+    items: [
+      { name: "📧 Campaign Builder", href: "/email-marketing", icon: Mail },
+      { name: "🎨 Email Designer", href: "/email-designer", icon: PenTool },
+      { name: "📊 Email Analytics", href: "/email-analytics", icon: TrendingUp },
+    ]
+  },
+  {
+    name: "Marketing Tools", 
     items: [
       { name: "Page Builder", href: "/page-builder", icon: PenTool },
       { name: "🚀 Advanced Builder", href: "/advanced-builder", icon: Zap },
-      { name: "📧 Email Marketing", href: "/email-marketing", icon: Mail },
-      { name: "🎨 Email Designer", href: "/email-designer", icon: PenTool },
       { name: "Multi-Channel", href: "/channels", icon: MessageSquare },
       { name: "Analytics", href: "/analytics", icon: TrendingUp },
     ]

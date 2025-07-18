@@ -30,7 +30,8 @@ import {
   Zap,
   Star,
   Shield,
-  Users
+  Users,
+  Play
 } from 'lucide-react';
 
 interface EmailTemplate {
@@ -460,15 +461,18 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
               {element.content.title || 'Key Features'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {element.content.features?.map((feature: any, index: number) => (
-                <div key={index} className="text-center p-6">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Zap className="w-8 h-8 text-blue-600" />
+              {element.content.features?.map((feature: any, index: number) => {
+                const IconComponent = feature.icon === 'Zap' ? Zap : feature.icon === 'Shield' ? Shield : feature.icon === 'Users' ? Users : Zap;
+                return (
+                  <div key={index} className="text-center p-6">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-xl mb-3">{feature.title}</h3>
+                    <p className="text-gray-600">{feature.description}</p>
                   </div>
-                  <h3 className="font-semibold text-xl mb-3">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </ElementWrapper>
         );
@@ -533,9 +537,7 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-700 transition-colors">
-                    <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M8 5v10l8-5-8-5z"/>
-                    </svg>
+                    <Play className="w-6 h-6 text-white ml-1" />
                   </div>
                 </div>
                 {element.content.duration && (
@@ -684,6 +686,9 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-7xl max-h-[90vh] p-0">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Email Template Editor</DialogTitle>
+        </DialogHeader>
         <div className="flex h-[90vh]">
           {/* Left Sidebar - Tools */}
           <div className="w-80 bg-gray-50 border-r border-gray-200 overflow-y-auto">
