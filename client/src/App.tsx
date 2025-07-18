@@ -20,7 +20,7 @@ import CRMDashboard from "./components/CRMDashboard";
 import MultiChannelSync from "./components/MultiChannelSync";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import Analytics from "./pages/Analytics";
+
 import CallBookingCloser from "./components/CallBookingCloser";
 import AdLaunchTracker from "./components/AdLaunchTracker";
 import AISalesCoach from "./components/AISalesCoach";
@@ -28,7 +28,7 @@ import IntegrationsHub from "./components/IntegrationsHub";
 import AILaunchAssistantPage from "./pages/AILaunchAssistant";
 import AIEmailSMSEnginePage from "./pages/AIEmailSMSEngine";
 import AIAdLauncherPage from "./pages/AIAdLauncher";
-import EmailDesignerPage from "./pages/EmailDesigner";
+
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -44,7 +44,7 @@ const App = () => (
             <Route path="/funnels" element={<Funnels />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/email-marketing" element={<EmailMarketing />} />
-            <Route path="/email-designer" element={<EmailDesignerPage />} />
+            
             <Route path="/crm" element={<CRMDashboard />} />
             <Route path="/channels" element={<MultiChannelSync />} />
             <Route path="/page-builder" element={<PageBuilder />} />
@@ -59,7 +59,7 @@ const App = () => (
             <Route path="/integrations" element={<IntegrationsHub />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/analytics" element={<Analytics />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

@@ -46,8 +46,6 @@ const navigation = [
     name: "Email Marketing",
     items: [
       { name: "📧 Campaign Builder", href: "/email-marketing", icon: Mail },
-      { name: "🎨 Email Designer", href: "/email-designer", icon: PenTool },
-      { name: "📊 Email Analytics", href: "/email-analytics", icon: TrendingUp },
     ]
   },
   {
@@ -98,7 +96,7 @@ export function Sidebar({ className }: SidebarProps) {
             <span className="text-sm bg-gradient-primary bg-clip-text text-transparent font-medium">AI</span>
           </Link>
         )}
-        
+
         <Button
           variant="ghost"
           size="icon"
@@ -122,7 +120,7 @@ export function Sidebar({ className }: SidebarProps) {
                 {group.name}
               </h3>
             )}
-            
+
             <nav className="space-y-1">
               {group.items.map((item) => (
                 <Link
