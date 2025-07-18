@@ -254,10 +254,10 @@ export default function EmailSequenceBuilder() {
       emailSequence: Array.from({ length: template.emails }, (_, i) => ({
         id: i + 1,
         name: template.type === 'broadcast' ? template.name : `Email ${i + 1}`,
-        subject: `Subject for ${template.type === 'broadcast' ? template.name : `Email ${i + 1}`}`,
+        subject: getTemplateSubject(template, i),
         delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
         delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
-        content: [],
+        content: getTemplateContent(template, i),
         settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
       }))
     };
@@ -556,10 +556,10 @@ export default function EmailSequenceBuilder() {
       emailSequence: Array.from({ length: template.emails }, (_, i) => ({
         id: i + 1,
         name: template.type === 'broadcast' ? `${template.name}` : `Email ${i + 1}`,
-        subject: `Subject for ${template.type === 'broadcast' ? template.name : `Email ${i + 1}`}`,
+        subject: getTemplateSubject(template, i),
         delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
         delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
-        content: [],
+        content: getTemplateContent(template, i),
         settings: { list: "all-subscribers", sendTime: template.type === 'broadcast' ? "immediate" : (i === 0 ? "immediate" : "9:00 AM") }
       }))
     };
@@ -809,7 +809,7 @@ export default function EmailSequenceBuilder() {
       emailSequence: Array.from({ length: template.emails }, (_, i) => ({
         id: i + 1,
         name: template.type === 'broadcast' ? template.name : `Email ${i + 1}`,
-        subject: `Subject for ${template.type === 'broadcast' ? template.name : `Email ${i + 1}`}`,
+        subject: getTemplateSubject(template, i),
         delay: template.type === 'broadcast' ? 0 : (i === 0 ? 0 : i),
         delayUnit: template.type === 'broadcast' ? 'minutes' : (i === 0 ? 'minutes' : 'days'),
         content: getTemplateContent(template, i),
@@ -821,6 +821,69 @@ export default function EmailSequenceBuilder() {
     setSelectedCampaign(newCampaign);
     setSelectedEmailStep(newCampaign.emailSequence[0]);
     setView('builder');
+  };
+
+  const getTemplateSubject = (template: any, emailIndex: number) => {
+    // Get proper subjects for each template type
+    if (template.name === 'Welcome Series') {
+      const subjects = [
+        'Welcome to our community! 🎉',
+        'Ready to get started? Here\'s your roadmap 🗺️',
+        'Your free resource library awaits 📚'
+      ];
+      return subjects[emailIndex] || subjects[0];
+    }
+
+    if (template.name === 'Product Launch') {
+      const subjects = [
+        'Something BIG is coming... 🚀',
+        'Introducing [Product Name] - Features revealed! ✨',
+        'The benefits that will change your life 💫',
+        'What our customers are saying (amazing!) 🌟',
+        '🔥 LAUNCH DAY: Get [Product Name] now!'
+      ];
+      return subjects[emailIndex] || subjects[0];
+    }
+
+    if (template.name === 'Nurture Sequence') {
+      const subjects = [
+        'The #1 mistake most people make (and how to avoid it)',
+        '3 quick tips that changed everything for me',
+        'Case study: How Sarah increased her results by 300%',
+        'The secret strategy nobody talks about',
+        'Success story: From zero to hero in 30 days',
+        'Special offer just for you (limited time)',
+        'What\'s next on your journey?'
+      ];
+      return subjects[emailIndex] || subjects[0];
+    }
+
+    if (template.name === 'Abandoned Cart') {
+      const subjects = [
+        'You left something behind... 🛒',
+        'Still thinking? Here\'s 15% off! 💸',
+        'Last chance: Your cart expires soon ⏰'
+      ];
+      return subjects[emailIndex] || subjects[0];
+    }
+
+    // Broadcast templates
+    if (template.type === 'broadcast') {
+      if (template.name === 'Product Announcement') {
+        return '🎉 Exciting News: [Product Name] is Here!';
+      }
+      if (template.name === 'Newsletter') {
+        return '📰 Your Weekly Update - [Date]';
+      }
+      if (template.name === 'Special Offer') {
+        return '🔥 Limited Time: 50% Off Everything!';
+      }
+      if (template.name === 'Event Invitation') {
+        return '🎟️ You\'re Invited: [Event Name]';
+      }
+    }
+
+    return `${template.name} - Email ${emailIndex + 1}`;
   };
 
   const getTemplateContent = (template: any, emailIndex: number) => {
@@ -880,7 +943,7 @@ export default function EmailSequenceBuilder() {
           {
             id: 'text-2',
             type: 'text',
-            properties: { text: 'STEP 1: Complete your profile setup\nThis helps us personalize your experience and connect you with relevant content.\n\nSTEP 2: Explore our resource library\nWe\'ve curated the best materials to help you succeed.\n\nSTEP 3: Join our community discussions\nConnect with other members and share your journey.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+            properties: { text: 'STEP 1: Complete your profile setup (2 minutes)\nThis helps us personalize your experience and connect you with relevant content.\n\nSTEP 2: Explore our resource library (10 minutes)\nWe\'ve curated the best materials to help you succeed faster.\n\nSTEP 3: Join our community discussions (5 minutes)\nConnect with other members and share your journey.\n\nSTEP 4: Schedule your success call (optional)\nGet personalized guidance from our team.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
           },
           {
             id: 'button-1',
@@ -894,6 +957,11 @@ export default function EmailSequenceBuilder() {
               textAlign: 'center',
               link: '#'
             }
+          },
+          {
+            id: 'text-3',
+            type: 'text',
+            properties: { text: 'Questions? Just reply to this email - I personally read every single one!\n\nTo your success,\n[Your Name]\nFounder, [Company Name]', fontSize: '14px', lineHeight: '1.5', textAlign: 'left' }
           }
         ],
         // Email 3: Resources
@@ -975,27 +1043,120 @@ export default function EmailSequenceBuilder() {
           {
             id: 'heading-1',
             type: 'heading',
-            properties: { text: 'Introducing [Product Name] - Features Revealed! ✨', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+            properties: { text: 'Introducing ProFlow - Features Revealed! ✨', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
           },
           {
             id: 'text-1',
             type: 'text',
-            properties: { text: 'Hi [First Name],\n\nThe wait is almost over! Today I\'m excited to show you exactly what [Product Name] can do for you.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+            properties: { text: 'Hi [First Name],\n\nThe wait is almost over! Today I\'m excited to show you exactly what ProFlow can do for you.\n\nThese features alone will save you 10+ hours per week...', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
           },
           {
             id: 'text-2',
             type: 'text',
-            properties: { text: '🎯 FEATURE 1: [Detailed description]\nHow it helps: [Specific benefit]\n\n⚡ FEATURE 2: [Detailed description] \nHow it helps: [Specific benefit]\n\n🚀 FEATURE 3: [Detailed description]\nHow it helps: [Specific benefit]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+            properties: { text: '🎯 SMART AUTOMATION: Set it once, run forever\nSaves 15 hours per week on repetitive tasks\n\n⚡ INSTANT ANALYTICS: Real-time insights dashboard\nMake data-driven decisions in seconds, not days\n\n🚀 AI OPTIMIZATION: Machine learning recommendations\nAutomatically improves your results over time\n\n🛡️ ENTERPRISE SECURITY: Bank-level encryption\nYour data is safer than in Fort Knox', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
           },
           {
             id: 'button-1',
             type: 'button',
             properties: { 
-              text: 'See Full Demo', 
+              text: 'Watch Live Demo', 
               backgroundColor: '#9C27B0', 
               textColor: '#ffffff',
               borderRadius: '8px',
               padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 3: Benefits
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'The Benefits That Will Change Your Life 💫', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nYesterday I showed you what ProFlow can do. Today, let me show you what it will do FOR YOU.\n\nThese aren\'t just features... they\'re life-changers:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '⏰ GET YOUR LIFE BACK\nSpend evenings with family instead of working late\n\n💰 INCREASE YOUR INCOME\nFree time to focus on revenue-generating activities\n\n😌 REDUCE STRESS\nNo more scrambling to meet deadlines\n\n🚀 SCALE YOUR BUSINESS\nHandle 10x more work without hiring more people\n\n🏆 BECOME THE EXPERT\nStay ahead of competitors who are still doing things manually', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Start Your Transformation', 
+              backgroundColor: '#FF5722', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 4: Social Proof
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'What Our Customers Are Saying (Amazing!) 🌟', fontSize: '26px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nDon\'t take my word for it. Here\'s what real customers are saying about ProFlow...\n\nThese results speak for themselves:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '"ProFlow saved my business. I was drowning in manual work, now I\'m scaling faster than ever. 500% ROI in 3 months!" - Mike J., CEO\n\n"I got my life back! Now I work 30 hours instead of 60 and make more money. My family thanks you!" - Sarah L., Consultant\n\n"This is magic. Tasks that took days now take minutes. My clients think I hired a team!" - David R., Freelancer\n\nOver 10,000 successful customers and counting...', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Join 10,000+ Happy Customers', 
+              backgroundColor: '#4CAF50', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 5: Launch
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: '🔥 LAUNCH DAY: Get ProFlow Now!', fontSize: '28px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nIT\'S HERE! After months of anticipation, ProFlow is officially available.\n\nBut here\'s the thing... I\'m only accepting 500 founding members at this special price.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: '🎉 FOUNDING MEMBER BENEFITS:\n• 50% off regular price (Save $500)\n• Lifetime updates included\n• Priority support (24/7)\n• Exclusive founder\'s community\n• 60-day money-back guarantee\n\n⏰ HURRY: Only 247 spots left!\n\nRegular price: $997\nFounding member price: $497', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Get ProFlow for $497 (Save $500)', 
+              backgroundColor: '#E91E63', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '16px 32px',
               textAlign: 'center',
               link: '#'
             }
@@ -1018,19 +1179,81 @@ export default function EmailSequenceBuilder() {
           {
             id: 'text-1',
             type: 'text',
-            properties: { text: 'Hi [First Name],\n\nI see this mistake everywhere, and it breaks my heart because it\'s so easily avoidable.\n\nThe mistake? [Describe the common mistake in your industry]\n\nHere\'s why this happens and what to do instead:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+            properties: { text: 'Hi [First Name],\n\nI see this mistake everywhere, and it breaks my heart because it\'s so easily avoidable.\n\nThe mistake? Trying to do everything at once instead of focusing on one proven strategy.\n\nHere\'s why this happens and what to do instead:', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
           },
           {
             id: 'text-2',
             type: 'text',
-            properties: { text: 'WHY IT HAPPENS:\n[Reason 1]\n[Reason 2]\n[Reason 3]\n\nTHE SOLUTION:\n[Your solution/approach]\n[Specific steps]\n[Expected results]', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+            properties: { text: 'WHY IT HAPPENS:\n• Information overload from too many sources\n• Fear of missing out on the "next big thing"\n• Lack of a clear, step-by-step plan\n\nTHE SOLUTION:\n• Pick ONE strategy and master it\n• Follow a proven framework\n• Track your progress consistently\n\nResult: 10x better results in half the time', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
           },
           {
             id: 'button-1',
             type: 'button',
             properties: { 
-              text: 'Learn the Full Strategy', 
+              text: 'Get the Complete Framework', 
               backgroundColor: '#607D8B', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 2: Tips
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: '3 Quick Tips That Changed Everything For Me', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nYesterday I shared the biggest mistake I see people make. Today, I want to give you 3 simple tips that completely transformed my results.\n\nThese might seem basic, but don\'t let that fool you...', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'TIP #1: Start your day with your most important task\nBefore checking email, social media, or anything else.\n\nTIP #2: Set a timer for 25 minutes and work with zero distractions\nYou\'ll be amazed at what you can accomplish.\n\nTIP #3: Review your progress every Friday\nWhat worked? What didn\'t? Adjust for next week.\n\nTry these for just one week and watch what happens.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'Get My Complete System', 
+              backgroundColor: '#4CAF50', 
+              textColor: '#ffffff',
+              borderRadius: '8px',
+              padding: '14px 28px',
+              textAlign: 'center',
+              link: '#'
+            }
+          }
+        ],
+        // Email 3: Case Study
+        [
+          {
+            id: 'heading-1',
+            type: 'heading',
+            properties: { text: 'Case Study: How Sarah Increased Her Results by 300%', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }
+          },
+          {
+            id: 'text-1',
+            type: 'text',
+            properties: { text: 'Hi [First Name],\n\nI want to share an incredible success story with you.\n\nMeet Sarah, a busy mom of two who was struggling to find time for her goals...\n\nShe was overwhelmed, scattered, and making very little progress despite working hard every day.', fontSize: '16px', lineHeight: '1.6', textAlign: 'left' }
+          },
+          {
+            id: 'text-2',
+            type: 'text',
+            properties: { text: 'BEFORE:\n• Working 12+ hours but seeing minimal results\n• Constantly switching between projects\n• Feeling burned out and frustrated\n\nAFTER (using our system):\n• 300% increase in productivity\n• 50% reduction in working hours\n• Achieved her biggest goal in just 90 days\n\n"I wish I had found this system years ago!" - Sarah M.', fontSize: '16px', lineHeight: '1.8', textAlign: 'left' }
+          },
+          {
+            id: 'button-1',
+            type: 'button',
+            properties: { 
+              text: 'See How Sarah Did It', 
+              backgroundColor: '#FF9800', 
               textColor: '#ffffff',
               borderRadius: '8px',
               padding: '14px 28px',
@@ -2644,7 +2867,7 @@ export default function EmailSequenceBuilder() {
           <TabsContent value="nurture" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {nurtureTemplates.map((template, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createNewCampaign(template)}>
+                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createCampaignFromTemplateFunction(template)}>
                   <CardContent className="p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
@@ -2669,7 +2892,7 @@ export default function EmailSequenceBuilder() {
           <TabsContent value="broadcast" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {broadcastTemplates.map((template, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createNewCampaign(template)}>
+                <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => createCampaignFromTemplateFunction(template)}>
                   <CardContent className="p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
