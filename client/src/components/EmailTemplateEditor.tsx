@@ -26,7 +26,11 @@ import {
   Settings,
   Sparkles,
   Undo,
-  Redo
+  Redo,
+  Zap,
+  Star,
+  Shield,
+  Users
 } from 'lucide-react';
 
 interface EmailTemplate {
@@ -48,7 +52,7 @@ interface EmailContent {
 
 interface EmailElement {
   id: string;
-  type: 'header' | 'hero' | 'content' | 'cta' | 'footer' | 'image' | 'divider' | 'countdown' | 'newsletter_intro' | 'article_grid' | 'abandoned_cart_hero' | 'urgency_timer' | 'course_hero' | 'curriculum_preview' | 'elegant_header' | 'invitation_hero' | 'rsvp_section';
+  type: 'header' | 'hero' | 'content' | 'cta' | 'footer' | 'image' | 'divider' | 'countdown' | 'newsletter_intro' | 'article_grid' | 'abandoned_cart_hero' | 'urgency_timer' | 'course_hero' | 'curriculum_preview' | 'elegant_header' | 'invitation_hero' | 'rsvp_section' | 'welcome_hero' | 'feature_grid' | 'progress_tracker' | 'social_proof' | 'newsletter_header' | 'quote_block' | 'event_details' | 'early_bird_offer' | 'video_embed' | 'testimonial_carousel' | 'pricing_table' | 'faq_section' | 'contact_info' | 'spacer';
   content: any;
   styles?: {
     backgroundColor?: string;
@@ -58,6 +62,10 @@ interface EmailElement {
     textAlign?: string;
     padding?: string;
     margin?: string;
+    borderRadius?: string;
+    borderWidth?: string;
+    borderColor?: string;
+    boxShadow?: string;
   };
 }
 
@@ -107,6 +115,162 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
     setCurrentTemplate(updatedTemplate);
   };
 
+  const addNewElement = (type: string, afterElementId?: string) => {
+    const newElement: EmailElement = {
+      id: `${type}-${Date.now()}`,
+      type,
+      content: getDefaultContent(type),
+      styles: getDefaultStyles(type)
+    };
+
+    const updatedTemplate = { ...currentTemplate };
+    const emailIndex = currentEmailIndex;
+    
+    if (afterElementId) {
+      const elementIndex = updatedTemplate.content[emailIndex].body.findIndex(el => el.id === afterElementId);
+      updatedTemplate.content[emailIndex].body.splice(elementIndex + 1, 0, newElement);
+    } else {
+      updatedTemplate.content[emailIndex].body.push(newElement);
+    }
+    
+    setCurrentTemplate(updatedTemplate);
+    setSelectedElement(newElement);
+  };
+
+  const deleteElement = (elementId: string) => {
+    const updatedTemplate = { ...currentTemplate };
+    const emailIndex = currentEmailIndex;
+    updatedTemplate.content[emailIndex].body = updatedTemplate.content[emailIndex].body.filter(el => el.id !== elementId);
+    setCurrentTemplate(updatedTemplate);
+    if (selectedElement?.id === elementId) {
+      setSelectedElement(null);
+    }
+  };
+
+  const duplicateElement = (elementId: string) => {
+    const elementToDuplicate = currentEmail.body.find(el => el.id === elementId);
+    if (elementToDuplicate) {
+      const duplicatedElement = {
+        ...elementToDuplicate,
+        id: `${elementToDuplicate.type}-${Date.now()}`
+      };
+      addNewElement(duplicatedElement.type, elementId);
+    }
+  };
+
+  const getDefaultContent = (type: string) => {
+    const defaults: Record<string, any> = {
+      header: {
+        logo: '[Your Logo]',
+        backgroundColor: '#667eea',
+        navigation: ['Dashboard', 'Features', 'Support']
+      },
+      content: {
+        text: 'Add your content here...'
+      },
+      cta: {
+        text: 'Call to Action',
+        backgroundColor: '#f093fb',
+        textColor: '#ffffff'
+      },
+      welcome_hero: {
+        title: 'Welcome to Our Platform',
+        subtitle: 'Start your journey with us today',
+        image: '/api/placeholder/500/300',
+        ctaText: 'Get Started',
+        ctaLink: '#'
+      },
+      feature_grid: {
+        title: 'Key Features',
+        features: [
+          { icon: 'Zap', title: 'Fast', description: 'Lightning-fast performance' },
+          { icon: 'Shield', title: 'Secure', description: 'Bank-level security' },
+          { icon: 'Users', title: 'Collaborative', description: 'Work together seamlessly' }
+        ]
+      },
+      progress_tracker: {
+        title: 'Your Progress',
+        steps: [
+          { step: 1, title: 'Step 1', completed: true },
+          { step: 2, title: 'Step 2', completed: false }
+        ]
+      },
+      social_proof: {
+        title: 'Trusted by thousands',
+        testimonials: [
+          { name: 'John D.', rating: 5, text: 'Amazing experience!' }
+        ]
+      },
+      video_embed: {
+        title: 'Watch Our Introduction',
+        videoUrl: 'https://example.com/video',
+        thumbnail: '/api/placeholder/500/300',
+        duration: '2:30'
+      },
+      pricing_table: {
+        title: 'Choose Your Plan',
+        plans: [
+          {
+            name: 'Basic',
+            price: '$9',
+            period: '/month',
+            features: ['Feature 1', 'Feature 2'],
+            highlighted: false
+          },
+          {
+            name: 'Pro',
+            price: '$19',
+            period: '/month',
+            features: ['Everything in Basic', 'Feature 3', 'Feature 4'],
+            highlighted: true
+          }
+        ]
+      },
+      faq_section: {
+        title: 'Frequently Asked Questions',
+        faqs: [
+          { question: 'How does it work?', answer: 'It\'s simple and intuitive.' },
+          { question: 'Is it secure?', answer: 'Yes, we use industry-standard security.' }
+        ]
+      },
+      spacer: {
+        height: '40px'
+      },
+      quote_block: {
+        quote: 'Innovation is the ability to see change as an opportunity, not a threat.',
+        author: 'Steve Jobs',
+        backgroundColor: '#f8f9fa'
+      },
+      article_grid: {
+        title: 'Latest Articles',
+        articles: [
+          {
+            title: 'Article Title',
+            excerpt: 'Article description...',
+            image: '/api/placeholder/300/200',
+            readTime: '3 min read',
+            category: 'Technology'
+          }
+        ]
+      }
+    };
+    return defaults[type] || {};
+  };
+
+  const getDefaultStyles = (type: string) => {
+    const defaults: Record<string, any> = {
+      welcome_hero: { padding: '60px 20px', textAlign: 'center' },
+      feature_grid: { padding: '40px 20px' },
+      progress_tracker: { padding: '30px 20px' },
+      social_proof: { padding: '40px 20px', backgroundColor: '#f8f9fa' },
+      video_embed: { padding: '30px 20px', textAlign: 'center' },
+      pricing_table: { padding: '50px 20px' },
+      faq_section: { padding: '40px 20px' },
+      spacer: { padding: '0' }
+    };
+    return defaults[type] || { padding: '20px' };
+  };
+
   const renderElement = (element: EmailElement) => {
     const baseStyles = {
       backgroundColor: element.styles?.backgroundColor || '#ffffff',
@@ -116,19 +280,53 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
       textAlign: element.styles?.textAlign || 'left',
       padding: element.styles?.padding || '20px',
       margin: element.styles?.margin || '0',
+      borderRadius: element.styles?.borderRadius || '0',
+      border: element.styles?.borderWidth ? `${element.styles.borderWidth} solid ${element.styles.borderColor || '#e5e5e5'}` : 'none',
+      boxShadow: element.styles?.boxShadow || 'none',
     };
 
     const isSelected = selectedElement?.id === element.id;
 
+    const ElementWrapper = ({ children }: { children: React.ReactNode }) => (
+      <div 
+        className={`relative group cursor-pointer transition-all ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+        style={baseStyles}
+        onClick={() => setSelectedElement(element)}
+      >
+        {children}
+        
+        {/* Element Controls Overlay */}
+        <div className={`absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ${isSelected ? 'opacity-100' : ''}`}>
+          <Button size="sm" variant="outline" className="h-6 w-6 p-0 bg-white" onClick={(e) => {
+            e.stopPropagation();
+            duplicateElement(element.id);
+          }}>
+            <Copy className="w-3 h-3" />
+          </Button>
+          <Button size="sm" variant="outline" className="h-6 w-6 p-0 bg-white" onClick={(e) => {
+            e.stopPropagation();
+            deleteElement(element.id);
+          }}>
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+
+        {/* Add Element Button */}
+        <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button size="sm" variant="outline" className="h-6 w-6 p-0 bg-blue-500 text-white border-blue-500" onClick={(e) => {
+            e.stopPropagation();
+            // Show element selector
+          }}>
+            <Plus className="w-3 h-3" />
+          </Button>
+        </div>
+      </div>
+    );
+
     switch (element.type) {
       case 'header':
         return (
-          <div 
-            key={element.id}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
-            style={{ backgroundColor: element.content.backgroundColor || '#667eea', padding: '20px' }}
-            onClick={() => setSelectedElement(element)}
-          >
+          <ElementWrapper key={element.id}>
             <div className="flex items-center justify-between">
               <div className="text-white font-bold text-xl">
                 {element.content.logo || '[Your Logo]'}
@@ -143,21 +341,13 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                 </div>
               )}
             </div>
-          </div>
+          </ElementWrapper>
         );
 
       case 'hero':
+      case 'welcome_hero':
         return (
-          <div 
-            key={element.id}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
-            style={{ 
-              background: element.content.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              padding: '60px 20px',
-              textAlign: 'center'
-            }}
-            onClick={() => setSelectedElement(element)}
-          >
+          <ElementWrapper key={element.id}>
             <h1 className="text-4xl font-bold mb-4" style={{ color: element.content.textColor || '#ffffff' }}>
               {element.content.title || '[Hero Title]'}
             </h1>
@@ -172,7 +362,19 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                 style={{ maxWidth: '500px', height: 'auto' }}
               />
             )}
-          </div>
+            {element.content.ctaText && (
+              <button
+                className="px-8 py-3 rounded-lg font-semibold text-lg transition-colors mt-4"
+                style={{
+                  backgroundColor: element.content.ctaColor || '#f093fb',
+                  color: element.content.ctaTextColor || '#ffffff',
+                  border: 'none'
+                }}
+              >
+                {element.content.ctaText}
+              </button>
+            )}
+          </ElementWrapper>
         );
 
       case 'content':
@@ -251,14 +453,182 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
           </div>
         );
 
+      case 'feature_grid':
+        return (
+          <ElementWrapper key={element.id}>
+            <h2 className="text-3xl font-bold text-center mb-8">
+              {element.content.title || 'Key Features'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {element.content.features?.map((feature: any, index: number) => (
+                <div key={index} className="text-center p-6">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Zap className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-xl mb-3">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </ElementWrapper>
+        );
+
+      case 'progress_tracker':
+        return (
+          <ElementWrapper key={element.id}>
+            <h2 className="text-2xl font-bold text-center mb-8">
+              {element.content.title || 'Your Progress'}
+            </h2>
+            <div className="max-w-md mx-auto">
+              {element.content.steps?.map((step: any, index: number) => (
+                <div key={index} className="flex items-center mb-4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-4 ${
+                    step.completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {step.step}
+                  </div>
+                  <span className={`font-medium ${step.completed ? 'text-green-600' : 'text-gray-600'}`}>
+                    {step.title}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </ElementWrapper>
+        );
+
+      case 'social_proof':
+        return (
+          <ElementWrapper key={element.id}>
+            <h2 className="text-2xl font-bold text-center mb-8">
+              {element.content.title || 'What Our Customers Say'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {element.content.testimonials?.map((testimonial: any, index: number) => (
+                <div key={index} className="bg-white p-6 rounded-lg shadow-sm border">
+                  <div className="flex mb-3">
+                    {[...Array(testimonial.rating || 5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                  <div className="font-semibold">{testimonial.name}</div>
+                </div>
+              ))}
+            </div>
+          </ElementWrapper>
+        );
+
+      case 'video_embed':
+        return (
+          <ElementWrapper key={element.id}>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              {element.content.title || 'Watch Our Video'}
+            </h2>
+            <div className="max-w-2xl mx-auto">
+              <div className="relative bg-black rounded-lg overflow-hidden">
+                <img 
+                  src={element.content.thumbnail || '/api/placeholder/600/400'} 
+                  alt="Video thumbnail"
+                  className="w-full h-64 object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-700 transition-colors">
+                    <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M8 5v10l8-5-8-5z"/>
+                    </svg>
+                  </div>
+                </div>
+                {element.content.duration && (
+                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
+                    {element.content.duration}
+                  </div>
+                )}
+              </div>
+            </div>
+          </ElementWrapper>
+        );
+
+      case 'pricing_table':
+        return (
+          <ElementWrapper key={element.id}>
+            <h2 className="text-3xl font-bold text-center mb-12">
+              {element.content.title || 'Choose Your Plan'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {element.content.plans?.map((plan: any, index: number) => (
+                <div key={index} className={`bg-white rounded-lg shadow-lg border-2 overflow-hidden ${
+                  plan.highlighted ? 'border-blue-500 transform scale-105' : 'border-gray-200'
+                }`}>
+                  {plan.highlighted && (
+                    <div className="bg-blue-500 text-white text-center py-2 font-semibold">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                    <div className="text-3xl font-bold mb-4">
+                      {plan.price}<span className="text-lg text-gray-600">{plan.period}</span>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      {plan.features?.map((feature: string, i: number) => (
+                        <li key={i} className="flex items-center">
+                          <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                          </svg>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <button className={`w-full py-2 px-4 rounded font-semibold transition-colors ${
+                      plan.highlighted 
+                        ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                    }`}>
+                      Choose Plan
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ElementWrapper>
+        );
+
+      case 'faq_section':
+        return (
+          <ElementWrapper key={element.id}>
+            <h2 className="text-3xl font-bold text-center mb-12">
+              {element.content.title || 'Frequently Asked Questions'}
+            </h2>
+            <div className="max-w-3xl mx-auto space-y-4">
+              {element.content.faqs?.map((faq: any, index: number) => (
+                <div key={index} className="bg-white border rounded-lg">
+                  <button className="w-full text-left px-6 py-4 font-semibold hover:bg-gray-50">
+                    {faq.question}
+                  </button>
+                  <div className="px-6 pb-4 text-gray-600">
+                    {faq.answer}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ElementWrapper>
+        );
+
+      case 'spacer':
+        return (
+          <ElementWrapper key={element.id}>
+            <div style={{ height: element.content.height || '40px' }} className="bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
+              <span className="text-gray-500 text-sm">Spacer - {element.content.height || '40px'}</span>
+            </div>
+          </ElementWrapper>
+        );
+
       case 'article_grid':
         return (
-          <div 
-            key={element.id}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
-            style={{ padding: '30px 20px' }}
-            onClick={() => setSelectedElement(element)}
-          >
+          <ElementWrapper key={element.id}>
+            <h2 className="text-2xl font-bold mb-8">
+              {element.content.title || 'Latest Articles'}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {element.content.articles?.map((article: any, index: number) => (
                 <div key={index} className="bg-white rounded-lg shadow-sm border overflow-hidden">
@@ -268,6 +638,10 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-blue-600 font-medium">{article.category}</span>
+                      <span className="text-xs text-gray-500">{article.readTime}</span>
+                    </div>
                     <h3 className="font-semibold text-lg mb-2">
                       {article.title || '[Article Title]'}
                     </h3>
@@ -281,7 +655,7 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                 </div>
               ))}
             </div>
-          </div>
+          </ElementWrapper>
         );
 
       default:
@@ -381,17 +755,21 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                       <div>
                         <label className="text-sm font-medium">Element Type</label>
                         <Badge variant="outline" className="mt-1 block w-fit">
-                          {selectedElement.type}
+                          {selectedElement.type.replace('_', ' ').toUpperCase()}
                         </Badge>
                       </div>
 
-                      {selectedElement.type === 'content' && (
+                      {/* Text Content Fields */}
+                      {(selectedElement.type === 'content' || selectedElement.type === 'quote_block') && (
                         <div>
                           <label className="text-sm font-medium">Text Content</label>
                           <Textarea
-                            value={selectedElement.content.text || ''}
+                            value={selectedElement.content.text || selectedElement.content.quote || ''}
                             onChange={(e) => handleElementUpdate(selectedElement.id, {
-                              content: { ...selectedElement.content, text: e.target.value }
+                              content: { 
+                                ...selectedElement.content, 
+                                [selectedElement.type === 'quote_block' ? 'quote' : 'text']: e.target.value 
+                              }
                             })}
                             className="mt-1"
                             rows={4}
@@ -399,20 +777,65 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                         </div>
                       )}
 
-                      {(selectedElement.type === 'hero' || selectedElement.type === 'cta') && (
+                      {/* Title Fields */}
+                      {(selectedElement.type === 'hero' || selectedElement.type === 'welcome_hero' || 
+                        selectedElement.type === 'feature_grid' || selectedElement.type === 'progress_tracker' ||
+                        selectedElement.type === 'social_proof' || selectedElement.type === 'video_embed' ||
+                        selectedElement.type === 'pricing_table' || selectedElement.type === 'faq_section') && (
                         <div>
-                          <label className="text-sm font-medium">
-                            {selectedElement.type === 'hero' ? 'Title' : 'Button Text'}
-                          </label>
+                          <label className="text-sm font-medium">Title</label>
                           <Input
-                            value={selectedElement.content.title || selectedElement.content.text || ''}
+                            value={selectedElement.content.title || ''}
+                            onChange={(e) => handleElementUpdate(selectedElement.id, {
+                              content: { ...selectedElement.content, title: e.target.value }
+                            })}
+                            className="mt-1"
+                          />
+                        </div>
+                      )}
+
+                      {/* Subtitle Fields */}
+                      {(selectedElement.type === 'hero' || selectedElement.type === 'welcome_hero') && (
+                        <div>
+                          <label className="text-sm font-medium">Subtitle</label>
+                          <Input
+                            value={selectedElement.content.subtitle || ''}
+                            onChange={(e) => handleElementUpdate(selectedElement.id, {
+                              content: { ...selectedElement.content, subtitle: e.target.value }
+                            })}
+                            className="mt-1"
+                          />
+                        </div>
+                      )}
+
+                      {/* CTA Text */}
+                      {(selectedElement.type === 'cta' || selectedElement.type === 'welcome_hero') && (
+                        <div>
+                          <label className="text-sm font-medium">Button Text</label>
+                          <Input
+                            value={selectedElement.content.ctaText || selectedElement.content.text || ''}
                             onChange={(e) => handleElementUpdate(selectedElement.id, {
                               content: { 
                                 ...selectedElement.content, 
-                                [selectedElement.type === 'hero' ? 'title' : 'text']: e.target.value 
+                                [selectedElement.type === 'cta' ? 'text' : 'ctaText']: e.target.value 
                               }
                             })}
                             className="mt-1"
+                          />
+                        </div>
+                      )}
+
+                      {/* Spacer Height */}
+                      {selectedElement.type === 'spacer' && (
+                        <div>
+                          <label className="text-sm font-medium">Height</label>
+                          <Input
+                            value={selectedElement.content.height || '40px'}
+                            onChange={(e) => handleElementUpdate(selectedElement.id, {
+                              content: { ...selectedElement.content, height: e.target.value }
+                            })}
+                            className="mt-1"
+                            placeholder="e.g., 40px, 2rem, 100px"
                           />
                         </div>
                       )}
@@ -463,6 +886,30 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                           </SelectContent>
                         </Select>
                       </div>
+
+                      <div>
+                        <label className="text-sm font-medium">Padding</label>
+                        <Input
+                          value={selectedElement.styles?.padding || '20px'}
+                          onChange={(e) => handleElementUpdate(selectedElement.id, {
+                            styles: { ...selectedElement.styles, padding: e.target.value }
+                          })}
+                          className="mt-1"
+                          placeholder="e.g., 20px, 1rem 2rem"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium">Border Radius</label>
+                        <Input
+                          value={selectedElement.styles?.borderRadius || '0'}
+                          onChange={(e) => handleElementUpdate(selectedElement.id, {
+                            styles: { ...selectedElement.styles, borderRadius: e.target.value }
+                          })}
+                          className="mt-1"
+                          placeholder="e.g., 8px, 0.5rem"
+                        />
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -471,6 +918,45 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                     <p>Select an element to edit its properties</p>
                   </div>
                 )}
+
+                {/* Add Element Buttons */}
+                <div className="border-t pt-4">
+                  <h5 className="font-medium mb-3">Add New Element</h5>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('welcome_hero')}>
+                      <Zap className="w-3 h-3 mr-1" />
+                      Hero
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('feature_grid')}>
+                      <Settings className="w-3 h-3 mr-1" />
+                      Features
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('social_proof')}>
+                      <Star className="w-3 h-3 mr-1" />
+                      Testimonials
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('video_embed')}>
+                      <Eye className="w-3 h-3 mr-1" />
+                      Video
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('pricing_table')}>
+                      <Type className="w-3 h-3 mr-1" />
+                      Pricing
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('faq_section')}>
+                      <Plus className="w-3 h-3 mr-1" />
+                      FAQ
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('spacer')}>
+                      <Copy className="w-3 h-3 mr-1" />
+                      Spacer
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => addNewElement('content')}>
+                      <Type className="w-3 h-3 mr-1" />
+                      Text
+                    </Button>
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="ai" className="p-4 space-y-4">

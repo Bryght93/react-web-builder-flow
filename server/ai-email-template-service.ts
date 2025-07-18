@@ -1,8 +1,12 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY 
-});
+let openai: OpenAI | null = null;
+
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({ 
+    apiKey: process.env.OPENAI_API_KEY 
+  });
+}
 
 export interface AIEmailGenerationParams {
   templateId: string;
@@ -31,6 +35,11 @@ export interface AIGeneratedContent {
 
 export class AIEmailTemplateService {
   static async generateContentForTemplate(params: AIEmailGenerationParams): Promise<AIGeneratedContent> {
+    if (!openai) {
+      console.log('OpenAI not configured, using fallback content');
+      return this.getFallbackContent(params);
+    }
+
     try {
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       const response = await openai.chat.completions.create({
@@ -90,6 +99,14 @@ export class AIEmailTemplateService {
   }
 
   static async generateSequenceContent(params: AIEmailGenerationParams & { emailCount: number }): Promise<AIGeneratedContent[]> {
+    if (!openai) {
+      console.log('OpenAI not configured, using fallback sequence content');
+      return Array(params.emailCount).fill(null).map((_, i) => this.getFallbackContent({
+        ...params,
+        campaignGoal: `${params.campaignGoal} - Email ${i + 1}`
+      }));
+    }
+
     try {
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       const response = await openai.chat.completions.create({
@@ -139,6 +156,11 @@ export class AIEmailTemplateService {
   }
 
   static async optimizeExistingContent(content: any, optimizationGoal: string): Promise<any> {
+    if (!openai) {
+      console.log('OpenAI not configured, returning original content');
+      return content;
+    }
+
     try {
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       const response = await openai.chat.completions.create({
@@ -174,6 +196,11 @@ export class AIEmailTemplateService {
   }
 
   static async generateColorPalette(brandDescription: string, industry: string): Promise<string[]> {
+    if (!openai) {
+      console.log('OpenAI not configured, using default colors');
+      return this.getDefaultColors(industry);
+    }
+
     try {
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       const response = await openai.chat.completions.create({
@@ -208,6 +235,11 @@ export class AIEmailTemplateService {
   }
 
   static async generateCopyVariations(originalText: string, variationCount: number = 3): Promise<string[]> {
+    if (!openai) {
+      console.log('OpenAI not configured, returning original text');
+      return [originalText];
+    }
+
     try {
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       const response = await openai.chat.completions.create({

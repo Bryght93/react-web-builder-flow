@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { EmailTemplateEditor } from './EmailTemplateEditor';
 import { 
-  Sparkles, 
-  Search, 
-  Filter, 
+  Mail, 
+  Zap, 
+  Plus, 
   Eye, 
   Edit, 
   Copy, 
+  Trash2,
+  Search,
+  Filter,
   Star,
-  Mail,
+  Clock,
+  Users,
+  TrendingUp,
+  Sparkles,
   Palette,
-  Zap,
   Layout,
   Image as ImageIcon,
   Type,
-  MousePointer,
-  Smartphone,
-  Monitor,
-  Tablet
+  MousePointer
 } from 'lucide-react';
-import { EmailTemplateEditor } from './EmailTemplateEditor';
 
 interface EmailTemplate {
   id: string;
@@ -33,585 +35,600 @@ interface EmailTemplate {
   category: string;
   industry: string;
   type: 'single' | 'sequence';
-  difficulty: 'basic' | 'intermediate' | 'advanced';
   emailCount: number;
+  content: EmailContent[];
+  isFullyDesigned: boolean;
   thumbnail: string;
   description: string;
-  tags: string[];
   features: string[];
-  designStyle: string;
-  colors: string[];
-  elements: any[];
-  content: {
-    subject: string;
-    preheader: string;
-    body: any[];
-  }[];
-  isFullyDesigned: boolean;
-  rating: number;
-  downloads: number;
-  aiOptimized: boolean;
+  conversionRate?: number;
+  popularity?: number;
+}
+
+interface EmailContent {
+  subject: string;
+  preheader: string;
+  body: EmailElement[];
+}
+
+interface EmailElement {
+  id: string;
+  type: string;
+  content: any;
+  styles?: any;
 }
 
 const EmailDesigner: React.FC = () => {
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedIndustry, setSelectedIndustry] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showEditor, setShowEditor] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
-  const [showAIDialog, setShowAIDialog] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Fully designed email templates
-  const fullyDesignedTemplates: EmailTemplate[] = [
-    {
-      id: '1',
-      name: 'Modern Welcome Series',
-      category: 'welcome',
-      industry: 'saas',
-      type: 'sequence',
-      difficulty: 'basic',
-      emailCount: 3,
-      thumbnail: '/api/placeholder/300/200',
-      description: 'Clean, modern welcome sequence with gradient backgrounds and professional typography',
-      tags: ['welcome', 'onboarding', 'modern', 'gradient'],
-      features: ['3 email sequence', 'Gradient backgrounds', 'Mobile responsive', 'CTA buttons'],
-      designStyle: 'Modern',
-      colors: ['#667eea', '#764ba2', '#f093fb'],
-      elements: [],
-      content: [
-        {
-          subject: 'Welcome to [Company] - Your journey starts now! 🚀',
-          preheader: 'We\'re excited to have you on board. Here\'s what happens next...',
-          body: [
-            {
-              type: 'header',
-              content: {
-                logo: '[LOGO]',
-                backgroundColor: '#667eea'
-              }
-            },
-            {
-              type: 'hero',
-              content: {
-                title: 'Welcome to [Company]!',
-                subtitle: 'We\'re thrilled to have you join our community of innovators',
-                backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                textColor: '#ffffff'
-              }
-            },
-            {
-              type: 'content',
-              content: {
-                text: 'Hi [First Name],\n\nWelcome to [Company]! We\'re excited to help you [achieve specific goal]. Over the next few days, you\'ll receive emails with valuable tips and resources to get you started.\n\nHere\'s what you can expect:',
-                items: [
-                  'Step-by-step setup guide',
-                  'Exclusive tips and strategies',
-                  'Access to our community'
-                ]
-              }
-            },
-            {
-              type: 'cta',
-              content: {
-                text: 'Get Started Now',
-                link: '[SETUP_LINK]',
-                backgroundColor: '#f093fb',
-                textColor: '#ffffff'
-              }
-            }
-          ]
-        }
-      ],
-      isFullyDesigned: true,
-      rating: 4.8,
-      downloads: 1247,
-      aiOptimized: true
-    },
-    {
-      id: '2',
-      name: 'E-commerce Product Launch',
-      category: 'product',
-      industry: 'ecommerce',
-      type: 'sequence',
-      difficulty: 'intermediate',
-      emailCount: 5,
-      thumbnail: '/api/placeholder/300/200',
-      description: 'Complete product launch sequence with countdown timers and social proof',
-      tags: ['product launch', 'ecommerce', 'countdown', 'social proof'],
-      features: ['5 email sequence', 'Countdown timers', 'Product showcases', 'Social proof'],
-      designStyle: 'E-commerce',
-      colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'],
-      elements: [],
-      content: [
-        {
-          subject: '🔥 Something amazing is coming... (Sneak peek inside)',
-          preheader: 'Be the first to know about our biggest launch this year',
-          body: [
-            {
-              type: 'header',
-              content: {
-                logo: '[LOGO]',
-                backgroundColor: '#ff6b6b'
-              }
-            },
-            {
-              type: 'hero',
-              content: {
-                title: 'Something Big is Coming...',
-                subtitle: 'Get ready for our biggest product launch this year',
-                image: '[PRODUCT_TEASER_IMAGE]',
-                backgroundColor: '#ffffff'
-              }
-            },
-            {
-              type: 'countdown',
-              content: {
-                title: 'Launch Countdown',
-                endDate: '[LAUNCH_DATE]',
-                backgroundColor: '#4ecdc4'
-              }
-            }
-          ]
-        }
-      ],
-      isFullyDesigned: true,
-      rating: 4.9,
-      downloads: 892,
-      aiOptimized: true
-    },
-    {
-      id: '3',
-      name: 'Professional Newsletter',
-      category: 'newsletter',
-      industry: 'business',
-      type: 'single',
-      difficulty: 'basic',
-      emailCount: 1,
-      thumbnail: '/api/placeholder/300/200',
-      description: 'Clean, professional newsletter template perfect for B2B communications',
-      tags: ['newsletter', 'professional', 'b2b', 'clean'],
-      features: ['Single email', 'Clean layout', 'Multiple content blocks', 'Professional design'],
-      designStyle: 'Professional',
-      colors: ['#2c3e50', '#3498db', '#ecf0f1'],
-      elements: [],
-      content: [
-        {
-          subject: '[Company] Weekly Insights - [Date]',
-          preheader: 'This week: Industry updates, expert tips, and more',
-          body: [
-            {
-              type: 'header',
-              content: {
-                logo: '[LOGO]',
-                navigation: ['Articles', 'Resources', 'About'],
-                backgroundColor: '#2c3e50'
-              }
-            },
-            {
-              type: 'newsletter_intro',
-              content: {
-                title: 'Weekly Insights',
-                date: '[CURRENT_DATE]',
-                intro: 'Your weekly dose of industry insights and expert tips'
-              }
-            },
-            {
-              type: 'article_grid',
-              content: {
-                articles: [
-                  {
-                    title: '[ARTICLE_1_TITLE]',
-                    excerpt: '[ARTICLE_1_EXCERPT]',
-                    image: '[ARTICLE_1_IMAGE]',
-                    link: '[ARTICLE_1_LINK]'
-                  },
-                  {
-                    title: '[ARTICLE_2_TITLE]',
-                    excerpt: '[ARTICLE_2_EXCERPT]',
-                    image: '[ARTICLE_2_IMAGE]',
-                    link: '[ARTICLE_2_LINK]'
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ],
-      isFullyDesigned: true,
-      rating: 4.7,
-      downloads: 2103,
-      aiOptimized: true
-    },
-    {
-      id: '4',
-      name: 'Abandoned Cart Recovery',
-      category: 'recovery',
-      industry: 'ecommerce',
-      type: 'sequence',
-      difficulty: 'advanced',
-      emailCount: 3,
-      thumbnail: '/api/placeholder/300/200',
-      description: 'Highly converting abandoned cart sequence with personalization and urgency',
-      tags: ['abandoned cart', 'ecommerce', 'urgency', 'personalization'],
-      features: ['3 email sequence', 'Product images', 'Urgency elements', 'Discount codes'],
-      designStyle: 'Conversion-focused',
-      colors: ['#e74c3c', '#f39c12', '#27ae60'],
-      elements: [],
-      content: [
-        {
-          subject: 'You left something behind... 🛒',
-          preheader: 'Your items are waiting for you. Complete your purchase now!',
-          body: [
-            {
-              type: 'header',
-              content: {
-                logo: '[LOGO]',
-                backgroundColor: '#e74c3c'
-              }
-            },
-            {
-              type: 'abandoned_cart_hero',
-              content: {
-                title: 'Don\'t Miss Out!',
-                subtitle: 'Your items are still available, but not for long...',
-                cartItems: '[CART_ITEMS]'
-              }
-            },
-            {
-              type: 'urgency_timer',
-              content: {
-                title: 'Complete your purchase within:',
-                duration: '24 hours',
-                backgroundColor: '#f39c12'
-              }
-            }
-          ]
-        }
-      ],
-      isFullyDesigned: true,
-      rating: 4.9,
-      downloads: 1567,
-      aiOptimized: true
-    },
-    {
-      id: '5',
-      name: 'Course Launch Sequence',
-      category: 'education',
-      industry: 'education',
-      type: 'sequence',
-      difficulty: 'intermediate',
-      emailCount: 7,
-      thumbnail: '/api/placeholder/300/200',
-      description: 'Complete course launch sequence with student testimonials and curriculum highlights',
-      tags: ['course', 'education', 'launch', 'testimonials'],
-      features: ['7 email sequence', 'Video embeds', 'Testimonials', 'Curriculum preview'],
-      designStyle: 'Educational',
-      colors: ['#9b59b6', '#3498db', '#f1c40f'],
-      elements: [],
-      content: [
-        {
-          subject: '🎓 Your learning journey begins here...',
-          preheader: 'Transform your skills with our comprehensive course',
-          body: [
-            {
-              type: 'header',
-              content: {
-                logo: '[LOGO]',
-                backgroundColor: '#9b59b6'
-              }
-            },
-            {
-              type: 'course_hero',
-              content: {
-                title: 'Master [Skill] in [Timeframe]',
-                subtitle: 'Join thousands of students who have transformed their careers',
-                video: '[COURSE_PREVIEW_VIDEO]',
-                instructor: '[INSTRUCTOR_INFO]'
-              }
-            },
-            {
-              type: 'curriculum_preview',
-              content: {
-                modules: [
-                  'Module 1: Foundation',
-                  'Module 2: Intermediate Concepts',
-                  'Module 3: Advanced Techniques',
-                  'Module 4: Real-world Projects'
-                ]
-              }
-            }
-          ]
-        }
-      ],
-      isFullyDesigned: true,
-      rating: 4.8,
-      downloads: 743,
-      aiOptimized: true
-    },
-    {
-      id: '6',
-      name: 'Event Invitation Suite',
-      category: 'event',
-      industry: 'events',
-      type: 'sequence',
-      difficulty: 'basic',
-      emailCount: 4,
-      thumbnail: '/api/placeholder/300/200',
-      description: 'Elegant event invitation sequence with RSVP tracking and reminders',
-      tags: ['event', 'invitation', 'rsvp', 'elegant'],
-      features: ['4 email sequence', 'RSVP buttons', 'Event details', 'Calendar integration'],
-      designStyle: 'Elegant',
-      colors: ['#8e44ad', '#2c3e50', '#ecf0f1'],
-      elements: [],
-      content: [
-        {
-          subject: 'You\'re Invited: [Event Name] - [Date]',
-          preheader: 'Join us for an exclusive event you won\'t want to miss',
-          body: [
-            {
-              type: 'elegant_header',
-              content: {
-                logo: '[LOGO]',
-                backgroundColor: '#8e44ad'
-              }
-            },
-            {
-              type: 'invitation_hero',
-              content: {
-                title: 'You\'re Invited',
-                eventName: '[EVENT_NAME]',
-                date: '[EVENT_DATE]',
-                location: '[EVENT_LOCATION]',
-                dress_code: '[DRESS_CODE]'
-              }
-            },
-            {
-              type: 'rsvp_section',
-              content: {
-                deadline: '[RSVP_DEADLINE]',
-                buttons: ['Yes, I\'ll attend', 'Sorry, can\'t make it']
-              }
-            }
-          ]
-        }
-      ],
-      isFullyDesigned: true,
-      rating: 4.6,
-      downloads: 456,
-      aiOptimized: true
-    }
-  ];
+  useEffect(() => {
+    loadTemplates();
+  }, []);
 
-  const categories = ['all', 'welcome', 'product', 'newsletter', 'recovery', 'education', 'event'];
-  const industries = ['all', 'saas', 'ecommerce', 'business', 'education', 'events', 'healthcare', 'finance'];
-  const types = ['all', 'single', 'sequence'];
+  const loadTemplates = () => {
+    const mockTemplates: EmailTemplate[] = [
+      {
+        id: '1',
+        name: 'SaaS Welcome Series',
+        category: 'welcome',
+        industry: 'saas',
+        type: 'sequence',
+        emailCount: 5,
+        isFullyDesigned: true,
+        thumbnail: '/api/placeholder/400/300',
+        description: 'Complete onboarding sequence for SaaS products',
+        features: ['Responsive Design', 'A/B Testing Ready', 'CTA Optimization'],
+        conversionRate: 24.5,
+        popularity: 95,
+        content: [
+          {
+            subject: 'Welcome to [PRODUCT_NAME] - Let\'s get you started!',
+            preheader: 'Your account is ready. Here\'s what to do next...',
+            body: [
+              {
+                id: 'header-1',
+                type: 'header',
+                content: {
+                  logo: '[Your Logo]',
+                  backgroundColor: '#667eea',
+                  navigation: ['Dashboard', 'Features', 'Support']
+                }
+              },
+              {
+                id: 'hero-1',
+                type: 'welcome_hero',
+                content: {
+                  title: 'Welcome to the future of [INDUSTRY]',
+                  subtitle: 'You\'re just minutes away from transforming your workflow',
+                  image: '/api/placeholder/500/300',
+                  backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  textColor: '#ffffff',
+                  ctaText: 'Complete Your Setup',
+                  ctaLink: '#'
+                }
+              },
+              {
+                id: 'feature-grid-1',
+                type: 'feature_grid',
+                content: {
+                  title: 'What you can achieve in your first week',
+                  features: [
+                    {
+                      icon: 'Zap',
+                      title: 'Instant Setup',
+                      description: 'Get up and running in under 5 minutes'
+                    },
+                    {
+                      icon: 'Users',
+                      title: 'Team Collaboration',
+                      description: 'Invite your team and work together seamlessly'
+                    },
+                    {
+                      icon: 'TrendingUp',
+                      title: 'Real-time Analytics',
+                      description: 'Track your progress with detailed insights'
+                    }
+                  ]
+                }
+              },
+              {
+                id: 'progress-tracker-1',
+                type: 'progress_tracker',
+                content: {
+                  title: 'Your Setup Progress',
+                  steps: [
+                    { step: 1, title: 'Account Created', completed: true },
+                    { step: 2, title: 'Complete Profile', completed: false },
+                    { step: 3, title: 'Invite Team', completed: false },
+                    { step: 4, title: 'First Project', completed: false }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: '2',
+        name: 'E-commerce Abandoned Cart',
+        category: 'ecommerce',
+        industry: 'retail',
+        type: 'sequence',
+        emailCount: 3,
+        isFullyDesigned: true,
+        thumbnail: '/api/placeholder/400/300',
+        description: 'Recover lost sales with this proven cart recovery sequence',
+        features: ['Product Showcase', 'Urgency Timers', 'Social Proof'],
+        conversionRate: 31.2,
+        popularity: 88,
+        content: [
+          {
+            subject: 'You left something behind...',
+            preheader: 'Complete your purchase and save 10%',
+            body: [
+              {
+                id: 'header-2',
+                type: 'header',
+                content: {
+                  logo: '[Your Store]',
+                  backgroundColor: '#ff6b6b'
+                }
+              },
+              {
+                id: 'cart-hero-1',
+                type: 'abandoned_cart_hero',
+                content: {
+                  title: 'Don\'t let it slip away',
+                  subtitle: 'Your items are waiting for you',
+                  cartItems: [
+                    {
+                      name: 'Premium Headphones',
+                      image: '/api/placeholder/100/100',
+                      price: '$299.99',
+                      quantity: 1
+                    }
+                  ],
+                  totalAmount: '$299.99',
+                  discountCode: 'SAVE10'
+                }
+              },
+              {
+                id: 'urgency-1',
+                type: 'urgency_timer',
+                content: {
+                  title: 'Limited Time Offer',
+                  subtitle: 'Save 10% if you complete your order within:',
+                  hours: 23,
+                  minutes: 45,
+                  backgroundColor: '#ff6b6b'
+                }
+              },
+              {
+                id: 'social-proof-1',
+                type: 'social_proof',
+                content: {
+                  title: 'Join 50,000+ happy customers',
+                  testimonials: [
+                    {
+                      name: 'Sarah J.',
+                      rating: 5,
+                      text: 'Best purchase I\'ve made this year!'
+                    },
+                    {
+                      name: 'Mike R.',
+                      rating: 5,
+                      text: 'Outstanding quality and fast shipping'
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: '3',
+        name: 'Newsletter Modern',
+        category: 'newsletter',
+        industry: 'media',
+        type: 'single',
+        emailCount: 1,
+        isFullyDesigned: true,
+        thumbnail: '/api/placeholder/400/300',
+        description: 'Clean, modern newsletter template for content creators',
+        features: ['Article Grid', 'Reading Time', 'Social Sharing'],
+        conversionRate: 18.7,
+        popularity: 76,
+        content: [
+          {
+            subject: 'This week in [INDUSTRY]: Top stories and insights',
+            preheader: 'The most important updates you need to know',
+            body: [
+              {
+                id: 'newsletter-header-1',
+                type: 'newsletter_header',
+                content: {
+                  logo: '[Publication Name]',
+                  issueNumber: 'Issue #47',
+                  date: 'March 15, 2024',
+                  backgroundColor: '#2c3e50'
+                }
+              },
+              {
+                id: 'newsletter-intro-1',
+                type: 'newsletter_intro',
+                content: {
+                  greeting: 'Hello [FIRST_NAME],',
+                  text: 'This week has been packed with exciting developments in [INDUSTRY]. Here are the stories that caught our attention and why they matter to you.',
+                  author: 'Sarah Thompson',
+                  authorTitle: 'Chief Editor'
+                }
+              },
+              {
+                id: 'article-grid-1',
+                type: 'article_grid',
+                content: {
+                  title: 'Top Stories This Week',
+                  articles: [
+                    {
+                      title: 'The Future of AI in Business',
+                      excerpt: 'How artificial intelligence is reshaping industries and what it means for your business strategy.',
+                      image: '/api/placeholder/300/200',
+                      readTime: '5 min read',
+                      category: 'Technology'
+                    },
+                    {
+                      title: 'Marketing Trends to Watch',
+                      excerpt: 'The latest marketing strategies that are driving results for leading brands.',
+                      image: '/api/placeholder/300/200',
+                      readTime: '3 min read',
+                      category: 'Marketing'
+                    }
+                  ]
+                }
+              },
+              {
+                id: 'quote-block-1',
+                type: 'quote_block',
+                content: {
+                  quote: 'Innovation is the ability to see change as an opportunity, not a threat.',
+                  author: 'Steve Jobs',
+                  backgroundColor: '#f8f9fa'
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: '4',
+        name: 'Event Invitation Elegant',
+        category: 'events',
+        industry: 'events',
+        type: 'single',
+        emailCount: 1,
+        isFullyDesigned: true,
+        thumbnail: '/api/placeholder/400/300',
+        description: 'Sophisticated event invitation template',
+        features: ['RSVP Integration', 'Calendar Widget', 'Location Map'],
+        conversionRate: 42.1,
+        popularity: 91,
+        content: [
+          {
+            subject: 'You\'re invited to an exclusive event',
+            preheader: 'Join us for an unforgettable evening',
+            body: [
+              {
+                id: 'elegant-header-1',
+                type: 'elegant_header',
+                content: {
+                  logo: '[Event Organizer]',
+                  backgroundColor: '#8e44ad',
+                  pattern: 'geometric'
+                }
+              },
+              {
+                id: 'invitation-hero-1',
+                type: 'invitation_hero',
+                content: {
+                  title: 'Annual Innovation Summit 2024',
+                  subtitle: 'Shaping the Future Together',
+                  date: 'April 15, 2024',
+                  time: '6:00 PM - 10:00 PM',
+                  venue: 'Grand Ballroom, Marriott Hotel',
+                  image: '/api/placeholder/600/400',
+                  backgroundColor: 'linear-gradient(135deg, #8e44ad 0%, #3498db 100%)'
+                }
+              },
+              {
+                id: 'event-details-1',
+                type: 'event_details',
+                content: {
+                  agenda: [
+                    { time: '6:00 PM', activity: 'Registration & Welcome Drinks' },
+                    { time: '7:00 PM', activity: 'Keynote: The Future of Innovation' },
+                    { time: '8:30 PM', activity: 'Panel Discussion' },
+                    { time: '9:30 PM', activity: 'Networking & Closing' }
+                  ],
+                  speakers: [
+                    {
+                      name: 'Dr. Jane Smith',
+                      title: 'Chief Innovation Officer',
+                      company: 'TechCorp',
+                      image: '/api/placeholder/100/100'
+                    }
+                  ]
+                }
+              },
+              {
+                id: 'rsvp-section-1',
+                type: 'rsvp_section',
+                content: {
+                  title: 'Reserve Your Spot',
+                  subtitle: 'Limited seats available',
+                  ctaText: 'RSVP Now',
+                  deadline: 'April 10, 2024',
+                  backgroundColor: '#e74c3c'
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: '5',
+        name: 'Course Launch Sequence',
+        category: 'education',
+        industry: 'education',
+        type: 'sequence',
+        emailCount: 7,
+        isFullyDesigned: true,
+        thumbnail: '/api/placeholder/400/300',
+        description: 'Complete course launch sequence with early bird offers',
+        features: ['Video Embeds', 'Progress Bars', 'Student Testimonials'],
+        conversionRate: 28.9,
+        popularity: 84,
+        content: [
+          {
+            subject: 'Your journey to mastery begins now',
+            preheader: 'Welcome to [COURSE_NAME] - Early bird pricing inside',
+            body: [
+              {
+                id: 'course-header-1',
+                type: 'header',
+                content: {
+                  logo: '[Academy Name]',
+                  backgroundColor: '#27ae60'
+                }
+              },
+              {
+                id: 'course-hero-1',
+                type: 'course_hero',
+                content: {
+                  title: 'Master [SKILL] in 30 Days',
+                  subtitle: 'From beginner to expert with our proven system',
+                  instructor: 'John Smith',
+                  instructorTitle: 'Industry Expert with 15+ years experience',
+                  studentCount: '12,347',
+                  rating: 4.9,
+                  image: '/api/placeholder/500/300',
+                  backgroundColor: '#27ae60'
+                }
+              },
+              {
+                id: 'curriculum-1',
+                type: 'curriculum_preview',
+                content: {
+                  title: 'What You\'ll Learn',
+                  modules: [
+                    {
+                      week: 1,
+                      title: 'Foundations',
+                      lessons: ['Introduction to [SKILL]', 'Core Concepts', 'First Project'],
+                      duration: '3 hours'
+                    },
+                    {
+                      week: 2,
+                      title: 'Intermediate Techniques',
+                      lessons: ['Advanced Methods', 'Real-world Applications', 'Case Studies'],
+                      duration: '4 hours'
+                    },
+                    {
+                      week: 3,
+                      title: 'Expert Level',
+                      lessons: ['Professional Strategies', 'Industry Secrets', 'Portfolio Project'],
+                      duration: '5 hours'
+                    }
+                  ]
+                }
+              },
+              {
+                id: 'early-bird-1',
+                type: 'early_bird_offer',
+                content: {
+                  title: 'Early Bird Special',
+                  originalPrice: '$497',
+                  earlyPrice: '$297',
+                  savings: '$200',
+                  deadline: '48 hours',
+                  benefits: ['Lifetime Access', 'Private Community', '1-on-1 Coaching Call'],
+                  backgroundColor: '#f39c12'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ];
 
-  const filteredTemplates = fullyDesignedTemplates.filter(template => {
+    setTemplates(mockTemplates);
+  };
+
+  const filteredTemplates = templates.filter(template => {
+    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         template.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
     const matchesIndustry = selectedIndustry === 'all' || template.industry === selectedIndustry;
-    const matchesType = selectedType === 'all' || template.type === selectedType;
-    const matchesSearch = searchQuery === '' || 
-      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    return matchesCategory && matchesIndustry && matchesType && matchesSearch;
+    return matchesSearch && matchesCategory && matchesIndustry;
   });
 
-  const handleTemplateSelect = (template: EmailTemplate) => {
+  const handleEditTemplate = (template: EmailTemplate) => {
     setSelectedTemplate(template);
-    setShowEditor(true);
+    setIsEditorOpen(true);
   };
 
-  const handleAIGenerate = async () => {
-    // Simulate AI generation process
-    console.log('Generating AI content for:', aiPrompt);
-    setShowAIDialog(false);
-    // Here you would integrate with your AI service
+  const handleSaveTemplate = (updatedTemplate: EmailTemplate) => {
+    setTemplates(prev => prev.map(t => t.id === updatedTemplate.id ? updatedTemplate : t));
+    setIsEditorOpen(false);
+    setSelectedTemplate(null);
   };
+
+  const categories = [
+    { value: 'all', label: 'All Categories' },
+    { value: 'welcome', label: 'Welcome Series' },
+    { value: 'ecommerce', label: 'E-commerce' },
+    { value: 'newsletter', label: 'Newsletter' },
+    { value: 'events', label: 'Events' },
+    { value: 'education', label: 'Education' },
+    { value: 'promotional', label: 'Promotional' }
+  ];
+
+  const industries = [
+    { value: 'all', label: 'All Industries' },
+    { value: 'saas', label: 'SaaS & Technology' },
+    { value: 'retail', label: 'E-commerce & Retail' },
+    { value: 'media', label: 'Media & Publishing' },
+    { value: 'events', label: 'Events & Hospitality' },
+    { value: 'education', label: 'Education & Training' },
+    { value: 'finance', label: 'Finance & Banking' },
+    { value: 'healthcare', label: 'Healthcare' }
+  ];
 
   return (
-    <div className="h-full bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Email Designer</h1>
-            <p className="text-gray-600">Choose from fully designed templates or create with AI</p>
-          </div>
-          <div className="flex space-x-3">
-            <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Create with AI
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Create Email with AI</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium">Describe your email campaign</label>
-                    <Input
-                      placeholder="e.g., Welcome sequence for SaaS product launch..."
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleAIGenerate}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate with AI
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-            <Button variant="outline">
-              <Eye className="w-4 h-4 mr-2" />
-              Preview
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Email Designer</h1>
+              <p className="text-gray-600">Create stunning, high-converting email campaigns with AI-powered templates</p>
+            </div>
+            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Custom Template
             </Button>
           </div>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center space-x-2">
-            <Search className="w-4 h-4 text-gray-400" />
-            <Input
-              placeholder="Search templates..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64"
-            />
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search templates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(category => (
+                  <SelectItem key={category.value} value={category.value}>
+                    {category.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
+              <SelectTrigger>
+                <SelectValue placeholder="Industry" />
+              </SelectTrigger>
+              <SelectContent>
+                {industries.map(industry => (
+                  <SelectItem key={industry.value} value={industry.value}>
+                    {industry.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button variant="outline" className="flex items-center">
+              <Filter className="w-4 h-4 mr-2" />
+              More Filters
+            </Button>
           </div>
-          
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map(cat => (
-                <SelectItem key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Industry" />
-            </SelectTrigger>
-            <SelectContent>
-              {industries.map(industry => (
-                <SelectItem key={industry} value={industry}>
-                  {industry.charAt(0).toUpperCase() + industry.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {types.map(type => (
-                <SelectItem key={type} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Badge variant="secondary" className="ml-auto">
-            {filteredTemplates.length} templates
-          </Badge>
         </div>
-      </div>
 
-      {/* Templates Grid */}
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Templates Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTemplates.map((template) => (
-            <Card key={template.id} className="group hover:shadow-lg transition-shadow cursor-pointer">
+            <Card key={template.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
               <div className="relative">
-                <img
-                  src={template.thumbnail}
+                <img 
+                  src={template.thumbnail} 
                   alt={template.name}
-                  className="w-full h-48 object-cover rounded-t-lg"
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-2 right-2 flex space-x-1">
-                  {template.aiOptimized && (
-                    <Badge className="bg-purple-100 text-purple-800 border-purple-200">
-                      <Sparkles className="w-3 h-3 mr-1" />
-                      AI
-                    </Badge>
-                  )}
-                  {template.isFullyDesigned && (
-                    <Badge className="bg-green-100 text-green-800 border-green-200">
-                      <Star className="w-3 h-3 mr-1" />
-                      Pro
-                    </Badge>
-                  )}
+                <div className="absolute top-4 left-4">
+                  <Badge variant="outline" className="bg-white/90 backdrop-blur-sm">
+                    {template.type === 'sequence' ? `${template.emailCount} Emails` : 'Single Email'}
+                  </Badge>
                 </div>
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded-t-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="flex space-x-2">
-                    <Button size="sm" onClick={() => handleTemplateSelect(template)}>
-                      <Edit className="w-4 h-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Eye className="w-4 h-4 mr-1" />
-                      Preview
-                    </Button>
+                <div className="absolute top-4 right-4 flex space-x-2">
+                  {template.conversionRate && (
+                    <Badge className="bg-green-500 hover:bg-green-600">
+                      {template.conversionRate}% CVR
+                    </Badge>
+                  )}
+                  <div className="flex items-center bg-white/90 backdrop-blur-sm rounded px-2 py-1">
+                    <Star className="w-3 h-3 text-yellow-500 mr-1" />
+                    <span className="text-xs font-medium">{template.popularity}</span>
                   </div>
                 </div>
               </div>
               
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-lg">{template.name}</h3>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />
-                    {template.rating}
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-lg mb-1">{template.name}</CardTitle>
+                    <p className="text-sm text-gray-600 mb-2">{template.description}</p>
                   </div>
                 </div>
                 
-                <p className="text-gray-600 text-sm mb-3">{template.description}</p>
-                
-                <div className="flex items-center justify-between mb-3">
-                  <Badge variant="outline" className="text-xs">
-                    {template.type === 'sequence' ? `${template.emailCount} emails` : 'Single email'}
-                  </Badge>
-                  <span className="text-xs text-gray-500">{template.downloads} downloads</span>
-                </div>
-
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {template.tags.slice(0, 3).map((tag, index) => (
+                  {template.features.slice(0, 3).map((feature, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
-                      {tag}
+                      {feature}
                     </Badge>
                   ))}
                 </div>
+              </CardHeader>
 
+              <CardContent className="pt-0">
                 <div className="flex space-x-2">
                   <Button 
-                    className="flex-1" 
-                    onClick={() => handleTemplateSelect(template)}
+                    onClick={() => handleEditTemplate(template)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
                   >
-                    Use Template
+                    <Edit className="w-4 h-4 mr-2" />
+                    Customize
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button variant="outline" size="sm" className="flex-shrink-0">
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-shrink-0">
                     <Copy className="w-4 h-4" />
                   </Button>
                 </div>
@@ -619,17 +636,30 @@ const EmailDesigner: React.FC = () => {
             </Card>
           ))}
         </div>
+
+        {/* Empty State */}
+        {filteredTemplates.length === 0 && (
+          <div className="text-center py-12">
+            <Mail className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No templates found</h3>
+            <p className="text-gray-600 mb-6">Try adjusting your search criteria or create a custom template</p>
+            <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Custom Template
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* Email Template Editor Modal */}
-      {showEditor && selectedTemplate && (
+      {/* Email Template Editor */}
+      {isEditorOpen && selectedTemplate && (
         <EmailTemplateEditor
           template={selectedTemplate}
-          onSave={(template) => {
-            console.log('Template saved:', template);
-            setShowEditor(false);
+          onSave={handleSaveTemplate}
+          onClose={() => {
+            setIsEditorOpen(false);
+            setSelectedTemplate(null);
           }}
-          onClose={() => setShowEditor(false)}
         />
       )}
     </div>
