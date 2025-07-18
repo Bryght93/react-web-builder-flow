@@ -3697,35 +3697,27 @@ export default function EmailSequenceBuilder() {
     );
   }
 
-  // Builder view - Responsive layout for laptop screens
+  // Builder view - Clean organized layout
   return (
     <div className="h-screen flex flex-col max-w-full">
-      {/* Header - Responsive */}
-      <div className="border-b bg-background p-2 sm:p-4 shrink-0">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div className="flex items-center space-x-2 sm:space-x-4">
+      {/* Header */}
+      <div className="border-b bg-background p-3 shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm" onClick={() => setView('campaigns')}>
-              <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
             <div>
-              <h1 className="text-lg sm:text-xl font-semibold">{selectedCampaign?.name}</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground">
+              <h1 className="text-xl font-semibold">{selectedCampaign?.name}</h1>
+              <p className="text-sm text-muted-foreground">
                 {selectedEmailStep ? `Editing: ${selectedEmailStep.name}` : 'Select an email to edit'}
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm" onClick={() => setPreviewMode(previewMode === 'desktop' ? 'mobile' : 'desktop')}>
               {previewMode === 'desktop' ? <Monitor className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
-            </Button>
-            <Button 
-              variant={showAIAssistant ? 'default' : 'outline'} 
-              size="sm" 
-              onClick={() => setShowAIAssistant(!showAIAssistant)}
-            >
-              <Sparkles className="w-4 h-4 mr-1" />
-              AI Assistant
             </Button>
             <Button variant="outline" size="sm">
               <Eye className="w-4 h-4 mr-1" />
@@ -3744,10 +3736,10 @@ export default function EmailSequenceBuilder() {
       </div>
 
       <div className="flex-1 flex min-h-0">
-        {/* Left Panel - Email Sequence Steps - Responsive */}
-        <div className="w-60 lg:w-72 border-r bg-muted/50 overflow-y-auto shrink-0">
-          <div className="p-3">
-            <div className="flex items-center justify-between mb-3">
+        {/* Left Panel - Email Sequence Steps */}
+        <div className="w-64 border-r bg-muted/30 overflow-y-auto shrink-0">
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-sm">Email Sequence</h3>
               {selectedCampaign?.type === 'nurture' && (
                 <Button size="sm" onClick={addEmailStep}>
@@ -3789,153 +3781,10 @@ export default function EmailSequenceBuilder() {
           </div>
         </div>
 
-        {/* Center Panel - Email Editor - Responsive */}
+        {/* Center Panel - Email Canvas */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Email Settings - Responsive */}
-          {selectedEmailStep && (
-            <div className="border-b p-3 bg-background shrink-0">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                <div>
-                  <Label className="text-xs">Email Name</Label>
-                  <Input 
-                    value={selectedEmailStep.name}
-                    onChange={(e) => updateEmailStep({ name: e.target.value })}
-                    className="mt-1 h-8"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <Label className="text-xs">Subject Line</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setAIAssistantMode('content');
-                        setShowAIAssistant(true);
-                        setUserPrompt(`Generate an engaging subject line for this ${selectedCampaign?.type} email campaign about ${selectedCampaign?.description}`);
-                      }}
-                      className="h-6 px-2"
-                    >
-                      <Sparkles className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <Input 
-                    value={selectedEmailStep.subject}
-                    onChange={(e) => updateEmailStep({ subject: e.target.value })}
-                    className="mt-1 h-8"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Send Delay</Label>
-                  <div className="flex space-x-1 mt-1">
-                    <Input 
-                      type="number"
-                      value={selectedEmailStep.delay}
-                      onChange={(e) => updateEmailStep({ delay: parseInt(e.target.value) || 0 })}
-                      className="w-16 h-8"
-                    />
-                    <Select value={selectedEmailStep.delayUnit} onValueChange={(value: any) => updateEmailStep({ delayUnit: value })}>
-                      <SelectTrigger className="w-16 h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="minutes">min</SelectItem>
-                        <SelectItem value="hours">hrs</SelectItem>
-                        <SelectItem value="days">days</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Element Toolbar - Responsive */}
-          <div className="border-b p-2 bg-background shrink-0">
-            <div className="flex flex-wrap items-center gap-1">
-              <span className="text-xs font-medium mr-2">Add:</span>
-              <Button variant="outline" size="sm" onClick={() => addElement('heading')}>
-                <Type className="w-4 h-4 mr-1" />
-                Heading
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('text')}>
-                <PenTool className="w-4 h-4 mr-1" />
-                Text
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('button')}>
-                <Target className="w-4 h-4 mr-1" />
-                Button
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('image')}>
-                <ImageIcon className="w-4 h-4 mr-1" />
-                Image
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('divider')}>
-                <Trash2 className="w-4 h-4 mr-1" />
-                Divider
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => addElement('spacer')}>
-                <Move className="w-4 h-4 mr-1" />
-                Spacer
-              </Button>
-            </div>
-            
-            {/* AI Quick Actions */}
-            <div className="flex flex-wrap items-center gap-1 border-t pt-2 mt-2">
-              <span className="text-xs font-medium mr-2">AI:</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  setAIAssistantMode('content');
-                  setShowAIAssistant(true);
-                  setUserPrompt('Generate engaging email content for this section');
-                }}
-              >
-                <Wand2 className="w-3 h-3 mr-1" />
-                Generate
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  setAIAssistantMode('edit');
-                  setShowAIAssistant(true);
-                  setUserPrompt('Review and improve this email content');
-                }}
-              >
-                <Edit3 className="w-3 h-3 mr-1" />
-                Improve
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  setAIAssistantMode('compliance');
-                  setShowAIAssistant(true);
-                  setUserPrompt('Check this email for compliance and legal requirements');
-                }}
-              >
-                <Shield className="w-3 h-3 mr-1" />
-                Compliance
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  setAIAssistantMode('strategy');
-                  setShowAIAssistant(true);
-                  setUserPrompt('Provide marketing strategy advice for this email');
-                }}
-              >
-                <TrendingUp className="w-3 h-3 mr-1" />
-                Strategy
-              </Button>
-            </div>
-          </div>
-
-          {/* Email Canvas - Responsive */}
-          <div className="flex-1 bg-gray-100 p-3 overflow-y-auto">
+          {/* Email Canvas */}
+          <div className="flex-1 bg-gray-100 p-4 overflow-y-auto">
             <div className="mx-auto" style={{ width: previewMode === 'desktop' ? '500px' : '320px', maxWidth: '100%' }}>
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div className="p-4">
@@ -4027,188 +3876,509 @@ export default function EmailSequenceBuilder() {
                   {selectedEmailStep?.content.length === 0 && (
                     <div className="text-center py-12 text-gray-500">
                       <Mail className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">Start building your email by adding elements above</p>
+                      <p className="text-sm">Start building your email by adding elements</p>
                     </div>
                   )}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Element Toolbar - Moved to bottom */}
+          <div className="border-t p-3 bg-background shrink-0">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => addElement('heading')}>
+                <Type className="w-4 h-4 mr-2" />
+                Heading
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => addElement('text')}>
+                <PenTool className="w-4 h-4 mr-2" />
+                Text
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => addElement('button')}>
+                <Target className="w-4 h-4 mr-2" />
+                Button
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => addElement('image')}>
+                <ImageIcon className="w-4 h-4 mr-2" />
+                Image
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => addElement('divider')}>
+                <Minus className="w-4 h-4 mr-2" />
+                Divider
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => addElement('spacer')}>
+                <Move className="w-4 h-4 mr-2" />
+                Spacer
+              </Button>
+            </div>
+          </div>
         </div>
 
-        {/* Right Panel - Element Properties or AI Assistant - Responsive */}
+        {/* Right Panel - Organized Sections */}
         {showAIAssistant ? (
           <AIAssistantPanel />
         ) : (
-          <div className="w-60 lg:w-72 border-l bg-background overflow-y-auto shrink-0">
-            <div className="p-3">
-              {selectedElement ? (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-sm">Properties</h3>
-                    <div className="flex items-center space-x-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowAIAssistant(true)}
-                        title="Get AI help with this element"
-                      >
-                        <Sparkles className="w-3 h-3" />
-                      </Button>
+          <div className="w-80 border-l bg-background overflow-y-auto shrink-0">
+            <Tabs defaultValue="settings" className="w-full h-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="settings">Settings</TabsTrigger>
+                <TabsTrigger value="design">Design</TabsTrigger>
+                <TabsTrigger value="ai">AI</TabsTrigger>
+              </TabsList>
+
+              {/* Settings Tab */}
+              <TabsContent value="settings" className="p-4 space-y-4">
+                {selectedEmailStep && (
+                  <>
+                    <div>
+                      <h3 className="font-semibold mb-3 flex items-center">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Email Settings
+                      </h3>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-sm font-medium">Email Name</Label>
+                          <Input 
+                            value={selectedEmailStep.name}
+                            onChange={(e) => updateEmailStep({ name: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label className="text-sm font-medium">Subject Line</Label>
+                          <Input 
+                            value={selectedEmailStep.subject}
+                            onChange={(e) => updateEmailStep({ subject: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label className="text-sm font-medium">Preview Text</Label>
+                          <Input 
+                            placeholder="Add preview text..."
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label className="text-sm font-medium">Background Color</Label>
+                          <Input 
+                            type="color"
+                            defaultValue="#ffffff"
+                            className="mt-1 h-10"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label className="text-sm font-medium">Send Delay</Label>
+                          <div className="flex space-x-2 mt-1">
+                            <Input 
+                              type="number"
+                              value={selectedEmailStep.delay}
+                              onChange={(e) => updateEmailStep({ delay: parseInt(e.target.value) || 0 })}
+                              className="w-20"
+                            />
+                            <Select value={selectedEmailStep.delayUnit} onValueChange={(value: any) => updateEmailStep({ delayUnit: value })}>
+                              <SelectTrigger className="w-24">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="minutes">min</SelectItem>
+                                <SelectItem value="hours">hrs</SelectItem>
+                                <SelectItem value="days">days</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+                
+                {!selectedEmailStep && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Select an email to edit settings</p>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Design Tab */}
+              <TabsContent value="design" className="p-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center">
+                    <Palette className="w-4 h-4 mr-2" />
+                    Layout & Components
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Layout Grid</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" size="sm" className="h-12 flex flex-col">
+                          <div className="w-6 h-6 border rounded grid grid-cols-1 gap-0.5 mb-1">
+                            <div className="bg-muted rounded-sm"></div>
+                          </div>
+                          <span className="text-xs">1 Column</span>
+                        </Button>
+                        <Button variant="outline" size="sm" className="h-12 flex flex-col">
+                          <div className="w-6 h-6 border rounded grid grid-cols-2 gap-0.5 mb-1">
+                            <div className="bg-muted rounded-sm"></div>
+                            <div className="bg-muted rounded-sm"></div>
+                          </div>
+                          <span className="text-xs">2 Column</span>
+                        </Button>
+                      </div>
+                      <div className="mt-2">
+                        <Button variant="outline" size="sm" className="w-full h-12 flex flex-col">
+                          <div className="w-6 h-6 border rounded grid grid-cols-3 gap-0.5 mb-1">
+                            <div className="bg-muted rounded-sm"></div>
+                            <div className="bg-muted rounded-sm"></div>
+                            <div className="bg-muted rounded-sm"></div>
+                          </div>
+                          <span className="text-xs">3 Column</span>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Flexbox Controls</Label>
+                      <div className="space-y-2">
+                        <Button variant="outline" size="sm" className="w-full">
+                          <AlignLeft className="w-4 h-4 mr-2" />
+                          Align Left
+                        </Button>
+                        <Button variant="outline" size="sm" className="w-full">
+                          <AlignCenter className="w-4 h-4 mr-2" />
+                          Align Center
+                        </Button>
+                        <Button variant="outline" size="sm" className="w-full">
+                          <AlignRight className="w-4 h-4 mr-2" />
+                          Align Right
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Content Components</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" size="sm" onClick={() => addElement('heading')}>
+                          <Type className="w-4 h-4 mr-1" />
+                          Text
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => addElement('image')}>
+                          <ImageIcon className="w-4 h-4 mr-1" />
+                          Image
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => addElement('button')}>
+                          <Target className="w-4 h-4 mr-1" />
+                          Button
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => addElement('divider')}>
+                          <Minus className="w-4 h-4 mr-1" />
+                          Divider
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {selectedElement && (
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold mb-3 flex items-center">
+                      <Edit3 className="w-4 h-4 mr-2" />
+                      Element Properties
+                    </h4>
+                    
+                    <div className="space-y-3">
+                      {(selectedElement.type === 'heading' || selectedElement.type === 'text') && (
+                        <>
+                          <div>
+                            <Label className="text-sm">Text Content</Label>
+                            <Textarea
+                              value={selectedElement.properties.text}
+                              onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
+                              className="mt-1 h-20"
+                              rows={3}
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm">Font Size</Label>
+                            <Input
+                              value={selectedElement.properties.fontSize}
+                              onChange={(e) => updateElement(selectedElement.id, { fontSize: e.target.value })}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm">Text Align</Label>
+                            <Select value={selectedElement.properties.textAlign} onValueChange={(value) => updateElement(selectedElement.id, { textAlign: value })}>
+                              <SelectTrigger className="mt-1">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="left">Left</SelectItem>
+                                <SelectItem value="center">Center</SelectItem>
+                                <SelectItem value="right">Right</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </>
+                      )}
+
+                      {selectedElement.type === 'button' && (
+                        <>
+                          <div>
+                            <Label className="text-sm">Button Text</Label>
+                            <Input
+                              value={selectedElement.properties.text}
+                              onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm">Link URL</Label>
+                            <Input
+                              value={selectedElement.properties.link}
+                              onChange={(e) => updateElement(selectedElement.id, { link: e.target.value })}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm">Background Color</Label>
+                            <Input
+                              type="color"
+                              value={selectedElement.properties.backgroundColor}
+                              onChange={(e) => updateElement(selectedElement.id, { backgroundColor: e.target.value })}
+                              className="mt-1"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {selectedElement.type === 'image' && (
+                        <>
+                          <div>
+                            <Label className="text-sm">Image URL</Label>
+                            <Input
+                              value={selectedElement.properties.src}
+                              onChange={(e) => updateElement(selectedElement.id, { src: e.target.value })}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm">Alt Text</Label>
+                            <Input
+                              value={selectedElement.properties.alt}
+                              onChange={(e) => updateElement(selectedElement.id, { alt: e.target.value })}
+                              className="mt-1"
+                            />
+                          </div>
+                        </>
+                      )}
+                      
                       <Button
                         variant="destructive"
                         size="sm"
                         onClick={() => deleteElement(selectedElement.id)}
+                        className="w-full"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Element
                       </Button>
                     </div>
                   </div>
+                )}
+              </TabsContent>
 
-                  {(selectedElement.type === 'heading' || selectedElement.type === 'text') && (
-                    <>
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs">Text Content</Label>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setAIAssistantMode('content');
-                              setShowAIAssistant(true);
-                              setUserPrompt(`Improve this ${selectedElement.type} text: "${selectedElement.properties.text}"`);
-                            }}
-                            className="h-6 px-2"
-                          >
-                            <Wand2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                        <Textarea
-                          value={selectedElement.properties.text}
-                          onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
-                          className="mt-1 h-20"
-                          rows={3}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Font Size</Label>
-                        <Input
-                          value={selectedElement.properties.fontSize}
-                          onChange={(e) => updateElement(selectedElement.id, { fontSize: e.target.value })}
-                          className="mt-1 h-8"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Text Align</Label>
-                        <Select value={selectedElement.properties.textAlign} onValueChange={(value) => updateElement(selectedElement.id, { textAlign: value })}>
-                          <SelectTrigger className="mt-1 h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="left">Left</SelectItem>
-                            <SelectItem value="center">Center</SelectItem>
-                            <SelectItem value="right">Right</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </>
-                  )}
-
-                  {selectedElement.type === 'button' && (
-                    <>
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs">Button Text</Label>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setAIAssistantMode('content');
-                              setShowAIAssistant(true);
-                              setUserPrompt(`Improve this call-to-action button text: "${selectedElement.properties.text}"`);
-                            }}
-                            className="h-6 px-2"
-                          >
-                            <Wand2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                        <Input
-                          value={selectedElement.properties.text}
-                          onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
-                          className="mt-1 h-8"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Link URL</Label>
-                        <Input
-                          value={selectedElement.properties.link}
-                          onChange={(e) => updateElement(selectedElement.id, { link: e.target.value })}
-                          className="mt-1 h-8"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Background Color</Label>
-                        <Input
-                          type="color"
-                          value={selectedElement.properties.backgroundColor}
-                          onChange={(e) => updateElement(selectedElement.id, { backgroundColor: e.target.value })}
-                          className="mt-1 h-8"
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {selectedElement.type === 'image' && (
-                    <>
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs">Image URL</Label>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setAIAssistantMode('content');
-                              setShowAIAssistant(true);
-                              setUserPrompt('Generate an image for this email campaign');
-                            }}
-                            className="h-6 px-2"
-                          >
-                            <Camera className="w-3 h-3" />
-                          </Button>
-                        </div>
-                        <Input
-                          value={selectedElement.properties.src}
-                          onChange={(e) => updateElement(selectedElement.id, { src: e.target.value })}
-                          className="mt-1 h-8"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Alt Text</Label>
-                        <Input
-                          value={selectedElement.properties.alt}
-                          onChange={(e) => updateElement(selectedElement.id, { alt: e.target.value })}
-                          className="mt-1 h-8"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Select an element to edit its properties</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAIAssistant(true)}
-                    className="mt-4"
-                  >
+              {/* AI Tab */}
+              <TabsContent value="ai" className="p-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center">
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Open AI Assistant
-                  </Button>
+                    AI Features
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full h-12 flex flex-col"
+                      onClick={() => setShowAIAssistant(true)}
+                    >
+                      <Brain className="w-5 h-5 mb-1" />
+                      <span className="text-xs">AI Assistant</span>
+                    </Button>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-12 flex flex-col"
+                        onClick={() => {
+                          setAIAssistantMode('content');
+                          setShowAIAssistant(true);
+                          setUserPrompt('Generate engaging email content');
+                        }}
+                      >
+                        <Wand2 className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Generate</span>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-12 flex flex-col"
+                        onClick={() => {
+                          setAIAssistantMode('edit');
+                          setShowAIAssistant(true);
+                          setUserPrompt('Improve this email content');
+                        }}
+                      >
+                        <Edit3 className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Improve</span>
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-12 flex flex-col"
+                        onClick={() => {
+                          setAIAssistantMode('strategy');
+                          setShowAIAssistant(true);
+                          setUserPrompt('Provide marketing strategy advice');
+                        }}
+                      >
+                        <TrendingUp className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Strategy</span>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-12 flex flex-col"
+                        onClick={() => {
+                          setAIAssistantMode('compliance');
+                          setShowAIAssistant(true);
+                          setUserPrompt('Check compliance requirements');
+                        }}
+                      >
+                        <Shield className="w-4 h-4 mb-1" />
+                        <span className="text-xs">Compliance</span>
+                      </Button>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Content Generation</Label>
+                      <div className="space-y-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('content');
+                            setShowAIAssistant(true);
+                            setUserPrompt(`Generate an engaging subject line for this ${selectedCampaign?.type} email`);
+                          }}
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Subject Line
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('content');
+                            setShowAIAssistant(true);
+                            setUserPrompt('Generate a compelling headline');
+                          }}
+                        >
+                          <Type className="w-4 h-4 mr-2" />
+                          Headline
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('content');
+                            setShowAIAssistant(true);
+                            setUserPrompt('Generate email body content');
+                          }}
+                        >
+                          <PenTool className="w-4 h-4 mr-2" />
+                          Body Content
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('content');
+                            setShowAIAssistant(true);
+                            setUserPrompt('Generate a strong call-to-action');
+                          }}
+                        >
+                          <Target className="w-4 h-4 mr-2" />
+                          Call to Action
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Marketing Tools</Label>
+                      <div className="space-y-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('content');
+                            setShowAIAssistant(true);
+                            setUserPrompt('Generate an image for this email');
+                          }}
+                        >
+                          <Camera className="w-4 h-4 mr-2" />
+                          Generate Image
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('strategy');
+                            setShowAIAssistant(true);
+                            setUserPrompt('Check email deliverability');
+                          }}
+                        >
+                          <BarChart className="w-4 h-4 mr-2" />
+                          Deliverability
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            setAIAssistantMode('strategy');
+                            setShowAIAssistant(true);
+                            setUserPrompt('Show best practices');
+                          }}
+                        >
+                          <BookOpen className="w-4 h-4 mr-2" />
+                          Best Practices
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </div>
