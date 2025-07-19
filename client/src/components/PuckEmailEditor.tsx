@@ -153,24 +153,44 @@ interface HTMLBlockProps {
 }
 
 // Puck component definitions
-const HeadingComponent = ({ text, level, color, textAlign }: HeadingProps) => {
+const HeadingComponent = ({ text, level, fontSize: customFontSize, color, textAlign, fontWeight, lineHeight, marginBottom }: any) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  const defaultFontSize = {
+    1: 32,
+    2: 28,
+    3: 24,
+    4: 20,
+    5: 18,
+    6: 16,
+  }[level];
+  
   return (
-    <Tag style={{ color, textAlign, margin: '16px 0', fontFamily: 'Arial, sans-serif' }}>
+    <Tag style={{ 
+      color, 
+      textAlign, 
+      fontSize: `${customFontSize || defaultFontSize}px`,
+      fontWeight: fontWeight || 'bold',
+      lineHeight: lineHeight || 1.2,
+      marginBottom: `${marginBottom || 16}px`,
+      marginTop: 0,
+      fontFamily: 'Arial, sans-serif'
+    }}>
       {text}
     </Tag>
   );
 };
 
-const TextComponent = ({ text, color, fontSize, textAlign, fontWeight }: TextProps) => (
+const TextComponent = ({ text, color, fontSize, textAlign, fontWeight, lineHeight, marginBottom }: any) => (
   <p style={{ 
     color, 
     fontSize: `${fontSize}px`, 
     textAlign, 
-    fontWeight,
-    margin: '12px 0',
-    lineHeight: 1.6,
-    fontFamily: 'Arial, sans-serif'
+    fontWeight: fontWeight || 'normal',
+    lineHeight: lineHeight || 1.5,
+    marginBottom: `${marginBottom || 16}px`,
+    marginTop: 0,
+    fontFamily: 'Arial, sans-serif',
+    whiteSpace: 'pre-wrap'
   }}>
     {text}
   </p>
@@ -227,50 +247,189 @@ const DividerComponent = ({ color, thickness, style }: DividerProps) => (
   }} />
 );
 
-const ContainerComponent = ({ backgroundColor, padding, maxWidth, children }: ContainerProps) => (
+const ContainerComponent = ({ backgroundColor, backgroundImage, padding, borderRadius, borderWidth, borderColor, maxWidth, textAlign, children }: any) => (
   <div style={{ 
-    backgroundColor, 
-    padding, 
-    maxWidth, 
+    backgroundColor,
+    backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    padding,
+    borderRadius: `${borderRadius}px`,
+    border: borderWidth ? `${borderWidth}px solid ${borderColor}` : 'none',
+    maxWidth,
     margin: '0 auto',
+    textAlign,
+    minHeight: '60px',
+    position: 'relative',
     fontFamily: 'Arial, sans-serif',
-    borderRadius: '8px',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    marginBottom: '20px'
+    marginBottom: '16px'
   }}>
     {children}
   </div>
 );
 
-// Enhanced Layout Components
-const LayoutBlockComponent = ({ 
-  columns, 
-  backgroundColor, 
-  padding, 
-  borderColor, 
-  borderWidth, 
-  borderStyle, 
-  fullWidth, 
-  stackOnMobile, 
-  children 
-}: LayoutBlockProps) => (
-  <div style={{ 
-    backgroundColor, 
-    padding, 
-    border: `${borderWidth}px ${borderStyle} ${borderColor}`,
-    width: fullWidth ? '100%' : 'auto',
-    display: 'grid', 
-    gridTemplateColumns: `repeat(${columns}, 1fr)`,
-    gap: '16px',
-    marginBottom: '16px',
-    '@media (max-width: 768px)': stackOnMobile ? {
-      gridTemplateColumns: '1fr',
-      gap: '8px'
-    } : {}
-  }}>
-    {children}
-  </div>
-);
+// Enhanced Layout Block Component with proper grid functionality
+const LayoutBlockComponent = ({ layout, backgroundColor, padding, gap, verticalAlign, mobileStack }: any) => {
+  const getGridStyle = () => {
+    const baseStyle = {
+      backgroundColor,
+      padding,
+      margin: '16px 0',
+      display: 'grid',
+      gap: `${gap}px`,
+      alignItems: verticalAlign,
+    };
+
+    switch (layout) {
+      case 'text-image':
+        return { ...baseStyle, gridTemplateColumns: '1fr 1fr' };
+      case 'image-text':
+        return { ...baseStyle, gridTemplateColumns: '1fr 1fr' };
+      case 'text-text':
+        return { ...baseStyle, gridTemplateColumns: '1fr 1fr' };
+      case 'three-col':
+        return { ...baseStyle, gridTemplateColumns: '1fr 1fr 1fr' };
+      default:
+        return { ...baseStyle, gridTemplateColumns: '1fr' };
+    }
+  };
+
+  const renderContent = () => {
+    switch (layout) {
+      case 'text-image':
+        return (
+          <>
+            <div style={{ 
+              minHeight: '120px', 
+              border: '2px dashed #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+              padding: '20px'
+            }}>
+              📝 Text Content Area
+            </div>
+            <div style={{ 
+              minHeight: '120px', 
+              border: '2px dashed #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+              padding: '20px'
+            }}>
+              🖼️ Image Area
+            </div>
+          </>
+        );
+      case 'image-text':
+        return (
+          <>
+            <div style={{ 
+              minHeight: '120px', 
+              border: '2px dashed #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+              padding: '20px'
+            }}>
+              🖼️ Image Area
+            </div>
+            <div style={{ 
+              minHeight: '120px', 
+              border: '2px dashed #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+              padding: '20px'
+            }}>
+              📝 Text Content Area
+            </div>
+          </>
+        );
+      case 'text-text':
+        return (
+          <>
+            <div style={{ 
+              minHeight: '120px', 
+              border: '2px dashed #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+              padding: '20px'
+            }}>
+              📝 Text Column 1
+            </div>
+            <div style={{ 
+              minHeight: '120px', 
+              border: '2px dashed #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+              padding: '20px'
+            }}>
+              📝 Text Column 2
+            </div>
+          </>
+        );
+      case 'three-col':
+        return Array.from({ length: 3 }, (_, i) => (
+          <div key={i} style={{ 
+            minHeight: '120px', 
+            border: '2px dashed #e2e8f0',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#6b7280',
+            fontSize: '14px',
+            padding: '20px'
+          }}>
+            Column {i + 1}
+          </div>
+        ));
+      default:
+        return (
+          <div style={{ 
+            minHeight: '120px', 
+            border: '2px dashed #e2e8f0',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#6b7280',
+            fontSize: '14px',
+            padding: '20px'
+          }}>
+            📄 Single Column Content
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div style={getGridStyle()}>
+      {renderContent()}
+    </div>
+  );
+};
 
 const SocialIconsComponent = ({ icons, size, style, spacing }: SocialIconsProps) => (
   <div style={{ 
@@ -410,19 +569,89 @@ const HTMLBlockComponent = ({ htmlContent }: HTMLBlockProps) => (
   />
 );
 
-// Enhanced Puck configuration for email components
+// Enhanced Puck configuration for email components with proper layout blocks
 const config: Config = {
   components: {
-    // Layout Blocks (Containers in rows/columns)
-    LayoutBlock: {
+    // Advanced Container with full editing capabilities
+    Container: {
       fields: {
-        columns: {
+        backgroundColor: { 
+          type: 'custom',
+          render: ({ onChange, value }) => (
+            <ColorPicker 
+              value={value || '#ffffff'} 
+              onChange={onChange} 
+              label="Background Color"
+            />
+          )
+        },
+        backgroundImage: {
+          type: 'text',
+          label: 'Background Image URL',
+        },
+        padding: {
+          type: 'text',
+          label: 'Padding (e.g., 40px 30px)',
+        },
+        borderRadius: {
+          type: 'number',
+          label: 'Border Radius (px)',
+          min: 0,
+          max: 50,
+        },
+        borderWidth: {
+          type: 'number',
+          label: 'Border Width (px)',
+          min: 0,
+          max: 10,
+        },
+        borderColor: {
+          type: 'custom',
+          render: ({ onChange, value }) => (
+            <ColorPicker 
+              value={value || '#e5e7eb'} 
+              onChange={onChange} 
+              label="Border Color"
+            />
+          )
+        },
+        maxWidth: {
+          type: 'text',
+          label: 'Max Width (e.g., 600px, 100%)',
+        },
+        textAlign: {
           type: 'select',
           options: [
-            { label: '1 Column', value: 1 },
-            { label: '2 Columns', value: 2 },
-            { label: '3 Columns', value: 3 },
-            { label: '4 Columns', value: 4 },
+            { label: 'Left', value: 'left' },
+            { label: 'Center', value: 'center' },
+            { label: 'Right', value: 'right' },
+          ],
+        },
+      },
+      defaultProps: {
+        backgroundColor: '#ffffff',
+        backgroundImage: '',
+        padding: '40px 30px',
+        borderRadius: 0,
+        borderWidth: 0,
+        borderColor: '#e5e7eb',
+        maxWidth: '600px',
+        textAlign: 'left',
+      },
+      render: ContainerComponent,
+    },
+
+    // Layout Block with proper grid functionality
+    LayoutBlock: {
+      fields: {
+        layout: {
+          type: 'select',
+          options: [
+            { label: 'Text Left + Image Right', value: 'text-image' },
+            { label: 'Image Left + Text Right', value: 'image-text' },
+            { label: 'Text + Text (2 Columns)', value: 'text-text' },
+            { label: 'Single Column', value: 'single' },
+            { label: '3 Columns', value: 'three-col' },
           ],
         },
         backgroundColor: { 
@@ -439,70 +668,57 @@ const config: Config = {
           type: 'text',
           label: 'Padding (e.g., 20px 16px)',
         },
-        borderColor: {
-          type: 'custom',
-          render: ({ onChange, value }) => (
-            <ColorPicker 
-              value={value || '#e2e8f0'} 
-              onChange={onChange} 
-              label="Border Color"
-            />
-          )
-        },
-        borderWidth: {
+        gap: {
           type: 'number',
-          label: 'Border Width (px)',
+          label: 'Column Gap (px)',
           min: 0,
-          max: 10,
+          max: 50,
         },
-        borderStyle: {
+        verticalAlign: {
           type: 'select',
           options: [
-            { label: 'Solid', value: 'solid' },
-            { label: 'Dashed', value: 'dashed' },
-            { label: 'Dotted', value: 'dotted' },
+            { label: 'Top', value: 'top' },
+            { label: 'Middle', value: 'middle' },
+            { label: 'Bottom', value: 'bottom' },
           ],
         },
-        fullWidth: {
-          type: 'radio',
-          options: [
-            { label: 'Full Width', value: true },
-            { label: 'Auto Width', value: false },
-          ],
-        },
-        stackOnMobile: {
+        mobileStack: {
           type: 'radio',
           options: [
             { label: 'Stack on Mobile', value: true },
-            { label: 'Keep Columns', value: false },
+            { label: 'Keep Layout', value: false },
           ],
         },
       },
       defaultProps: {
-        columns: 1,
+        layout: 'text-image',
         backgroundColor: '#ffffff',
         padding: '20px',
-        borderColor: '#e2e8f0',
-        borderWidth: 0,
-        borderStyle: 'solid',
-        fullWidth: true,
-        stackOnMobile: true,
+        gap: 20,
+        verticalAlign: 'middle',
+        mobileStack: true,
       },
       render: LayoutBlockComponent,
     },
 
-    // Standard Content Elements
+    // Enhanced Text Elements with proper sizing
     Heading: {
       fields: {
         text: { type: 'text', label: 'Heading Text' },
         level: {
           type: 'select',
           options: [
-            { label: 'H1 - Main Title', value: 1 },
-            { label: 'H2 - Section Title', value: 2 },
-            { label: 'H3 - Subsection', value: 3 },
-            { label: 'H4 - Small Heading', value: 4 },
+            { label: 'H1 - Main Title (32px)', value: 1 },
+            { label: 'H2 - Section Title (28px)', value: 2 },
+            { label: 'H3 - Subsection (24px)', value: 3 },
+            { label: 'H4 - Small Heading (20px)', value: 4 },
           ],
+        },
+        fontSize: {
+          type: 'number',
+          label: 'Custom Font Size (px)',
+          min: 12,
+          max: 72,
         },
         color: { 
           type: 'custom',
@@ -522,12 +738,37 @@ const config: Config = {
             { label: 'Right', value: 'right' },
           ],
         },
+        fontWeight: {
+          type: 'select',
+          options: [
+            { label: 'Normal', value: 'normal' },
+            { label: 'Bold', value: 'bold' },
+            { label: 'Extra Bold', value: '800' },
+          ],
+        },
+        lineHeight: {
+          type: 'number',
+          label: 'Line Height',
+          min: 1,
+          max: 3,
+          step: 0.1,
+        },
+        marginBottom: {
+          type: 'number',
+          label: 'Bottom Margin (px)',
+          min: 0,
+          max: 60,
+        },
       },
       defaultProps: {
         text: 'Your Heading Here',
         level: 2,
+        fontSize: 28,
         color: '#333333',
         textAlign: 'left',
+        fontWeight: 'bold',
+        lineHeight: 1.2,
+        marginBottom: 16,
       },
       render: HeadingComponent,
     },
@@ -551,12 +792,20 @@ const config: Config = {
           min: 10,
           max: 48,
         },
+        lineHeight: {
+          type: 'number',
+          label: 'Line Height',
+          min: 1,
+          max: 3,
+          step: 0.1,
+        },
         textAlign: {
           type: 'select',
           options: [
             { label: 'Left', value: 'left' },
             { label: 'Center', value: 'center' },
             { label: 'Right', value: 'right' },
+            { label: 'Justify', value: 'justify' },
           ],
         },
         fontWeight: {
@@ -566,13 +815,21 @@ const config: Config = {
             { label: 'Bold', value: 'bold' },
           ],
         },
+        marginBottom: {
+          type: 'number',
+          label: 'Bottom Margin (px)',
+          min: 0,
+          max: 60,
+        },
       },
       defaultProps: {
         text: 'Your email content goes here. You can add multiple paragraphs and format them as needed.',
         color: '#666666',
         fontSize: 16,
+        lineHeight: 1.5,
         textAlign: 'left',
         fontWeight: 'normal',
+        marginBottom: 16,
       },
       render: TextComponent,
     },
@@ -873,35 +1130,6 @@ const config: Config = {
       },
       render: HTMLBlockComponent,
     },
-
-    Container: {
-      fields: {
-        backgroundColor: { 
-          type: 'custom',
-          render: ({ onChange, value }) => (
-            <ColorPicker 
-              value={value || '#ffffff'} 
-              onChange={onChange} 
-              label="Background Color"
-            />
-          )
-        },
-        padding: { 
-          type: 'text', 
-          label: 'Padding (e.g., 40px 30px)' 
-        },
-        maxWidth: { 
-          type: 'text', 
-          label: 'Max Width (e.g., 600px, 100%)' 
-        },
-      },
-      defaultProps: {
-        backgroundColor: '#ffffff',
-        padding: '40px 30px',
-        maxWidth: '600px',
-      },
-      render: ContainerComponent,
-    },
   },
 
   // Categories for better organization (like in Mailchimp)
@@ -923,7 +1151,7 @@ const config: Config = {
     }
   },
 
-  // Root configuration for email-wide settings
+  // Enhanced root configuration for email canvas
   root: {
     fields: {
       emailBackgroundColor: {
@@ -932,13 +1160,27 @@ const config: Config = {
           <ColorPicker 
             value={value || '#f8fafc'} 
             onChange={onChange} 
-            label="Email Background Color"
+            label="Canvas Background Color"
           />
         )
+      },
+      backgroundImage: {
+        type: 'text',
+        label: 'Canvas Background Image URL',
       },
       contentWidth: {
         type: 'text',
         label: 'Content Width (e.g., 600px)',
+      },
+      contentBackgroundColor: {
+        type: 'custom',
+        render: ({ onChange, value }) => (
+          <ColorPicker 
+            value={value || '#ffffff'} 
+            onChange={onChange} 
+            label="Content Background Color"
+          />
+        )
       },
       fontFamily: {
         type: 'select',
@@ -947,28 +1189,41 @@ const config: Config = {
           { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
           { label: 'Georgia', value: 'Georgia, serif' },
           { label: 'Times New Roman', value: 'Times New Roman, serif' },
+          { label: 'Verdana', value: 'Verdana, sans-serif' },
         ],
+      },
+      padding: {
+        type: 'text',
+        label: 'Canvas Padding (e.g., 40px 20px)',
       },
     },
     defaultProps: {
       emailBackgroundColor: '#f8fafc',
+      backgroundImage: '',
       contentWidth: '600px',
+      contentBackgroundColor: '#ffffff',
       fontFamily: 'Arial, sans-serif',
+      padding: '40px 20px',
     },
-    render: ({ children, emailBackgroundColor, contentWidth, fontFamily }) => (
+    render: ({ children, emailBackgroundColor, backgroundImage, contentWidth, contentBackgroundColor, fontFamily, padding }) => (
       <div style={{ 
         backgroundColor: emailBackgroundColor,
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         fontFamily,
-        padding: '20px 0',
-        minHeight: '100vh'
+        padding,
+        minHeight: '100vh',
+        fontSize: '16px',
       }}>
         <div style={{ 
           maxWidth: contentWidth, 
           margin: '0 auto',
-          backgroundColor: '#ffffff',
+          backgroundColor: contentBackgroundColor,
           borderRadius: '8px',
           overflow: 'hidden',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          minHeight: '400px',
         }}>
           {children}
         </div>
@@ -1144,10 +1399,20 @@ export default function PuckEmailEditor({
             </Button>
           </div>
 
-          {/* Action Buttons */}
+          {/* Enhanced Action Buttons with All Save Options */}
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <Eye className="w-4 h-4" />
-            Preview
+            Preview Live
+          </Button>
+          
+          <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Save as Template
+          </Button>
+          
+          <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Save className="w-4 h-4" />
+            Save as Draft
           </Button>
           
           <Button 
@@ -1161,7 +1426,7 @@ export default function PuckEmailEditor({
           </Button>
           
           <Button variant="default" size="sm" className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
-            <Send className="w-4 h-4" />
+            <Mail className="w-4 h-4" />
             Send Test
           </Button>
         </div>
@@ -1222,128 +1487,189 @@ export default function PuckEmailEditor({
         />
       </div>
 
-      {/* Custom CSS for enhanced Mailchimp-style layout */}
+      {/* Enhanced CSS for Mailchimp-style 2x2 square component blocks */}
       <style jsx global>{`
         /* Full screen Puck editor */
         .Puck {
           height: 100vh !important;
+          font-size: 14px;
         }
         
-        /* Component sidebar styling - 2x2 grid layout like Mailchimp */
+        /* Component sidebar styling - EXACTLY like your screenshot */
         .Puck-sidebarSection {
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
         
         .Puck-sidebarSectionTitle {
           font-weight: 600;
-          font-size: 12px;
+          font-size: 11px;
           text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #6b7280;
-          margin-bottom: 8px;
-          padding: 0 12px;
+          letter-spacing: 1px;
+          color: #8b8b8b;
+          margin-bottom: 12px;
+          padding: 0 16px;
         }
         
-        /* Component grid - 2 columns like Mailchimp */
+        /* CRITICAL: Component grid - EXACTLY 2x2 square blocks like your screenshot */
         .Puck-componentList {
           display: grid !important;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-          padding: 0 12px;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 12px !important;
+          padding: 0 16px !important;
         }
         
-        /* Individual component blocks - square like Mailchimp */
+        /* CRITICAL: Individual component blocks - EXACTLY square like your screenshot */
         .Puck-component {
-          aspect-ratio: 1;
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          padding: 12px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-          background: white;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: center;
+          aspect-ratio: 1 !important;
+          border: 2px solid #e0e0e0 !important;
+          border-radius: 12px !important;
+          padding: 16px 8px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 8px !important;
+          background: white !important;
+          cursor: pointer !important;
+          transition: all 0.2s ease !important;
+          text-align: center !important;
+          min-height: 90px !important;
+          max-height: 90px !important;
+          width: 100% !important;
         }
         
         .Puck-component:hover {
-          border-color: #3b82f6;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
-          transform: translateY(-1px);
+          border-color: #4CAF50 !important;
+          box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15) !important;
+          transform: translateY(-2px) !important;
         }
         
+        .Puck-component.Puck-component--selected {
+          border-color: #2196F3 !important;
+          background: #f0f8ff !important;
+        }
+        
+        /* Component icon styling */
+        .Puck-component > div:first-child {
+          font-size: 24px !important;
+          margin-bottom: 4px !important;
+        }
+        
+        /* Component label styling - EXACTLY like your screenshot */
         .Puck-componentLabel {
-          font-size: 11px;
-          font-weight: 500;
-          color: #374151;
-          line-height: 1.2;
+          font-size: 12px !important;
+          font-weight: 500 !important;
+          color: #333333 !important;
+          line-height: 1.2 !important;
+          text-align: center !important;
         }
         
-        /* Preview area styling - full content width like Mailchimp */
+        /* Dots under component name like your screenshot */
+        .Puck-componentLabel::after {
+          content: '••••••';
+          display: block;
+          color: #cccccc;
+          font-size: 8px;
+          margin-top: 4px;
+          letter-spacing: 1px;
+        }
+        
+        /* Preview area styling - larger content like Mailchimp */
         .Puck-preview {
-          background: #f3f4f6 !important;
-          padding: 20px !important;
-          overflow-y: auto;
+          background: #f5f5f5 !important;
+          padding: 30px !important;
+          overflow-y: auto !important;
+          zoom: 1.2 !important;
         }
         
         .Puck-previewFrame {
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          max-width: ${previewMode === 'mobile' ? '375px' : '100%'};
-          margin: 0 auto;
-          transition: max-width 0.3s ease;
+          background: white !important;
+          border-radius: 8px !important;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+          max-width: ${previewMode === 'mobile' ? '375px' : '700px'} !important;
+          margin: 0 auto !important;
+          transition: max-width 0.3s ease !important;
+          min-height: 500px !important;
+        }
+        
+        /* ZOOM content to make text larger and more visible */
+        .Puck-preview .Puck-render > * {
+          zoom: 1.1 !important;
         }
         
         /* Right sidebar styling */
         .Puck-fields {
-          padding: 16px;
-          background: #fafafa;
+          padding: 20px !important;
+          background: #fafafa !important;
         }
         
         .Puck-field {
-          margin-bottom: 16px;
+          margin-bottom: 20px !important;
         }
         
         .Puck-fieldLabel {
-          font-weight: 500;
-          font-size: 13px;
-          color: #374151;
-          margin-bottom: 6px;
-          display: block;
+          font-weight: 600 !important;
+          font-size: 13px !important;
+          color: #333333 !important;
+          margin-bottom: 8px !important;
+          display: block !important;
         }
         
-        /* Enhanced input styling */
-        .Puck-input, .Puck-textarea {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #d1d5db;
-          border-radius: 6px;
-          font-size: 13px;
-          background: white;
+        /* Enhanced input styling for better visibility */
+        .Puck-input, .Puck-textarea, .Puck-select {
+          width: 100% !important;
+          padding: 10px 14px !important;
+          border: 2px solid #e0e0e0 !important;
+          border-radius: 8px !important;
+          font-size: 14px !important;
+          background: white !important;
+          font-family: inherit !important;
         }
         
-        .Puck-input:focus, .Puck-textarea:focus {
-          outline: none;
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .Puck-input:focus, .Puck-textarea:focus, .Puck-select:focus {
+          outline: none !important;
+          border-color: #2196F3 !important;
+          box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1) !important;
         }
         
-        /* Left sidebar width for better component visibility */
+        /* Left sidebar width for better component visibility - WIDER */
         .Puck-sidebarLeft {
-          width: 280px !important;
-          background: #fafafa;
-          border-right: 1px solid #e5e7eb;
+          width: 320px !important;
+          background: #fafafa !important;
+          border-right: 1px solid #e0e0e0 !important;
         }
         
         /* Right sidebar width */
         .Puck-sidebarRight {
-          width: 320px !important;
-          background: #fafafa;
-          border-left: 1px solid #e5e7eb;
+          width: 350px !important;
+          background: #fafafa !important;
+          border-left: 1px solid #e0e0e0 !important;
+        }
+        
+        /* Make content areas droppable and more visible */
+        .Puck-render {
+          min-height: 400px !important;
+          padding: 20px !important;
+        }
+        
+        /* Enhanced container drop zones */
+        .Puck-dropZone {
+          min-height: 60px !important;
+          border: 2px dashed #cccccc !important;
+          border-radius: 8px !important;
+          margin: 8px 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          color: #888888 !important;
+          font-size: 13px !important;
+          background: #fafafa !important;
+        }
+        
+        .Puck-dropZone:hover, .Puck-dropZone--isOver {
+          border-color: #2196F3 !important;
+          background: #f0f8ff !important;
+          color: #2196F3 !important;
         }
       `}</style>
     </div>
