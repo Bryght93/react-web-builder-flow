@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Puck Editor Styles */
+@import "@measured/puck/dist/index.css";
+
 @layer utilities {
   /* Line clamp utility for template descriptions */
   .line-clamp-2 {

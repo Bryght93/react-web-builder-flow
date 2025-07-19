@@ -1,0 +1,432 @@
+import React from 'react';
+import { Puck, Config } from '@measured/puck';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Save, Eye, Send } from 'lucide-react';
+
+// Define email component types for Puck
+interface HeadingProps {
+  text: string;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  color: string;
+  textAlign: 'left' | 'center' | 'right';
+}
+
+interface TextProps {
+  text: string;
+  color: string;
+  fontSize: number;
+  textAlign: 'left' | 'center' | 'right';
+  fontWeight: 'normal' | 'bold';
+}
+
+interface ButtonProps {
+  text: string;
+  href: string;
+  backgroundColor: string;
+  textColor: string;
+  borderRadius: number;
+  padding: string;
+}
+
+interface ImageProps {
+  src: string;
+  alt: string;
+  width: string;
+  height: string;
+  borderRadius: number;
+}
+
+interface SpacerProps {
+  height: number;
+}
+
+interface DividerProps {
+  color: string;
+  thickness: number;
+  style: 'solid' | 'dashed' | 'dotted';
+}
+
+interface ContainerProps {
+  backgroundColor: string;
+  padding: string;
+  maxWidth: string;
+  children: React.ReactNode;
+}
+
+// Puck component definitions
+const HeadingComponent = ({ text, level, color, textAlign }: HeadingProps) => {
+  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  return (
+    <Tag style={{ color, textAlign, margin: '16px 0', fontFamily: 'Arial, sans-serif' }}>
+      {text}
+    </Tag>
+  );
+};
+
+const TextComponent = ({ text, color, fontSize, textAlign, fontWeight }: TextProps) => (
+  <p style={{ 
+    color, 
+    fontSize: `${fontSize}px`, 
+    textAlign, 
+    fontWeight,
+    margin: '12px 0',
+    lineHeight: 1.6,
+    fontFamily: 'Arial, sans-serif'
+  }}>
+    {text}
+  </p>
+);
+
+const ButtonComponent = ({ text, href, backgroundColor, textColor, borderRadius, padding }: ButtonProps) => (
+  <div style={{ textAlign: 'center', margin: '20px 0' }}>
+    <a
+      href={href}
+      style={{
+        display: 'inline-block',
+        backgroundColor,
+        color: textColor,
+        padding,
+        borderRadius: `${borderRadius}px`,
+        textDecoration: 'none',
+        fontWeight: 'bold',
+        fontFamily: 'Arial, sans-serif',
+        border: 'none',
+        cursor: 'pointer'
+      }}
+    >
+      {text}
+    </a>
+  </div>
+);
+
+const ImageComponent = ({ src, alt, width, height, borderRadius }: ImageProps) => (
+  <div style={{ textAlign: 'center', margin: '16px 0' }}>
+    <img
+      src={src}
+      alt={alt}
+      style={{
+        width,
+        height,
+        borderRadius: `${borderRadius}px`,
+        maxWidth: '100%',
+        objectFit: 'cover'
+      }}
+    />
+  </div>
+);
+
+const SpacerComponent = ({ height }: SpacerProps) => (
+  <div style={{ height: `${height}px` }} />
+);
+
+const DividerComponent = ({ color, thickness, style }: DividerProps) => (
+  <hr style={{ 
+    border: 'none',
+    borderTop: `${thickness}px ${style} ${color}`,
+    margin: '20px 0',
+    width: '100%'
+  }} />
+);
+
+const ContainerComponent = ({ backgroundColor, padding, maxWidth, children }: ContainerProps) => (
+  <div style={{ 
+    backgroundColor, 
+    padding, 
+    maxWidth, 
+    margin: '0 auto',
+    fontFamily: 'Arial, sans-serif'
+  }}>
+    {children}
+  </div>
+);
+
+// Puck configuration for email components
+const config: Config = {
+  components: {
+    Heading: {
+      fields: {
+        text: { type: 'text' },
+        level: {
+          type: 'select',
+          options: [
+            { label: 'H1', value: 1 },
+            { label: 'H2', value: 2 },
+            { label: 'H3', value: 3 },
+            { label: 'H4', value: 4 },
+            { label: 'H5', value: 5 },
+            { label: 'H6', value: 6 },
+          ],
+        },
+        color: { type: 'text' },
+        textAlign: {
+          type: 'select',
+          options: [
+            { label: 'Left', value: 'left' },
+            { label: 'Center', value: 'center' },
+            { label: 'Right', value: 'right' },
+          ],
+        },
+      },
+      defaultProps: {
+        text: 'Heading Text',
+        level: 2,
+        color: '#333333',
+        textAlign: 'left',
+      },
+      render: HeadingComponent,
+    },
+    Text: {
+      fields: {
+        text: { type: 'textarea' },
+        color: { type: 'text' },
+        fontSize: { type: 'number' },
+        textAlign: {
+          type: 'select',
+          options: [
+            { label: 'Left', value: 'left' },
+            { label: 'Center', value: 'center' },
+            { label: 'Right', value: 'right' },
+          ],
+        },
+        fontWeight: {
+          type: 'select',
+          options: [
+            { label: 'Normal', value: 'normal' },
+            { label: 'Bold', value: 'bold' },
+          ],
+        },
+      },
+      defaultProps: {
+        text: 'Your email content goes here...',
+        color: '#666666',
+        fontSize: 16,
+        textAlign: 'left',
+        fontWeight: 'normal',
+      },
+      render: TextComponent,
+    },
+    Button: {
+      fields: {
+        text: { type: 'text' },
+        href: { type: 'text' },
+        backgroundColor: { type: 'text' },
+        textColor: { type: 'text' },
+        borderRadius: { type: 'number' },
+        padding: { type: 'text' },
+      },
+      defaultProps: {
+        text: 'Click Here',
+        href: '#',
+        backgroundColor: '#007bff',
+        textColor: '#ffffff',
+        borderRadius: 4,
+        padding: '12px 24px',
+      },
+      render: ButtonComponent,
+    },
+    Image: {
+      fields: {
+        src: { type: 'text' },
+        alt: { type: 'text' },
+        width: { type: 'text' },
+        height: { type: 'text' },
+        borderRadius: { type: 'number' },
+      },
+      defaultProps: {
+        src: 'https://via.placeholder.com/400x200',
+        alt: 'Image',
+        width: '100%',
+        height: '200px',
+        borderRadius: 0,
+      },
+      render: ImageComponent,
+    },
+    Spacer: {
+      fields: {
+        height: { type: 'number' },
+      },
+      defaultProps: {
+        height: 20,
+      },
+      render: SpacerComponent,
+    },
+    Divider: {
+      fields: {
+        color: { type: 'text' },
+        thickness: { type: 'number' },
+        style: {
+          type: 'select',
+          options: [
+            { label: 'Solid', value: 'solid' },
+            { label: 'Dashed', value: 'dashed' },
+            { label: 'Dotted', value: 'dotted' },
+          ],
+        },
+      },
+      defaultProps: {
+        color: '#e0e0e0',
+        thickness: 1,
+        style: 'solid',
+      },
+      render: DividerComponent,
+    },
+    Container: {
+      fields: {
+        backgroundColor: { type: 'text' },
+        padding: { type: 'text' },
+        maxWidth: { type: 'text' },
+      },
+      defaultProps: {
+        backgroundColor: '#ffffff',
+        padding: '20px',
+        maxWidth: '600px',
+      },
+      render: ContainerComponent,
+    },
+  },
+  root: {
+    fields: {
+      backgroundColor: { type: 'text' },
+      padding: { type: 'text' },
+    },
+    defaultProps: {
+      backgroundColor: '#f5f5f5',
+      padding: '20px',
+    },
+    render: ({ backgroundColor, padding, children }) => (
+      <div style={{ backgroundColor, padding, minHeight: '100vh' }}>
+        {children}
+      </div>
+    ),
+  },
+};
+
+interface PuckEmailEditorProps {
+  onBack: () => void;
+  onSave: (data: any) => void;
+  initialData?: any;
+  emailTemplate?: {
+    name: string;
+    subject: string;
+  };
+}
+
+export default function PuckEmailEditor({ 
+  onBack, 
+  onSave, 
+  initialData,
+  emailTemplate 
+}: PuckEmailEditorProps) {
+  const [data, setData] = React.useState(initialData || {
+    content: [],
+    root: {
+      backgroundColor: '#f5f5f5',
+      padding: '20px',
+    },
+  });
+
+  const [previewMode, setPreviewMode] = React.useState(false);
+
+  const handleSave = () => {
+    onSave({
+      ...data,
+      subject: emailTemplate?.subject || 'Untitled Email',
+      name: emailTemplate?.name || 'Untitled Template',
+    });
+  };
+
+  const generateEmailHTML = () => {
+    // This would convert the Puck data to HTML for email sending
+    // For now, return a basic HTML structure
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>${emailTemplate?.subject || 'Email'}</title>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: ${data.root?.backgroundColor || '#f5f5f5'};">
+          <!-- Email content would be rendered here -->
+        </body>
+      </html>
+    `;
+  };
+
+  return (
+    <div className="h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-lg font-semibold">
+              {emailTemplate?.name || 'Email Editor'}
+            </h1>
+            <p className="text-sm text-gray-500">
+              Subject: {emailTemplate?.subject || 'Untitled Email'}
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setPreviewMode(!previewMode)}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            {previewMode ? 'Edit' : 'Preview'}
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleSave}>
+            <Save className="h-4 w-4 mr-2" />
+            Save
+          </Button>
+          <Button size="sm" onClick={handleSave}>
+            <Send className="h-4 w-4 mr-2" />
+            Save & Continue
+          </Button>
+        </div>
+      </div>
+
+      {/* Editor */}
+      <div className="flex-1 overflow-hidden">
+        {previewMode ? (
+          <div className="h-full bg-gray-100 p-8 overflow-y-auto">
+            <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+              <div className="bg-gray-50 px-6 py-4 border-b">
+                <h2 className="text-lg font-semibold">Email Preview</h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Subject: {emailTemplate?.subject || 'Untitled Email'}
+                </p>
+              </div>
+              <div className="p-6">
+                <Puck
+                  config={config}
+                  data={data}
+                  onPublish={(data) => setData(data)}
+                  ui={{
+                    leftSideBarVisible: false,
+                    rightSideBarVisible: false,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Puck
+            config={config}
+            data={data}
+            onPublish={(data) => setData(data)}
+            ui={{
+              headerActions: null,
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}

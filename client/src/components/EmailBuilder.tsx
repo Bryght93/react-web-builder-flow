@@ -18,6 +18,7 @@ import {
   Megaphone,
   CheckCircle
 } from 'lucide-react';
+import PuckEmailEditor from './PuckEmailEditor';
 
 interface Email {
   id: number;
@@ -162,8 +163,8 @@ export default function EmailBuilder() {
   const handleTypeSelection = (type: 'sequence' | 'broadcast') => {
     setSelectedType(type);
     if (currentCreationFlow === 'scratch') {
-      // Email editor has been removed - show message
-      alert(`${type} type selected! Email editor functionality has been removed.`);
+      // For scratch flow, go directly to Puck editor
+      setView('puck-editor');
     } else {
       // Show template selection for AI and template flows
       setView('template-selection');
@@ -171,9 +172,14 @@ export default function EmailBuilder() {
   };
 
   const handleTemplateSelection = (template: EmailTemplate) => {
+    setIsGenerating(true);
     setSelectedTemplate(template);
-    // Email editor has been removed - show confirmation message
-    alert(`Template "${template.name}" selected! Email editor functionality has been removed.`);
+    
+    // Simulate template loading
+    setTimeout(() => {
+      setIsGenerating(false);
+      setView('puck-editor');
+    }, 1500);
   };
 
   // Main view with three cards
@@ -538,7 +544,40 @@ export default function EmailBuilder() {
     );
   }
 
-  
+  // Puck Editor View
+  if (view === 'puck-editor') {
+    const handleSaveEmail = (emailData: any) => {
+      console.log('Email saved:', emailData);
+      // Here you would save to your backend
+      setView('main');
+    };
+
+    const handleBackFromEditor = () => {
+      if (currentCreationFlow === 'scratch') {
+        setView('type-selection');
+      } else {
+        setView('template-selection');
+      }
+    };
+
+    return (
+      <PuckEmailEditor
+        onBack={handleBackFromEditor}
+        onSave={handleSaveEmail}
+        emailTemplate={{
+          name: selectedTemplate?.name || `New ${selectedType} Email`,
+          subject: selectedTemplate?.name ? `${selectedTemplate.name} - Subject` : 'Your Email Subject Here'
+        }}
+        initialData={{
+          content: [],
+          root: {
+            backgroundColor: '#f5f5f5',
+            padding: '20px',
+          },
+        }}
+      />
+    );
+  }
 
   return null;
 }
