@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Save, Eye, Send, Monitor, Smartphone, Settings, Palette, Type, Image as ImageIcon, Link, Layers, Grid, AlignLeft, AlignCenter, AlignRight, Bold, Italic, Underline } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Send, Monitor, Smartphone, Settings, Palette, Type, Image as ImageIcon, Link, Layers, Grid, AlignLeft, AlignCenter, AlignRight, Bold, Italic, Underline, Download, Mail } from 'lucide-react';
 
 // Color Picker Component
 const ColorPicker = ({ value, onChange, label }: { value: string, onChange: (color: string) => void, label: string }) => {
