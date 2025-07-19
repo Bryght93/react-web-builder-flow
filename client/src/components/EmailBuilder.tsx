@@ -50,16 +50,13 @@ interface EmailTemplate {
   estimatedTime: string;
 }
 
-export default function EmailBuilder({ onBack }: { onBack: () => void }) {
-  const [view, setView] = useState<
-    'main' | 'type-selection' | 'template-selection' | 'puck-editor' | 'sequence-editor' | 'my-emails'
-  >('main');
+export default function EmailBuilder() {
+  const [view, setView] = useState<'main' | 'type-selection' | 'template-selection' | 'sequence-editor' | 'puck-editor'>('main');
   const [selectedType, setSelectedType] = useState<'sequence' | 'broadcast' | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
   const [currentCreationFlow, setCurrentCreationFlow] = useState<'ai' | 'template' | 'scratch'>('template');
   const [showTemplatePreview, setShowTemplatePreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [editingEmail, setEditingEmail] = useState<any>(null);
 
   // Sample templates for sequences
   const sequenceTemplates: EmailTemplate[] = [
@@ -178,11 +175,11 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
   const handleTemplateSelection = (template: EmailTemplate) => {
     setIsGenerating(true);
     setSelectedTemplate(template);
-
+    
     // Simulate template loading
     setTimeout(() => {
       setIsGenerating(false);
-
+      
       // Use sequence editor for multi-email templates, Puck editor for single emails
       if (template.emailCount > 1) {
         setView('sequence-editor');
@@ -202,113 +199,133 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
           <p className="text-muted-foreground text-lg">Create beautiful emails with our drag-and-drop editor</p>
         </div>
 
-        {/* Quick Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* My Emails Library */}
+        {/* Three Creation Cards - Exactly like Campaign Builder */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {/* AI Generated Card */}
           <Card 
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-indigo-500" 
-            onClick={() => setView('my-emails')}
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-purple-500 relative overflow-hidden"
+            onClick={() => createFromAI()}
           >
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FileText className="w-8 h-8 text-white" />
+            <CardContent className="p-0">
+              {/* AI Preview Image */}
+              <div className="h-48 bg-gradient-to-br from-purple-50 to-purple-100 relative flex items-center justify-center border-b">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">Most Popular</span>
+                </div>
+                {/* AI Magic Animation */}
+                <div className="relative">
+                  <div className="w-24 h-32 bg-white rounded-lg shadow-lg p-3 space-y-2 relative">
+                    <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
+                    <div className="h-1 bg-gray-200 rounded w-3/4 animate-pulse delay-100"></div>
+                    <div className="h-1 bg-gray-200 rounded w-1/2 animate-pulse delay-200"></div>
+                    <div className="h-4 bg-purple-500 rounded text-xs text-white flex items-center justify-center">AI</div>
+                    <div className="absolute -top-2 -right-2">
+                      <Sparkles className="w-6 h-6 text-purple-500 animate-pulse" />
+                    </div>
+                  </div>
+                  {/* Magic sparkles */}
+                  <div className="absolute -top-4 -left-2">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping"></div>
+                  </div>
+                  <div className="absolute -bottom-2 -right-4">
+                    <div className="w-1 h-1 bg-purple-300 rounded-full animate-ping delay-300"></div>
+                  </div>
+                </div>
               </div>
-              <CardTitle className="text-xl">My Emails</CardTitle>
-              <CardDescription>
-                View all your saved emails and drafts
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary">Drafts</Badge>
-                <Badge variant="secondary">Completed</Badge>
-                <Badge variant="secondary">Templates</Badge>
+              
+              {/* Card Content */}
+              <div className="p-6 text-center space-y-3">
+                <h3 className="text-xl font-semibold text-gray-900">AI Generated</h3>
+                <p className="text-gray-600 text-sm">Let AI create personalized email content and sequences</p>
               </div>
-              <p className="text-sm text-gray-600">
-                Access your email library with auto-saved drafts and completed templates.
-              </p>
             </CardContent>
           </Card>
 
-          {/* Create from Template */}
+          {/* Use Template Card */}
           <Card 
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-blue-500" 
-            onClick={() => {
-              setCurrentCreationFlow('template');
-              setView('type-selection');
-            }}
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-blue-500 relative overflow-hidden"
+            onClick={() => createFromTemplate()}
           >
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-white" />
+            <CardContent className="p-0">
+              {/* Template Preview Image */}
+              <div className="h-48 bg-gradient-to-br from-blue-50 to-blue-100 relative flex items-center justify-center border-b">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-black text-white text-xs px-2 py-1 rounded">Recommended</span>
+                </div>
+                {/* Template Preview Grid */}
+                <div className="grid grid-cols-2 gap-2 p-4 w-full max-w-xs">
+                  <div className="bg-white rounded shadow-sm p-3 space-y-2">
+                    <div className="h-2 bg-blue-200 rounded"></div>
+                    <div className="h-1 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-1 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-blue-500 rounded text-xs text-white flex items-center justify-center">CTA</div>
+                  </div>
+                  <div className="bg-white rounded shadow-sm p-3 space-y-2">
+                    <div className="h-2 bg-green-200 rounded"></div>
+                    <div className="h-1 bg-gray-200 rounded w-2/3"></div>
+                    <div className="h-1 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-green-500 rounded text-xs text-white flex items-center justify-center">CTA</div>
+                  </div>
+                  <div className="bg-white rounded shadow-sm p-3 space-y-2 col-span-2">
+                    <div className="h-2 bg-purple-200 rounded"></div>
+                    <div className="h-1 bg-gray-200 rounded w-full"></div>
+                    <div className="h-1 bg-gray-200 rounded w-4/5"></div>
+                    <div className="h-4 bg-purple-500 rounded text-xs text-white flex items-center justify-center">CTA</div>
+                  </div>
+                </div>
               </div>
-              <CardTitle className="text-xl">Use Template</CardTitle>
-              <CardDescription>
-                Start with professionally designed templates
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary">Welcome Series</Badge>
-                <Badge variant="secondary">Product Launch</Badge>
-                <Badge variant="secondary">Newsletter</Badge>
+              
+              {/* Card Content */}
+              <div className="p-6 text-center space-y-3">
+                <h3 className="text-xl font-semibold text-gray-900">Use Template</h3>
+                <p className="text-gray-600 text-sm">Start with professionally designed email templates</p>
               </div>
-              <p className="text-sm text-gray-600">
-                Choose from our collection of proven email templates.
-              </p>
             </CardContent>
           </Card>
 
-          {/* Create from Scratch */}
+          {/* Start from Scratch Card */}
           <Card 
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-green-500" 
-            onClick={() => {
-              setCurrentCreationFlow('scratch');
-              setView('type-selection');
-            }}
+            className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-green-500 relative overflow-hidden"
+            onClick={() => createFromScratch()}
           >
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <PenTool className="w-8 h-8 text-white" />
+            <CardContent className="p-0">
+              {/* Blank Canvas Preview */}
+              <div className="h-48 bg-gradient-to-br from-green-50 to-green-100 relative flex items-center justify-center border-b">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Full Control</span>
+                </div>
+                {/* Blank Canvas with Grid */}
+                <div className="relative">
+                  <div className="w-24 h-32 bg-white rounded-lg shadow-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative">
+                    <Plus className="w-8 h-8 text-gray-400" />
+                    {/* Grid pattern */}
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="grid grid-cols-4 grid-rows-6 h-full w-full">
+                        {Array.from({ length: 24 }).map((_, i) => (
+                          <div key={i} className="border-r border-b border-gray-300 last:border-r-0"></div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Design tools */}
+                  <div className="absolute -top-2 -left-2">
+                    <div className="w-4 h-4 bg-green-500 rounded flex items-center justify-center">
+                      <PenTool className="w-2 h-2 text-white" />
+                    </div>
+                  </div>
+                  <div className="absolute -bottom-2 -right-2">
+                    <div className="w-4 h-4 bg-green-400 rounded flex items-center justify-center">
+                      <FileText className="w-2 h-2 text-white" />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <CardTitle className="text-xl">Start from Scratch</CardTitle>
-              <CardDescription>
-                Build your email from the ground up
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="outline">Drag & Drop</Badge>
-                <Badge variant="outline">Custom Design</Badge>
-                <Badge variant="outline">Full Control</Badge>
+              
+              {/* Card Content */}
+              <div className="p-6 text-center space-y-3">
+                <h3 className="text-xl font-semibold text-gray-900">Start from Scratch</h3>
+                <p className="text-gray-600 text-sm">Build your email from the ground up with full control</p>
               </div>
-              <p className="text-sm text-gray-600">
-                Use our intuitive drag-and-drop editor to create custom designs.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* AI Assistant */}
-          <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-purple-500">
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <CardTitle className="text-xl">AI Assistant</CardTitle>
-              <CardDescription>
-                Let AI help you create emails
-              </CardDescription>
-              <Badge className="bg-purple-100 text-purple-700 mt-2">Coming Soon</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="outline">Smart Content</Badge>
-                <Badge variant="outline">Auto Design</Badge>
-                <Badge variant="outline">Optimization</Badge>
-              </div>
-              <p className="text-sm text-gray-600">
-                Describe your goals and let AI create the perfect template.
-              </p>
             </CardContent>
           </Card>
         </div>
@@ -447,7 +464,7 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
                 <div className="absolute top-2 right-2">
                   <Badge variant="outline" className="bg-white/90 border-blue-300">{template.category}</Badge>
                 </div>
-
+                
                 {/* Email Preview */}
                 <div className="w-full max-w-[180px] bg-white rounded-lg shadow-lg border overflow-hidden">
                   {/* Email Header */}
@@ -458,7 +475,7 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
                       <div className="w-1 h-1 bg-white/70 rounded-full"></div>
                     </div>
                   </div>
-
+                  
                   {/* Email Content Preview */}
                   <div className="p-2 space-y-1">
                     <div className="h-1.5 bg-blue-200 rounded w-4/5"></div>
@@ -469,7 +486,7 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
                   </div>
                 </div>
               </div>
-
+              
               {/* Template Info */}
               <CardContent className="p-4">
                 <div className="space-y-3">
@@ -477,7 +494,7 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
                     <h3 className="font-semibold text-lg mb-1">{template.name}</h3>
                     <p className="text-sm text-gray-600 line-clamp-2">{template.description}</p>
                   </div>
-
+                  
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span className="flex items-center">
                       <Mail className="w-4 h-4 mr-1" />
@@ -488,7 +505,7 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
                       {template.estimatedTime}
                     </span>
                   </div>
-
+                  
                   <div className="flex gap-2">
                     <Button 
                       variant="outline" 
@@ -570,32 +587,6 @@ export default function EmailBuilder({ onBack }: { onBack: () => void }) {
         onBack={() => setView('template-selection')}
         template={selectedTemplate}
       />
-    );
-  }
-
-  // My Emails View
-  if (view === 'my-emails') {
-    return (
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => setView('main')}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Email Builder
-          </Button>
-          <h1 className="text-3xl font-bold mb-2">My Emails</h1>
-          <p className="text-muted-foreground">
-            Manage your saved emails, drafts, and templates
-          </p>
-        </div>
-        {/* Placeholder for email list */}
-        <div>
-          <p>Your saved emails will appear here.</p>
-        </div>
-      </div>
     );
   }
 
