@@ -1,8 +1,8 @@
-# LeadGenius AI - Full-Stack Lead Generation Platform
+# Convertly - Your Smart & Intelligent Marketing OS
 
 ## Overview
 
-LeadGenius AI is a comprehensive, AI-powered lead generation platform built as a modern full-stack web application. The system combines automated lead magnet creation, intelligent funnel building, multi-channel marketing automation, and advanced CRM capabilities to help businesses capture, nurture, and convert leads effectively.
+Convertly is a comprehensive, AI-powered marketing platform built as a modern full-stack web application. The system combines automated lead magnet creation, intelligent funnel building, multi-channel marketing automation, and advanced CRM capabilities to help businesses convert more visitors into paying customers.
 
 ## System Architecture
 
@@ -176,6 +176,23 @@ Changelog:
   * Fixed template isolation issue - now only selected template loads instead of all templates
   * Connected sequence editor to Puck editor for individual email editing
   * Enhanced user experience with proper email sequence workflow like campaign builder
+- July 19, 2025. Complete Marketing Website Creation:
+  * Successfully migrated from Replit Agent to Replit environment with PostgreSQL database
+  * Rebranded from LeadGenius AI to Convertly with new coral/navy color scheme
+  * Created complete marketing website with 7 professional landing pages:
+    - Home: Hero section with compelling value proposition and social proof
+    - Features: Detailed feature breakdown with comparisons and integrations
+    - Pricing: Three-tier pricing with ROI calculator and FAQs
+    - About: Company story, team profiles, values, and mission
+    - Contact: Multiple contact methods, office locations, and contact form
+    - Case Studies: Real customer success stories with detailed results
+    - Blog: Resource hub with expert content and newsletter signup
+  * Implemented professional copywriting with attention-grabbing headlines
+  * Added responsive design with modern UI components and smooth animations
+  * Set up proper routing structure separating marketing pages from app dashboard
+  * Updated color scheme throughout platform to match new Convertly branding
+  * Added Input and Textarea UI components for form functionality
+  * Created comprehensive navigation and footer across all marketing pages
 ```
 
 ## User Preferences

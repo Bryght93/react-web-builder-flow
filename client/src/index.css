@@ -87,22 +87,22 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Brand Colors - Professional Lead Gen Theme */
+    /* Brand Colors - Convertly Theme (Coral + Navy) */
     --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    --foreground: 210 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 30% 15%;
 
-    /* Primary - Professional Blue */
-    --primary: 240 100% 60%;
+    /* Primary - Convertly Coral */
+    --primary: 15 85% 65%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Deep Navy */
-    --secondary: 220 25% 20%;
+    /* Secondary - Convertly Navy */
+    --secondary: 210 30% 15%;
     --secondary-foreground: 0 0% 100%;
 
     /* Success - Conversion Green */
@@ -114,15 +114,16 @@ All colors MUST be HSL.
     --warning-foreground: 0 0% 100%;
 
     /* Muted Backgrounds */
-    --muted: 220 13% 97%;
-    --muted-foreground: 220 9% 55%;
+    --muted: 25 15% 97%;
+    --muted-foreground: 210 15% 55%;
 
-    /* Accent - AI Purple */
-    --accent: 270 95% 75%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Light Coral */
+    --accent: 15 85% 75%;
+    --accent-foreground: 210 30% 15%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(240 100% 60%), hsl(270 95% 75%));
+    --gradient-primary: linear-gradient(135deg, hsl(15 85% 65%), hsl(210 30% 15%));
+    --gradient-hero: linear-gradient(135deg, hsl(15 85% 65%), hsl(15 85% 75%));
     --gradient-hero: linear-gradient(135deg, hsl(240 100% 60%), hsl(220 25% 20%));
     --gradient-success: linear-gradient(135deg, hsl(142 72% 29%), hsl(142 72% 45%));
     

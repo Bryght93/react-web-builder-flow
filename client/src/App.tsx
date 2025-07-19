@@ -8,6 +8,13 @@ import { Layout } from "./components/Layout";
 import VoiceFunnelsAI from "./components/VoiceFunnelsAI";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import Home from "./pages/marketing/Home";
+import Features from "./pages/marketing/Features";
+import Pricing from "./pages/marketing/Pricing";
+import About from "./pages/marketing/About";
+import Contact from "./pages/marketing/Contact";
+import CaseStudies from "./pages/marketing/CaseStudies";
+import Blog from "./pages/marketing/Blog";
 import LeadMagnets from "./pages/LeadMagnets";
 import Funnels from "./pages/Funnels";
 import Leads from "./pages/Leads";
@@ -37,34 +44,42 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/lead-magnets" element={<LeadMagnets />} />
-            <Route path="/funnels" element={<Funnels />} />
-            <Route path="/leads" element={<Leads />} />
-            <Route path="/email-marketing" element={<EmailMarketing />} />
-            <Route path="/email-builder" element={<EmailBuilder />} />
-            
-            <Route path="/crm" element={<CRMDashboard />} />
-            <Route path="/channels" element={<MultiChannelSync />} />
-            <Route path="/page-builder" element={<PageBuilder />} />
-            <Route path="/advanced-builder" element={<AdvancedPageBuilderPage />} />
-            <Route path="/ai-builder" element={<AILeadMagnetBuilder />} />
-            <Route path="/ai-launch" element={<AILaunchAssistantPage />} />
-            <Route path="/ai-email-sms" element={<AIEmailSMSEnginePage />} />
-            <Route path="/ai-ads" element={<AIAdLauncherPage />} />
-            <Route path="/call-booking" element={<CallBookingCloser />} />
-            <Route path="/ads" element={<AdLaunchTracker />} />
-            <Route path="/ai-coach" element={<AISalesCoach />} />
-            <Route path="/integrations" element={<IntegrationsHub />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Marketing Pages (No Layout) */}
+          <Route path="/" element={<Home />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/case-studies" element={<CaseStudies />} />
+          <Route path="/blog" element={<Blog />} />
+          
+          {/* App Pages (With Layout) */}
+          <Route path="/app" element={<Layout><Index /></Layout>} />
+          <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/lead-magnets" element={<Layout><LeadMagnets /></Layout>} />
+          <Route path="/funnels" element={<Layout><Funnels /></Layout>} />
+          <Route path="/leads" element={<Layout><Leads /></Layout>} />
+          <Route path="/email-marketing" element={<Layout><EmailMarketing /></Layout>} />
+          <Route path="/email-builder" element={<Layout><EmailBuilder /></Layout>} />
+          
+          <Route path="/crm" element={<Layout><CRMDashboard /></Layout>} />
+          <Route path="/channels" element={<Layout><MultiChannelSync /></Layout>} />
+          <Route path="/page-builder" element={<Layout><PageBuilder /></Layout>} />
+          <Route path="/advanced-builder" element={<Layout><AdvancedPageBuilderPage /></Layout>} />
+          <Route path="/ai-builder" element={<Layout><AILeadMagnetBuilder /></Layout>} />
+          <Route path="/ai-launch" element={<Layout><AILaunchAssistantPage /></Layout>} />
+          <Route path="/ai-email-sms" element={<Layout><AIEmailSMSEnginePage /></Layout>} />
+          <Route path="/ai-ads" element={<Layout><AIAdLauncherPage /></Layout>} />
+          <Route path="/call-booking" element={<Layout><CallBookingCloser /></Layout>} />
+          <Route path="/ads" element={<Layout><AdLaunchTracker /></Layout>} />
+          <Route path="/ai-coach" element={<Layout><AISalesCoach /></Layout>} />
+          <Route path="/integrations" element={<Layout><IntegrationsHub /></Layout>} />
+          <Route path="/profile" element={<Layout><Profile /></Layout>} />
+          <Route path="/settings" element={<Layout><Settings /></Layout>} />
+          
+          <Route path="*" element={<NotFound />} />
+        </Routes>
         <VoiceFunnelsAI />
       </BrowserRouter>
     </TooltipProvider>
