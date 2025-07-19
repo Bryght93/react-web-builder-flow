@@ -162,8 +162,8 @@ export default function EmailBuilder() {
   const handleTypeSelection = (type: 'sequence' | 'broadcast') => {
     setSelectedType(type);
     if (currentCreationFlow === 'scratch') {
-      // Go directly to Puck editor for scratch
-      setView('puck-editor');
+      // Email editor has been removed - show message
+      alert(`${type} type selected! Email editor functionality has been removed.`);
     } else {
       // Show template selection for AI and template flows
       setView('template-selection');
@@ -172,7 +172,8 @@ export default function EmailBuilder() {
 
   const handleTemplateSelection = (template: EmailTemplate) => {
     setSelectedTemplate(template);
-    setView('puck-editor');
+    // Email editor has been removed - show confirmation message
+    alert(`Template "${template.name}" selected! Email editor functionality has been removed.`);
   };
 
   // Main view with three cards
@@ -537,223 +538,7 @@ export default function EmailBuilder() {
     );
   }
 
-  // Email Editor View
-  if (view === 'puck-editor') {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="border-b bg-white p-4">
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => setView(currentCreationFlow === 'scratch' ? 'type-selection' : 'template-selection')}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-              <div>
-                <h1 className="text-xl font-semibold">
-                  {selectedTemplate ? selectedTemplate.name : `New ${selectedType || 'Email'}`}
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {selectedType === 'sequence' ? 'Email Sequence Builder' : 'Broadcast Email Builder'}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline">Save Draft</Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">Launch Campaign</Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex h-screen">
-          {/* Left Sidebar - Email Sequence Manager (for sequences only) */}
-          {selectedType === 'sequence' && (
-            <div className="w-80 bg-white border-r flex flex-col">
-              <div className="p-4 border-b">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold">Email Sequence</h3>
-                  <Button size="sm" variant="outline">
-                    <Plus className="w-4 h-4 mr-1" />
-                    Add Email
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Drag to reorder emails in your sequence
-                </p>
-              </div>
-              
-              <div className="flex-1 p-4 space-y-3 overflow-y-auto">
-                {/* Sample emails in sequence */}
-                {[
-                  { id: 1, subject: 'Welcome to our community!', delay: '0', status: 'editing' },
-                  { id: 2, subject: 'Here\'s what you need to know', delay: '1 day', status: 'draft' },
-                  { id: 3, subject: 'Special offer just for you', delay: '3 days', status: 'draft' }
-                ].map((email, index) => (
-                  <div key={email.id} className={`border rounded-lg p-3 cursor-pointer transition-all ${index === 0 ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Email {email.id}</span>
-                      <div className="flex items-center space-x-1">
-                        <Badge variant={email.status === 'editing' ? 'default' : 'secondary'} className="text-xs">
-                          {email.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-1">{email.subject}</p>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Clock className="w-3 h-3 mr-1" />
-                      Send after {email.delay}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Main Editor Area */}
-          <div className="flex-1 flex flex-col">
-            {/* Editor Toolbar */}
-            <div className="bg-white border-b p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <h4 className="font-medium">
-                    {selectedType === 'sequence' ? 'Email 1: Welcome to our community!' : 'Broadcast Email'}
-                  </h4>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
-                    <Eye className="w-4 h-4 mr-1" />
-                    Preview
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Test Send
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Email Canvas */}
-            <div className="flex-1 bg-gray-100 p-6 overflow-auto">
-              <div className="max-w-2xl mx-auto">
-                {/* Email Preview */}
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden border">
-                  {/* Email Header */}
-                  <div className="bg-gray-800 text-white p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                          <Mail className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Your Company</p>
-                          <p className="text-xs opacity-75">hello@yourcompany.com</p>
-                        </div>
-                      </div>
-                      <div className="text-xs opacity-75">
-                        {new Date().toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Email Subject */}
-                  <div className="p-4 border-b bg-gray-50">
-                    <h2 className="text-xl font-semibold text-gray-800">
-                      {selectedType === 'sequence' ? 'Welcome to our community!' : 'Your Amazing Subject Line'}
-                    </h2>
-                  </div>
-
-                  {/* Email Body */}
-                  <div className="p-6 space-y-4">
-                    <div className="prose max-w-none">
-                      <p className="text-gray-700 leading-relaxed">
-                        Hi there! 👋
-                      </p>
-                      <p className="text-gray-700 leading-relaxed">
-                        {selectedType === 'sequence' 
-                          ? "Welcome to our amazing community! We're thrilled to have you on board. This is the beginning of something great."
-                          : "We have some exciting news to share with you today. Get ready for something amazing!"
-                        }
-                      </p>
-                      <p className="text-gray-700 leading-relaxed">
-                        Over the next few days, you'll receive valuable content that will help you succeed. Here's what to expect:
-                      </p>
-                      <ul className="text-gray-700">
-                        <li>Exclusive tips and strategies</li>
-                        <li>Behind-the-scenes content</li>
-                        <li>Special offers and discounts</li>
-                      </ul>
-                    </div>
-
-                    {/* Call to Action */}
-                    <div className="text-center py-4">
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
-                        Get Started Now
-                      </Button>
-                    </div>
-
-                    <div className="border-t pt-4 text-center text-sm text-gray-500">
-                      <p>Best regards,<br />The Your Company Team</p>
-                    </div>
-                  </div>
-
-                  {/* Email Footer */}
-                  <div className="bg-gray-50 p-4 text-center text-xs text-gray-500 border-t">
-                    <p>You're receiving this email because you subscribed to our newsletter.</p>
-                    <p className="mt-1">
-                      <a href="#" className="text-blue-600 hover:underline">Unsubscribe</a> | 
-                      <a href="#" className="text-blue-600 hover:underline ml-1">Update Preferences</a>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Editing Instructions */}
-                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">🎨 Start Building Your Email!</h4>
-                  <p className="text-blue-800 text-sm">
-                    Your drag-and-drop email editor will be integrated here. You'll be able to:
-                  </p>
-                  <ul className="mt-2 text-sm text-blue-800 space-y-1">
-                    <li>• Customize text, images, and buttons</li>
-                    <li>• Add dynamic content blocks</li>
-                    <li>• Preview on different devices</li>
-                    <li>• Test email deliverability</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Sidebar - Element Library */}
-          <div className="w-64 bg-white border-l flex flex-col">
-            <div className="p-4 border-b">
-              <h3 className="font-semibold mb-2">Add Elements</h3>
-              <p className="text-sm text-muted-foreground">Drag elements into your email</p>
-            </div>
-            
-            <div className="flex-1 p-4 space-y-3 overflow-y-auto">
-              {/* Element Categories */}
-              {[
-                { icon: FileText, name: 'Text Block', desc: 'Add paragraphs, headers' },
-                { icon: Target, name: 'Button', desc: 'Call-to-action button' },
-                { icon: Mail, name: 'Image', desc: 'Upload or select images' },
-                { icon: Heart, name: 'Divider', desc: 'Separate content sections' },
-                { icon: CheckCircle, name: 'Social Icons', desc: 'Link to social media' },
-                { icon: Clock, name: 'Countdown', desc: 'Add urgency timers' }
-              ].map((element, index) => (
-                <div key={index} className="border border-dashed border-gray-300 rounded-lg p-3 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
-                  <div className="flex items-center space-x-2">
-                    <element.icon className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <p className="text-sm font-medium">{element.name}</p>
-                      <p className="text-xs text-gray-500">{element.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  
 
   return null;
 }
