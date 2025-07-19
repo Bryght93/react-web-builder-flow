@@ -3,6 +3,50 @@ import { Puck, Config, Data } from '@measured/puck';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Eye, Send } from 'lucide-react';
 
+// Color Picker Component
+const ColorPicker = ({ value, onChange, label }: { value: string, onChange: (color: string) => void, label: string }) => {
+  const colors = [
+    '#000000', '#333333', '#666666', '#999999', '#cccccc', '#ffffff',
+    '#ff0000', '#ff6600', '#ffcc00', '#66ff00', '#00ff66', '#00ccff',
+    '#0066ff', '#6600ff', '#cc00ff', '#ff0066', '#dc2626', '#ea580c',
+    '#ca8a04', '#16a34a', '#059669', '#0891b2', '#2563eb', '#7c3aed',
+    '#c026d3', '#e11d48', '#f97316', '#eab308', '#22c55e', '#06b6d4',
+    '#3b82f6', '#8b5cf6', '#d946ef', '#ec4899'
+  ];
+  
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium block">{label}</label>
+      <div className="flex items-center space-x-2">
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-8 h-8 border border-gray-300 rounded cursor-pointer"
+        />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
+          placeholder="#000000"
+        />
+      </div>
+      <div className="grid grid-cols-6 gap-1">
+        {colors.map((color) => (
+          <button
+            key={color}
+            onClick={() => onChange(color)}
+            className={`w-6 h-6 rounded border ${value === color ? 'border-blue-500 border-2' : 'border-gray-300'}`}
+            style={{ backgroundColor: color }}
+            title={color}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Define email component types for Puck
 interface HeadingProps {
   text: string;
@@ -143,9 +187,116 @@ const ContainerComponent = ({ backgroundColor, padding, maxWidth, children }: Co
   </div>
 );
 
+// Enhanced Layout Components
+const LayoutBlock = ({ columns, children, backgroundColor, padding }: { 
+  columns: 1 | 2 | 3 | 4, 
+  children: React.ReactNode, 
+  backgroundColor: string, 
+  padding: string 
+}) => (
+  <div style={{ 
+    backgroundColor, 
+    padding, 
+    display: 'grid', 
+    gridTemplateColumns: `repeat(${columns}, 1fr)`,
+    gap: '16px',
+    marginBottom: '16px'
+  }}>
+    {children}
+  </div>
+);
+
+const SocialIcons = ({ icons, size, style }: { 
+  icons: string[], 
+  size: number, 
+  style: 'circle' | 'square' | 'rounded' 
+}) => (
+  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+    {icons.map((icon, index) => (
+      <div 
+        key={index}
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          backgroundColor: '#3b82f6',
+          borderRadius: style === 'circle' ? '50%' : style === 'rounded' ? '4px' : '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: `${size * 0.6}px`,
+          cursor: 'pointer'
+        }}
+      >
+        {icon[0].toUpperCase()}
+      </div>
+    ))}
+  </div>
+);
+
+const LinkBar = ({ links, backgroundColor, textColor }: { 
+  links: string[], 
+  backgroundColor: string, 
+  textColor: string 
+}) => (
+  <div style={{ 
+    backgroundColor, 
+    padding: '12px', 
+    display: 'flex', 
+    justifyContent: 'center', 
+    gap: '20px',
+    marginBottom: '16px'
+  }}>
+    {links.map((link, index) => (
+      <a 
+        key={index}
+        href="#"
+        style={{ 
+          color: textColor, 
+          textDecoration: 'none',
+          fontSize: '14px',
+          fontWeight: '500'
+        }}
+      >
+        {link}
+      </a>
+    ))}
+  </div>
+);
+
 // Puck configuration for email components
 const config: Config = {
   components: {
+    LayoutBlock: {
+      fields: {
+        columns: {
+          type: 'select',
+          options: [
+            { label: '1 Column', value: 1 },
+            { label: '2 Columns', value: 2 },
+            { label: '3 Columns', value: 3 },
+            { label: '4 Columns', value: 4 },
+          ],
+        },
+        backgroundColor: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#ffffff'} 
+              onChange={onChange} 
+              label="Background Color"
+            />
+          )
+        },
+        padding: { type: 'text' },
+      },
+      defaultProps: {
+        columns: 1,
+        backgroundColor: '#ffffff',
+        padding: '20px',
+      },
+      render: LayoutBlock,
+    },
     Heading: {
       fields: {
         text: { type: 'text' },
@@ -160,7 +311,16 @@ const config: Config = {
             { label: 'H6', value: 6 },
           ],
         },
-        color: { type: 'text' },
+        color: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#333333'} 
+              onChange={onChange} 
+              label="Text Color"
+            />
+          )
+        },
         textAlign: {
           type: 'select',
           options: [
@@ -181,7 +341,16 @@ const config: Config = {
     Text: {
       fields: {
         text: { type: 'textarea' },
-        color: { type: 'text' },
+        color: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#666666'} 
+              onChange={onChange} 
+              label="Text Color"
+            />
+          )
+        },
         fontSize: { type: 'number' },
         textAlign: {
           type: 'select',
@@ -212,8 +381,26 @@ const config: Config = {
       fields: {
         text: { type: 'text' },
         href: { type: 'text' },
-        backgroundColor: { type: 'text' },
-        textColor: { type: 'text' },
+        backgroundColor: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#007bff'} 
+              onChange={onChange} 
+              label="Background Color"
+            />
+          )
+        },
+        textColor: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#ffffff'} 
+              onChange={onChange} 
+              label="Text Color"
+            />
+          )
+        },
         borderRadius: { type: 'number' },
         padding: { type: 'text' },
       },
@@ -226,6 +413,67 @@ const config: Config = {
         padding: '12px 24px',
       },
       render: ButtonComponent,
+    },
+    SocialIcons: {
+      fields: {
+        icons: {
+          type: 'array',
+          arrayFields: {
+            name: { type: 'text' }
+          }
+        },
+        size: { type: 'number' },
+        style: {
+          type: 'select',
+          options: [
+            { label: 'Circle', value: 'circle' },
+            { label: 'Square', value: 'square' },
+            { label: 'Rounded', value: 'rounded' },
+          ],
+        },
+      },
+      defaultProps: {
+        icons: ['Facebook', 'Twitter', 'Instagram'],
+        size: 32,
+        style: 'circle',
+      },
+      render: SocialIcons,
+    },
+    LinkBar: {
+      fields: {
+        links: {
+          type: 'array',
+          arrayFields: {
+            name: { type: 'text' }
+          }
+        },
+        backgroundColor: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#f8fafc'} 
+              onChange={onChange} 
+              label="Background Color"
+            />
+          )
+        },
+        textColor: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#1e293b'} 
+              onChange={onChange} 
+              label="Text Color"
+            />
+          )
+        },
+      },
+      defaultProps: {
+        links: ['Home', 'About', 'Services', 'Contact'],
+        backgroundColor: '#f8fafc',
+        textColor: '#1e293b',
+      },
+      render: LinkBar,
     },
     Image: {
       fields: {
@@ -255,7 +503,16 @@ const config: Config = {
     },
     Divider: {
       fields: {
-        color: { type: 'text' },
+        color: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#e0e0e0'} 
+              onChange={onChange} 
+              label="Divider Color"
+            />
+          )
+        },
         thickness: { type: 'number' },
         style: {
           type: 'select',
@@ -275,7 +532,16 @@ const config: Config = {
     },
     Container: {
       fields: {
-        backgroundColor: { type: 'text' },
+        backgroundColor: { 
+          type: 'custom',
+          render: ({ field, onChange, value }) => (
+            <ColorPicker 
+              value={value || '#ffffff'} 
+              onChange={onChange} 
+              label="Background Color"
+            />
+          )
+        },
         padding: { type: 'text' },
         maxWidth: { type: 'text' },
       },
@@ -289,7 +555,16 @@ const config: Config = {
   },
   root: {
     props: {
-      backgroundColor: { type: 'text' },
+      backgroundColor: { 
+        type: 'custom',
+        render: ({ field, onChange, value }) => (
+          <ColorPicker 
+            value={value || '#f5f5f5'} 
+            onChange={onChange} 
+            label="Email Background"
+          />
+        )
+      },
       padding: { type: 'text' },
     },
     render: ({ backgroundColor, padding, children }) => (
@@ -297,9 +572,12 @@ const config: Config = {
         backgroundColor: backgroundColor || '#f5f5f5', 
         padding: padding || '20px', 
         minHeight: '100vh',
-        fontFamily: 'Arial, sans-serif'
+        fontFamily: 'Arial, sans-serif',
+        overflowY: 'auto'
       }}>
-        {children}
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          {children}
+        </div>
       </div>
     ),
   },
@@ -634,9 +912,9 @@ export default function PuckEmailEditor({
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -673,11 +951,16 @@ export default function PuckEmailEditor({
       </div>
 
       {/* Editor */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0">
         <Puck
           config={config}
           data={data}
           onPublish={(newData) => setData(newData)}
+          ui={{
+            leftSideBarVisible: true,
+            rightSideBarVisible: true,
+            headerVisible: false,
+          }}
         />
       </div>
     </div>
