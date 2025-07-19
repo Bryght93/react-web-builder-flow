@@ -1,5 +1,5 @@
 import React from 'react';
-import { Puck, Config } from '@measured/puck';
+import { Puck, Config, Data } from '@measured/puck';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Eye, Send } from 'lucide-react';
 
@@ -285,16 +285,17 @@ const config: Config = {
     },
   },
   root: {
-    fields: {
+    props: {
       backgroundColor: { type: 'text' },
       padding: { type: 'text' },
     },
-    defaultProps: {
-      backgroundColor: '#f5f5f5',
-      padding: '20px',
-    },
     render: ({ backgroundColor, padding, children }) => (
-      <div style={{ backgroundColor, padding, minHeight: '100vh' }}>
+      <div style={{ 
+        backgroundColor: backgroundColor || '#f5f5f5', 
+        padding: padding || '20px', 
+        minHeight: '100vh',
+        fontFamily: 'Arial, sans-serif'
+      }}>
         {children}
       </div>
     ),
@@ -317,11 +318,47 @@ export default function PuckEmailEditor({
   initialData,
   emailTemplate 
 }: PuckEmailEditorProps) {
-  const [data, setData] = React.useState(initialData || {
-    content: [],
+  const [data, setData] = React.useState<Data>(initialData || {
+    content: [
+      {
+        type: "Heading",
+        props: {
+          id: "heading-1",
+          text: "Welcome to our Newsletter!",
+          level: 1,
+          color: '#333333',
+          textAlign: 'center',
+        },
+      },
+      {
+        type: "Text",
+        props: {
+          id: "text-1",
+          text: "Thank you for subscribing. We're excited to share valuable content with you.",
+          color: '#666666',
+          fontSize: 16,
+          textAlign: 'left',
+          fontWeight: 'normal',
+        },
+      },
+      {
+        type: "Button",
+        props: {
+          id: "button-1",
+          text: "Get Started",
+          href: "#",
+          backgroundColor: '#007bff',
+          textColor: '#ffffff',
+          borderRadius: 4,
+          padding: '12px 24px',
+        },
+      },
+    ],
     root: {
-      backgroundColor: '#f5f5f5',
-      padding: '20px',
+      props: {
+        backgroundColor: '#f5f5f5',
+        padding: '20px',
+      }
     },
   });
 
@@ -394,38 +431,11 @@ export default function PuckEmailEditor({
 
       {/* Editor */}
       <div className="flex-1 overflow-hidden">
-        {previewMode ? (
-          <div className="h-full bg-gray-100 p-8 overflow-y-auto">
-            <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-              <div className="bg-gray-50 px-6 py-4 border-b">
-                <h2 className="text-lg font-semibold">Email Preview</h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  Subject: {emailTemplate?.subject || 'Untitled Email'}
-                </p>
-              </div>
-              <div className="p-6">
-                <Puck
-                  config={config}
-                  data={data}
-                  onPublish={(data) => setData(data)}
-                  ui={{
-                    leftSideBarVisible: false,
-                    rightSideBarVisible: false,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Puck
-            config={config}
-            data={data}
-            onPublish={(data) => setData(data)}
-            ui={{
-              headerActions: null,
-            }}
-          />
-        )}
+        <Puck
+          config={config}
+          data={data}
+          onPublish={(newData) => setData(newData)}
+        />
       </div>
     </div>
   );
