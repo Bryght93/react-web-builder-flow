@@ -40,7 +40,7 @@ import {
   type EmailAutomation,
   type InsertEmailAutomation,
   type EmailSend
-} from "@shared/schema";
+} from "../shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or } from "drizzle-orm";
 

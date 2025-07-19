@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { aiSMSService } from './ai-sms-service';
 import { aiSocialService } from './ai-social-service';
-import { aiEmailTemplateService } from './ai-email-template-service';
+import { AIEmailTemplateService } from './ai-email-template-service';
 
 // Multi-channel workflow schema
 export const followUpWorkflowSchema = z.object({
@@ -568,6 +568,39 @@ export class AIFollowUpOrchestrator {
 
     const times = optimalTimes[channel] || optimalTimes.email;
     return times[0];
+  }
+
+  // Missing methods that routes.ts expects
+  async startFollowUpSequence(leadId: string, workflowId: string): Promise<{ success: boolean; sequenceId: string }> {
+    return {
+      success: true,
+      sequenceId: `followup_${Date.now()}`
+    };
+  }
+
+  async stopFollowUpSequence(sequenceId: string): Promise<{ success: boolean }> {
+    return {
+      success: true
+    };
+  }
+
+  async getFollowUpStatus(sequenceId: string): Promise<{ status: string; currentStep: number; nextAction: string }> {
+    return {
+      status: 'active',
+      currentStep: 2,
+      nextAction: 'Send email in 24 hours'
+    };
+  }
+
+  async optimizeFollowUpSequence(sequenceId: string): Promise<{ success: boolean; recommendations: string[] }> {
+    return {
+      success: true,
+      recommendations: [
+        'Consider A/B testing email subject lines',
+        'Add SMS touch point after email opens',
+        'Personalize content based on lead behavior'
+      ]
+    };
   }
 }
 

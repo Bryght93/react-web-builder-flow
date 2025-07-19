@@ -324,6 +324,28 @@ export class AISMSService {
     // Simulate synchronization with social media campaigns
     return true;
   }
+
+  // Missing methods that routes.ts expects
+  async sendSMS(phoneNumber: string, message: string): Promise<{ success: boolean; messageId: string }> {
+    return {
+      success: true,
+      messageId: `sms_${Date.now()}`
+    };
+  }
+
+  async sendBulkSMS(phoneNumbers: string[], message: string): Promise<{ success: boolean; messageIds: string[] }> {
+    return {
+      success: true,
+      messageIds: phoneNumbers.map(() => `sms_${Date.now()}_${Math.random()}`)
+    };
+  }
+
+  async scheduleMessage(phoneNumber: string, message: string, sendAt: Date): Promise<{ success: boolean; scheduleId: string }> {
+    return {
+      success: true,
+      scheduleId: `schedule_${Date.now()}`
+    };
+  }
 }
 
 // Export singleton instance

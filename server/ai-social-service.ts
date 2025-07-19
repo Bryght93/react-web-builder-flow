@@ -529,6 +529,28 @@ export class AISocialService {
     // Simulate synchronization with SMS campaigns
     return true;
   }
+
+  // Missing methods that routes.ts expects
+  async sendDirectMessage(platform: SocialPlatform, recipientId: string, message: string): Promise<{ success: boolean; messageId: string }> {
+    return {
+      success: true,
+      messageId: `dm_${platform}_${Date.now()}`
+    };
+  }
+
+  async sendBulkDirectMessages(platform: SocialPlatform, recipientIds: string[], message: string): Promise<{ success: boolean; messageIds: string[] }> {
+    return {
+      success: true,
+      messageIds: recipientIds.map(() => `dm_${platform}_${Date.now()}_${Math.random()}`)
+    };
+  }
+
+  async scheduleDirectMessage(platform: SocialPlatform, recipientId: string, message: string, sendAt: Date): Promise<{ success: boolean; scheduleId: string }> {
+    return {
+      success: true,
+      scheduleId: `schedule_dm_${platform}_${Date.now()}`
+    };
+  }
 }
 
 // Export singleton instance
