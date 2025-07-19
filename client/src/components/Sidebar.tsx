@@ -46,6 +46,7 @@ const navigation = [
     name: "Email Marketing",
     items: [
       { name: "📧 Campaign Builder", href: "/email-marketing", icon: Mail },
+      { name: "✉️ Email Builder", href: "/email-builder", icon: PenTool },
     ]
   },
   {

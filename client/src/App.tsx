@@ -28,6 +28,7 @@ import IntegrationsHub from "./components/IntegrationsHub";
 import AILaunchAssistantPage from "./pages/AILaunchAssistant";
 import AIEmailSMSEnginePage from "./pages/AIEmailSMSEngine";
 import AIAdLauncherPage from "./pages/AIAdLauncher";
+import EmailBuilder from "./components/EmailBuilder";
 
 
 const App = () => (
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/funnels" element={<Funnels />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/email-marketing" element={<EmailMarketing />} />
+            <Route path="/email-builder" element={<EmailBuilder />} />
             
             <Route path="/crm" element={<CRMDashboard />} />
             <Route path="/channels" element={<MultiChannelSync />} />
