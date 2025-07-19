@@ -833,8 +833,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates = req.body;
       const leadMagnet = await storage.updateLeadMagnet(id, updates);
       res.json(leadMagnet);
-    } catch<previous_generation>
-error) {
+    } catch (error) {
       res.status(400).json({ error: "Failed to update lead magnet" });
     }
   });
@@ -1287,79 +1286,6 @@ error) {
     } catch (error) {
       console.error('Follow-up optimization error:', error);
       res.status(500).json({ error: "Failed to optimize follow-up sequence" });
-    }
-  });
-
-  // Email sending endpoint
-  app.post('/api/send-email', async (req, res) => {
-    try {
-      const { subject, html, data } = req.body;
-
-      // Here you would integrate with your email service provider
-      // For example: SendGrid, Mailgun, Amazon SES, etc.
-
-      console.log('Sending email with subject:', subject);
-      console.log('Email HTML length:', html.length);
-
-      // Simulate email sending
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      res.json({ 
-        success: true, 
-        message: 'Email sent successfully',
-        emailId: Date.now().toString()
-      });
-    } catch (error) {
-      console.error('Email sending failed:', error);
-      res.status(500).json({ success: false, error: 'Failed to send email' });
-    }
-  });
-
-  // SMS sending endpoint
-  app.post('/api/send-sms', async (req, res) => {
-    try {
-      const { message, data } = req.body;
-
-      // Here you would integrate with your SMS service provider
-      // For example: Twilio, AWS SNS, etc.
-
-      console.log('Sending SMS with message:', message);
-
-      // Simulate SMS sending
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      res.json({ 
-        success: true, 
-        message: 'SMS sent successfully',
-        smsId: Date.now().toString()
-      });
-    } catch (error) {
-      console.error('SMS sending failed:', error);
-      res.status(500).json({ success: false, error: 'Failed to send SMS' });
-    }
-  });
-
-  // DM/Social Media sending endpoint
-  app.post('/api/send-dm', async (req, res) => {
-    try {
-      const { platform, message, data } = req.body;
-
-      // Here you would integrate with social media APIs
-      // For example: Facebook Messenger, Instagram, Twitter DMs, etc.
-
-      console.log(`Sending ${platform} DM with message:`, message);
-
-      // Simulate DM sending
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      res.json({ 
-        success: true, 
-        message: `${platform} DM sent successfully`,
-        dmId: Date.now().toString()
-      });
-    } catch (error) {
-      console.error('DM sending failed:', error);
-      res.status(500).json({ success: false, error: 'Failed to send DM' });
     }
   });
 

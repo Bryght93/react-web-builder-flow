@@ -894,38 +894,8 @@ export default function PuckEmailEditor({
   };
 
   const generateEmailHTML = () => {
-    // Convert Puck data to email-ready HTML
-    const renderContent = (content: any[]) => {
-      return content.map((item) => {
-        switch (item.type) {
-          case 'Heading':
-            const HeadingTag = `h${item.props.level}`;
-            return `<${HeadingTag} style="color: ${item.props.color}; text-align: ${item.props.textAlign}; margin: 16px 0; font-family: Arial, sans-serif;">${item.props.text}</${HeadingTag}>`;
-          
-          case 'Text':
-            return `<p style="color: ${item.props.color}; font-size: ${item.props.fontSize}px; text-align: ${item.props.textAlign}; font-weight: ${item.props.fontWeight}; margin: 12px 0; line-height: 1.6; font-family: Arial, sans-serif;">${item.props.text}</p>`;
-          
-          case 'Button':
-            return `<div style="text-align: center; margin: 20px 0;"><a href="${item.props.href}" style="display: inline-block; background-color: ${item.props.backgroundColor}; color: ${item.props.textColor}; padding: ${item.props.padding}; border-radius: ${item.props.borderRadius}px; text-decoration: none; font-weight: bold; font-family: Arial, sans-serif;">${item.props.text}</a></div>`;
-          
-          case 'Image':
-            return `<div style="text-align: center; margin: 16px 0;"><img src="${item.props.src}" alt="${item.props.alt}" style="width: ${item.props.width}; height: ${item.props.height}; border-radius: ${item.props.borderRadius}px; max-width: 100%; object-fit: cover;" /></div>`;
-          
-          case 'Spacer':
-            return `<div style="height: ${item.props.height}px;"></div>`;
-          
-          case 'Divider':
-            return `<hr style="border: none; border-top: ${item.props.thickness}px ${item.props.style} ${item.props.color}; margin: 20px 0; width: 100%;" />`;
-          
-          case 'Container':
-            return `<div style="background-color: ${item.props.backgroundColor}; padding: ${item.props.padding}; max-width: ${item.props.maxWidth}; margin: 0 auto; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">${renderContent(item.props.children || [])}</div>`;
-          
-          default:
-            return '';
-        }
-      }).join('');
-    };
-
+    // This would convert the Puck data to HTML for email sending
+    // For now, return a basic HTML structure
     return `
       <!DOCTYPE html>
       <html>
@@ -933,84 +903,12 @@ export default function PuckEmailEditor({
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <title>${emailTemplate?.subject || 'Email'}</title>
-          <style>
-            body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-            @media only screen and (max-width: 600px) {
-              .email-container { width: 100% !important; }
-            }
-          </style>
         </head>
-        <body style="margin: 0; padding: 0; background-color: ${data.root?.props?.backgroundColor || '#f5f5f5'};">
-          <div class="email-container" style="max-width: 600px; margin: 0 auto; background-color: ${data.root?.props?.backgroundColor || '#f5f5f5'}; padding: ${data.root?.props?.padding || '20px'};">
-            ${renderContent(data.content || [])}
-          </div>
+        <body style="margin: 0; padding: 0; background-color: ${data.root?.backgroundColor || '#f5f5f5'};">
+          <!-- Email content would be rendered here -->
         </body>
       </html>
     `;
-  };
-
-  const sendEmail = async () => {
-    const emailHTML = generateEmailHTML();
-    const emailData = {
-      subject: emailTemplate?.subject || 'Untitled Email',
-      html: emailHTML,
-      data: data
-    };
-
-    try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(emailData)
-      });
-      
-      if (response.ok) {
-        console.log('Email sent successfully');
-        // Add success notification
-      }
-    } catch (error) {
-      console.error('Failed to send email:', error);
-    }
-  };
-
-  const generateSMSContent = () => {
-    // Extract text content for SMS (no HTML, character limit)
-    const textContent = data.content?.map((item: any) => {
-      switch (item.type) {
-        case 'Heading':
-        case 'Text':
-          return item.props.text;
-        case 'Button':
-          return `${item.props.text}: ${item.props.href}`;
-        default:
-          return '';
-      }
-    }).filter(Boolean).join('\n\n');
-
-    // Truncate to SMS limits (160 chars for single SMS)
-    return textContent?.substring(0, 160) + (textContent?.length > 160 ? '...' : '');
-  };
-
-  const sendSMS = async () => {
-    const smsContent = generateSMSContent();
-    const smsData = {
-      message: smsContent,
-      data: data
-    };
-
-    try {
-      const response = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(smsData)
-      });
-      
-      if (response.ok) {
-        console.log('SMS sent successfully');
-      }
-    } catch (error) {
-      console.error('Failed to send SMS:', error);
-    }
   };
 
   return (
@@ -1045,16 +943,8 @@ export default function PuckEmailEditor({
             <Save className="h-4 w-4 mr-2" />
             Save
           </Button>
-          <Button variant="outline" size="sm" onClick={sendSMS}>
-            <Send className="h-4 w-4 mr-2" />
-            Send SMS
-          </Button>
-          <Button size="sm" onClick={sendEmail}>
-            <Send className="h-4 w-4 mr-2" />
-            Send Email
-          </Button>
           <Button size="sm" onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
+            <Send className="h-4 w-4 mr-2" />
             Save & Continue
           </Button>
         </div>
