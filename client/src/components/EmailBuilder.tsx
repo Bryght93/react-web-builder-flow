@@ -19,6 +19,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import PuckEmailEditor from './PuckEmailEditor';
+import EmailSequenceEditor from './EmailSequenceEditor';
 
 interface Email {
   id: number;
@@ -50,7 +51,7 @@ interface EmailTemplate {
 }
 
 export default function EmailBuilder() {
-  const [view, setView] = useState<'main' | 'type-selection' | 'template-selection' | 'puck-editor'>('main');
+  const [view, setView] = useState<'main' | 'type-selection' | 'template-selection' | 'sequence-editor' | 'puck-editor'>('main');
   const [selectedType, setSelectedType] = useState<'sequence' | 'broadcast' | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
   const [currentCreationFlow, setCurrentCreationFlow] = useState<'ai' | 'template' | 'scratch'>('template');
@@ -178,7 +179,13 @@ export default function EmailBuilder() {
     // Simulate template loading
     setTimeout(() => {
       setIsGenerating(false);
-      setView('puck-editor');
+      
+      // Use sequence editor for multi-email templates, Puck editor for single emails
+      if (template.emailCount > 1) {
+        setView('sequence-editor');
+      } else {
+        setView('puck-editor');
+      }
     }, 1500);
   };
 
@@ -568,13 +575,17 @@ export default function EmailBuilder() {
           name: selectedTemplate?.name || `New ${selectedType} Email`,
           subject: selectedTemplate?.name ? `${selectedTemplate.name} - Subject` : 'Your Email Subject Here'
         }}
-        initialData={{
-          content: [],
-          root: {
-            backgroundColor: '#f5f5f5',
-            padding: '20px',
-          },
-        }}
+        initialData={null} // Let PuckEmailEditor handle template content based on selected template
+      />
+    );
+  }
+
+  // Email Sequence Editor View
+  if (view === 'sequence-editor' && selectedTemplate) {
+    return (
+      <EmailSequenceEditor
+        onBack={() => setView('template-selection')}
+        template={selectedTemplate}
       />
     );
   }

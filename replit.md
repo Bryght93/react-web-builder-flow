@@ -166,6 +166,16 @@ Changelog:
   * Fixed CSS import order and root configuration issues for proper Puck functionality
   * Connected email builder "Select" buttons to open Puck editor with pre-designed content
   * Enhanced email templates with professional styling and proper email structure
+- July 19, 2025. Campaign-Style Email Sequence Editor Implementation:
+  * Created EmailSequenceEditor component with campaign builder-style interface
+  * Added left sidebar showing individual emails with add button functionality
+  * Implemented AI integration panel for voice and text prompts to edit email content
+  * Built template-specific email sequences for Welcome Series (3 emails) and Product Launch (5 emails)
+  * Added email management features: edit, duplicate, delete individual emails
+  * Integrated delay settings and email status tracking (draft/active)
+  * Fixed template isolation issue - now only selected template loads instead of all templates
+  * Connected sequence editor to Puck editor for individual email editing
+  * Enhanced user experience with proper email sequence workflow like campaign builder
 ```
 
 ## User Preferences

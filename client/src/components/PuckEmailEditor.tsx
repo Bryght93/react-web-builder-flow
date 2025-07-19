@@ -325,6 +325,11 @@ export default function PuckEmailEditor({
   const getTemplateContent = () => {
     const templateName = emailTemplate?.name;
     
+    // If we have initial data passed in, use it
+    if (initialData && initialData.content && initialData.content.length > 0) {
+      return initialData.content;
+    }
+    
     if (templateName?.includes('Welcome')) {
       return [
         {
@@ -582,14 +587,22 @@ export default function PuckEmailEditor({
     }
   };
 
-  const [data, setData] = React.useState<Data>(initialData || {
-    content: getTemplateContent(),
-    root: {
-      props: {
-        backgroundColor: '#f8fafc',
-        padding: '20px',
-      }
-    },
+  const [data, setData] = React.useState<Data>(() => {
+    // If we have valid initial data, use it directly
+    if (initialData && initialData.content && initialData.content.length > 0) {
+      return initialData;
+    }
+    
+    // Otherwise, create template-specific content
+    return {
+      content: getTemplateContent(),
+      root: {
+        props: {
+          backgroundColor: '#f8fafc',
+          padding: '20px',
+        }
+      },
+    };
   });
 
   const [previewMode, setPreviewMode] = React.useState(false);
