@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Puck, Config, Data } from '@measured/puck';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, Eye, Send } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Save, Eye, Send, Monitor, Smartphone, Settings, Palette, Type, Image as ImageIcon, Link, Layers, Grid, AlignLeft, AlignCenter, AlignRight, Bold, Italic, Underline } from 'lucide-react';
 
 // Color Picker Component
 const ColorPicker = ({ value, onChange, label }: { value: string, onChange: (color: string) => void, label: string }) => {
@@ -97,6 +103,55 @@ interface ContainerProps {
   children: React.ReactNode;
 }
 
+interface LayoutBlockProps {
+  columns: 1 | 2 | 3 | 4;
+  backgroundColor: string;
+  padding: string;
+  borderColor: string;
+  borderWidth: number;
+  borderStyle: 'solid' | 'dashed' | 'dotted';
+  fullWidth: boolean;
+  stackOnMobile: boolean;
+  children: React.ReactNode;
+}
+
+interface SocialIconsProps {
+  icons: { platform: string; url: string; color: string }[];
+  size: number;
+  style: 'circle' | 'square' | 'rounded';
+  spacing: number;
+}
+
+interface LinkBarProps {
+  links: { text: string; url: string }[];
+  alignment: 'left' | 'center' | 'right';
+  color: string;
+  fontSize: number;
+  spacing: number;
+}
+
+interface TextWrapImageProps {
+  src: string;
+  alt: string;
+  text: string;
+  imagePosition: 'left' | 'right';
+  imageWidth: string;
+  borderRadius: number;
+}
+
+interface VideoProps {
+  thumbnailSrc: string;
+  videoUrl: string;
+  alt: string;
+  width: string;
+  height: string;
+  borderRadius: number;
+}
+
+interface HTMLBlockProps {
+  htmlContent: string;
+}
+
 // Puck component definitions
 const HeadingComponent = ({ text, level, color, textAlign }: HeadingProps) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
@@ -188,85 +243,177 @@ const ContainerComponent = ({ backgroundColor, padding, maxWidth, children }: Co
 );
 
 // Enhanced Layout Components
-const LayoutBlock = ({ columns, children, backgroundColor, padding }: { 
-  columns: 1 | 2 | 3 | 4, 
-  children: React.ReactNode, 
-  backgroundColor: string, 
-  padding: string 
-}) => (
+const LayoutBlockComponent = ({ 
+  columns, 
+  backgroundColor, 
+  padding, 
+  borderColor, 
+  borderWidth, 
+  borderStyle, 
+  fullWidth, 
+  stackOnMobile, 
+  children 
+}: LayoutBlockProps) => (
   <div style={{ 
     backgroundColor, 
     padding, 
+    border: `${borderWidth}px ${borderStyle} ${borderColor}`,
+    width: fullWidth ? '100%' : 'auto',
     display: 'grid', 
     gridTemplateColumns: `repeat(${columns}, 1fr)`,
     gap: '16px',
-    marginBottom: '16px'
+    marginBottom: '16px',
+    '@media (max-width: 768px)': stackOnMobile ? {
+      gridTemplateColumns: '1fr',
+      gap: '8px'
+    } : {}
   }}>
     {children}
   </div>
 );
 
-const SocialIcons = ({ icons, size, style }: { 
-  icons: string[], 
-  size: number, 
-  style: 'circle' | 'square' | 'rounded' 
-}) => (
-  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+const SocialIconsComponent = ({ icons, size, style, spacing }: SocialIconsProps) => (
+  <div style={{ 
+    display: 'flex', 
+    gap: `${spacing}px`, 
+    justifyContent: 'center',
+    margin: '20px 0'
+  }}>
     {icons.map((icon, index) => (
-      <div 
+      <a 
         key={index}
+        href={icon.url}
+        target="_blank"
+        rel="noopener noreferrer"
         style={{
           width: `${size}px`,
           height: `${size}px`,
-          backgroundColor: '#3b82f6',
-          borderRadius: style === 'circle' ? '50%' : style === 'rounded' ? '4px' : '0',
+          backgroundColor: icon.color,
+          borderRadius: style === 'circle' ? '50%' : style === 'rounded' ? '8px' : '0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
+          textDecoration: 'none',
           fontSize: `${size * 0.6}px`,
+          fontWeight: 'bold',
+          transition: 'transform 0.2s ease',
           cursor: 'pointer'
         }}
+        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
       >
-        {icon[0].toUpperCase()}
-      </div>
-    ))}
-  </div>
-);
-
-const LinkBar = ({ links, backgroundColor, textColor }: { 
-  links: string[], 
-  backgroundColor: string, 
-  textColor: string 
-}) => (
-  <div style={{ 
-    backgroundColor, 
-    padding: '12px', 
-    display: 'flex', 
-    justifyContent: 'center', 
-    gap: '20px',
-    marginBottom: '16px'
-  }}>
-    {links.map((link, index) => (
-      <a 
-        key={index}
-        href="#"
-        style={{ 
-          color: textColor, 
-          textDecoration: 'none',
-          fontSize: '14px',
-          fontWeight: '500'
-        }}
-      >
-        {link}
+        {icon.platform.charAt(0).toUpperCase()}
       </a>
     ))}
   </div>
 );
 
-// Puck configuration for email components
+const LinkBarComponent = ({ links, alignment, color, fontSize, spacing }: LinkBarProps) => (
+  <div style={{ 
+    display: 'flex', 
+    gap: `${spacing}px`,
+    justifyContent: alignment,
+    margin: '20px 0',
+    flexWrap: 'wrap'
+  }}>
+    {links.map((link, index) => (
+      <a
+        key={index}
+        href={link.url}
+        style={{
+          color,
+          fontSize: `${fontSize}px`,
+          textDecoration: 'none',
+          fontFamily: 'Arial, sans-serif',
+          padding: '8px 12px',
+          borderRadius: '4px',
+          transition: 'background-color 0.2s ease'
+        }}
+        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
+        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+      >
+        {link.text}
+      </a>
+    ))}
+  </div>
+);
+
+const TextWrapImageComponent = ({ src, alt, text, imagePosition, imageWidth, borderRadius }: TextWrapImageProps) => (
+  <div style={{ 
+    display: 'flex', 
+    gap: '16px',
+    alignItems: 'flex-start',
+    flexDirection: imagePosition === 'left' ? 'row' : 'row-reverse',
+    margin: '20px 0'
+  }}>
+    <img
+      src={src}
+      alt={alt}
+      style={{
+        width: imageWidth,
+        borderRadius: `${borderRadius}px`,
+        flexShrink: 0
+      }}
+    />
+    <p style={{
+      margin: 0,
+      lineHeight: 1.6,
+      fontFamily: 'Arial, sans-serif',
+      flex: 1
+    }}>
+      {text}
+    </p>
+  </div>
+);
+
+const VideoComponent = ({ thumbnailSrc, videoUrl, alt, width, height, borderRadius }: VideoProps) => (
+  <div style={{ textAlign: 'center', margin: '20px 0' }}>
+    <a href={videoUrl} target="_blank" rel="noopener noreferrer">
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <img
+          src={thumbnailSrc}
+          alt={alt}
+          style={{
+            width,
+            height,
+            borderRadius: `${borderRadius}px`,
+            objectFit: 'cover'
+          }}
+        />
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '60px',
+          height: '60px',
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '20px'
+        }}>
+          ▶
+        </div>
+      </div>
+    </a>
+  </div>
+);
+
+const HTMLBlockComponent = ({ htmlContent }: HTMLBlockProps) => (
+  <div 
+    style={{ margin: '16px 0' }}
+    dangerouslySetInnerHTML={{ __html: htmlContent }}
+  />
+);
+
+// Enhanced Puck configuration for email components
 const config: Config = {
   components: {
+    // Layout Blocks (Containers in rows/columns)
     LayoutBlock: {
       fields: {
         columns: {
@@ -280,7 +427,7 @@ const config: Config = {
         },
         backgroundColor: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
               value={value || '#ffffff'} 
               onChange={onChange} 
@@ -288,32 +435,78 @@ const config: Config = {
             />
           )
         },
-        padding: { type: 'text' },
+        padding: {
+          type: 'text',
+          label: 'Padding (e.g., 20px 16px)',
+        },
+        borderColor: {
+          type: 'custom',
+          render: ({ onChange, value }) => (
+            <ColorPicker 
+              value={value || '#e2e8f0'} 
+              onChange={onChange} 
+              label="Border Color"
+            />
+          )
+        },
+        borderWidth: {
+          type: 'number',
+          label: 'Border Width (px)',
+          min: 0,
+          max: 10,
+        },
+        borderStyle: {
+          type: 'select',
+          options: [
+            { label: 'Solid', value: 'solid' },
+            { label: 'Dashed', value: 'dashed' },
+            { label: 'Dotted', value: 'dotted' },
+          ],
+        },
+        fullWidth: {
+          type: 'radio',
+          options: [
+            { label: 'Full Width', value: true },
+            { label: 'Auto Width', value: false },
+          ],
+        },
+        stackOnMobile: {
+          type: 'radio',
+          options: [
+            { label: 'Stack on Mobile', value: true },
+            { label: 'Keep Columns', value: false },
+          ],
+        },
       },
       defaultProps: {
         columns: 1,
         backgroundColor: '#ffffff',
         padding: '20px',
+        borderColor: '#e2e8f0',
+        borderWidth: 0,
+        borderStyle: 'solid',
+        fullWidth: true,
+        stackOnMobile: true,
       },
-      render: LayoutBlock,
+      render: LayoutBlockComponent,
     },
+
+    // Standard Content Elements
     Heading: {
       fields: {
-        text: { type: 'text' },
+        text: { type: 'text', label: 'Heading Text' },
         level: {
           type: 'select',
           options: [
-            { label: 'H1', value: 1 },
-            { label: 'H2', value: 2 },
-            { label: 'H3', value: 3 },
-            { label: 'H4', value: 4 },
-            { label: 'H5', value: 5 },
-            { label: 'H6', value: 6 },
+            { label: 'H1 - Main Title', value: 1 },
+            { label: 'H2 - Section Title', value: 2 },
+            { label: 'H3 - Subsection', value: 3 },
+            { label: 'H4 - Small Heading', value: 4 },
           ],
         },
         color: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
               value={value || '#333333'} 
               onChange={onChange} 
@@ -331,19 +524,20 @@ const config: Config = {
         },
       },
       defaultProps: {
-        text: 'Heading Text',
+        text: 'Your Heading Here',
         level: 2,
         color: '#333333',
         textAlign: 'left',
       },
       render: HeadingComponent,
     },
+
     Text: {
       fields: {
-        text: { type: 'textarea' },
+        text: { type: 'textarea', label: 'Text Content' },
         color: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
               value={value || '#666666'} 
               onChange={onChange} 
@@ -351,7 +545,12 @@ const config: Config = {
             />
           )
         },
-        fontSize: { type: 'number' },
+        fontSize: { 
+          type: 'number', 
+          label: 'Font Size (px)',
+          min: 10,
+          max: 48,
+        },
         textAlign: {
           type: 'select',
           options: [
@@ -369,7 +568,7 @@ const config: Config = {
         },
       },
       defaultProps: {
-        text: 'Your email content goes here...',
+        text: 'Your email content goes here. You can add multiple paragraphs and format them as needed.',
         color: '#666666',
         fontSize: 16,
         textAlign: 'left',
@@ -377,15 +576,16 @@ const config: Config = {
       },
       render: TextComponent,
     },
+
     Button: {
       fields: {
-        text: { type: 'text' },
-        href: { type: 'text' },
+        text: { type: 'text', label: 'Button Text' },
+        href: { type: 'text', label: 'Link URL' },
         backgroundColor: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
-              value={value || '#007bff'} 
+              value={value || '#2563eb'} 
               onChange={onChange} 
               label="Background Color"
             />
@@ -393,7 +593,7 @@ const config: Config = {
         },
         textColor: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
               value={value || '#ffffff'} 
               onChange={onChange} 
@@ -401,119 +601,84 @@ const config: Config = {
             />
           )
         },
-        borderRadius: { type: 'number' },
-        padding: { type: 'text' },
+        borderRadius: { 
+          type: 'number', 
+          label: 'Border Radius (px)',
+          min: 0,
+          max: 50,
+        },
+        padding: { 
+          type: 'text', 
+          label: 'Padding (e.g., 16px 32px)' 
+        },
       },
       defaultProps: {
         text: 'Click Here',
-        href: '#',
-        backgroundColor: '#007bff',
+        href: 'https://example.com',
+        backgroundColor: '#2563eb',
         textColor: '#ffffff',
-        borderRadius: 4,
-        padding: '12px 24px',
+        borderRadius: 8,
+        padding: '16px 32px',
       },
       render: ButtonComponent,
     },
-    SocialIcons: {
-      fields: {
-        icons: {
-          type: 'array',
-          arrayFields: {
-            name: { type: 'text' }
-          }
-        },
-        size: { type: 'number' },
-        style: {
-          type: 'select',
-          options: [
-            { label: 'Circle', value: 'circle' },
-            { label: 'Square', value: 'square' },
-            { label: 'Rounded', value: 'rounded' },
-          ],
-        },
-      },
-      defaultProps: {
-        icons: ['Facebook', 'Twitter', 'Instagram'],
-        size: 32,
-        style: 'circle',
-      },
-      render: SocialIcons,
-    },
-    LinkBar: {
-      fields: {
-        links: {
-          type: 'array',
-          arrayFields: {
-            name: { type: 'text' }
-          }
-        },
-        backgroundColor: { 
-          type: 'custom',
-          render: ({ field, onChange, value }) => (
-            <ColorPicker 
-              value={value || '#f8fafc'} 
-              onChange={onChange} 
-              label="Background Color"
-            />
-          )
-        },
-        textColor: { 
-          type: 'custom',
-          render: ({ field, onChange, value }) => (
-            <ColorPicker 
-              value={value || '#1e293b'} 
-              onChange={onChange} 
-              label="Text Color"
-            />
-          )
-        },
-      },
-      defaultProps: {
-        links: ['Home', 'About', 'Services', 'Contact'],
-        backgroundColor: '#f8fafc',
-        textColor: '#1e293b',
-      },
-      render: LinkBar,
-    },
+
     Image: {
       fields: {
-        src: { type: 'text' },
-        alt: { type: 'text' },
-        width: { type: 'text' },
-        height: { type: 'text' },
-        borderRadius: { type: 'number' },
+        src: { type: 'text', label: 'Image URL' },
+        alt: { type: 'text', label: 'Alt Text' },
+        width: { type: 'text', label: 'Width (e.g., 100%, 300px)' },
+        height: { type: 'text', label: 'Height (e.g., auto, 200px)' },
+        borderRadius: { 
+          type: 'number', 
+          label: 'Border Radius (px)',
+          min: 0,
+          max: 50,
+        },
       },
       defaultProps: {
-        src: 'https://via.placeholder.com/400x200',
-        alt: 'Image',
+        src: 'https://via.placeholder.com/600x300/e2e8f0/64748b?text=Your+Image',
+        alt: 'Email Image',
         width: '100%',
-        height: '200px',
+        height: 'auto',
         borderRadius: 0,
       },
       render: ImageComponent,
     },
+
     Spacer: {
       fields: {
-        height: { type: 'number' },
+        height: { 
+          type: 'number', 
+          label: 'Height (px)',
+          min: 5,
+          max: 100,
+        },
       },
       defaultProps: {
         height: 20,
       },
       render: SpacerComponent,
     },
+
     Divider: {
       fields: {
         color: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
-              value={value || '#e0e0e0'} 
+              value={value || '#e2e8f0'} 
               onChange={onChange} 
               label="Divider Color"
             />
           )
         },
-        thickness: { type: 'number' },
+        thickness: { 
+          type: 'number', 
+          label: 'Thickness (px)',
+          min: 1,
+          max: 10,
+        },
         style: {
           type: 'select',
           options: [
@@ -524,17 +689,196 @@ const config: Config = {
         },
       },
       defaultProps: {
-        color: '#e0e0e0',
+        color: '#e2e8f0',
         thickness: 1,
         style: 'solid',
       },
       render: DividerComponent,
     },
+
+    // Advanced Components
+    SocialIcons: {
+      fields: {
+        icons: {
+          type: 'array',
+          arrayFields: {
+            platform: { type: 'text', label: 'Platform Name' },
+            url: { type: 'text', label: 'URL' },
+            color: { 
+              type: 'custom',
+              render: ({ onChange, value }) => (
+                <ColorPicker 
+                  value={value || '#3b82f6'} 
+                  onChange={onChange} 
+                  label="Icon Color"
+                />
+              )
+            },
+          }
+        },
+        size: { 
+          type: 'number', 
+          label: 'Icon Size (px)',
+          min: 20,
+          max: 60,
+        },
+        style: {
+          type: 'select',
+          options: [
+            { label: 'Circle', value: 'circle' },
+            { label: 'Square', value: 'square' },
+            { label: 'Rounded', value: 'rounded' },
+          ],
+        },
+        spacing: { 
+          type: 'number', 
+          label: 'Spacing (px)',
+          min: 4,
+          max: 20,
+        },
+      },
+      defaultProps: {
+        icons: [
+          { platform: 'Facebook', url: 'https://facebook.com', color: '#1877f2' },
+          { platform: 'Twitter', url: 'https://twitter.com', color: '#1da1f2' },
+          { platform: 'Instagram', url: 'https://instagram.com', color: '#e4405f' },
+        ],
+        size: 32,
+        style: 'circle',
+        spacing: 8,
+      },
+      render: SocialIconsComponent,
+    },
+
+    LinkBar: {
+      fields: {
+        links: {
+          type: 'array',
+          arrayFields: {
+            text: { type: 'text', label: 'Link Text' },
+            url: { type: 'text', label: 'URL' },
+          }
+        },
+        alignment: {
+          type: 'select',
+          options: [
+            { label: 'Left', value: 'left' },
+            { label: 'Center', value: 'center' },
+            { label: 'Right', value: 'right' },
+          ],
+        },
+        color: { 
+          type: 'custom',
+          render: ({ onChange, value }) => (
+            <ColorPicker 
+              value={value || '#2563eb'} 
+              onChange={onChange} 
+              label="Link Color"
+            />
+          )
+        },
+        fontSize: { 
+          type: 'number', 
+          label: 'Font Size (px)',
+          min: 10,
+          max: 24,
+        },
+        spacing: { 
+          type: 'number', 
+          label: 'Spacing (px)',
+          min: 4,
+          max: 30,
+        },
+      },
+      defaultProps: {
+        links: [
+          { text: 'Home', url: 'https://example.com' },
+          { text: 'About', url: 'https://example.com/about' },
+          { text: 'Services', url: 'https://example.com/services' },
+          { text: 'Contact', url: 'https://example.com/contact' },
+        ],
+        alignment: 'center',
+        color: '#2563eb',
+        fontSize: 14,
+        spacing: 16,
+      },
+      render: LinkBarComponent,
+    },
+
+    TextWrapImage: {
+      fields: {
+        src: { type: 'text', label: 'Image URL' },
+        alt: { type: 'text', label: 'Alt Text' },
+        text: { type: 'textarea', label: 'Text Content' },
+        imagePosition: {
+          type: 'select',
+          options: [
+            { label: 'Left', value: 'left' },
+            { label: 'Right', value: 'right' },
+          ],
+        },
+        imageWidth: { type: 'text', label: 'Image Width (e.g., 150px, 30%)' },
+        borderRadius: { 
+          type: 'number', 
+          label: 'Border Radius (px)',
+          min: 0,
+          max: 50,
+        },
+      },
+      defaultProps: {
+        src: 'https://via.placeholder.com/150x150/e2e8f0/64748b?text=Image',
+        alt: 'Content Image',
+        text: 'This text wraps around the image. You can position the image on the left or right side of the text content.',
+        imagePosition: 'left',
+        imageWidth: '150px',
+        borderRadius: 0,
+      },
+      render: TextWrapImageComponent,
+    },
+
+    Video: {
+      fields: {
+        thumbnailSrc: { type: 'text', label: 'Thumbnail Image URL' },
+        videoUrl: { type: 'text', label: 'Video URL (YouTube/Vimeo)' },
+        alt: { type: 'text', label: 'Alt Text' },
+        width: { type: 'text', label: 'Width (e.g., 100%, 400px)' },
+        height: { type: 'text', label: 'Height (e.g., 225px)' },
+        borderRadius: { 
+          type: 'number', 
+          label: 'Border Radius (px)',
+          min: 0,
+          max: 50,
+        },
+      },
+      defaultProps: {
+        thumbnailSrc: 'https://via.placeholder.com/560x315/e2e8f0/64748b?text=Video+Thumbnail',
+        videoUrl: 'https://youtube.com/watch?v=example',
+        alt: 'Video Preview',
+        width: '100%',
+        height: '315px',
+        borderRadius: 8,
+      },
+      render: VideoComponent,
+    },
+
+    HTMLBlock: {
+      fields: {
+        htmlContent: { 
+          type: 'textarea', 
+          label: 'HTML/CSS Code' 
+        },
+      },
+      defaultProps: {
+        htmlContent: '<div style="padding: 20px; background-color: #f8fafc; border-radius: 8px; text-align: center;"><h3>Custom HTML Block</h3><p>Add your custom HTML and CSS here.</p></div>',
+      },
+      render: HTMLBlockComponent,
+    },
+
     Container: {
       fields: {
         backgroundColor: { 
           type: 'custom',
-          render: ({ field, onChange, value }) => (
+          render: ({ onChange, value }) => (
             <ColorPicker 
               value={value || '#ffffff'} 
               onChange={onChange} 
@@ -542,40 +886,90 @@ const config: Config = {
             />
           )
         },
-        padding: { type: 'text' },
-        maxWidth: { type: 'text' },
+        padding: { 
+          type: 'text', 
+          label: 'Padding (e.g., 40px 30px)' 
+        },
+        maxWidth: { 
+          type: 'text', 
+          label: 'Max Width (e.g., 600px, 100%)' 
+        },
       },
       defaultProps: {
         backgroundColor: '#ffffff',
-        padding: '20px',
+        padding: '40px 30px',
         maxWidth: '600px',
       },
       render: ContainerComponent,
     },
   },
+
+  // Categories for better organization (like in Mailchimp)
+  categories: {
+    'Layout': {
+      components: ['Container', 'LayoutBlock']
+    },
+    'Content': {
+      components: ['Heading', 'Text', 'Image', 'Video']
+    },
+    'Interactive': {
+      components: ['Button', 'LinkBar']
+    },
+    'Design': {
+      components: ['Spacer', 'Divider', 'SocialIcons']
+    },
+    'Advanced': {
+      components: ['TextWrapImage', 'HTMLBlock']
+    }
+  },
+
+  // Root configuration for email-wide settings
   root: {
-    props: {
-      backgroundColor: { 
+    fields: {
+      emailBackgroundColor: {
         type: 'custom',
-        render: ({ field, onChange, value }) => (
+        render: ({ onChange, value }) => (
           <ColorPicker 
-            value={value || '#f5f5f5'} 
+            value={value || '#f8fafc'} 
             onChange={onChange} 
-            label="Email Background"
+            label="Email Background Color"
           />
         )
       },
-      padding: { type: 'text' },
+      contentWidth: {
+        type: 'text',
+        label: 'Content Width (e.g., 600px)',
+      },
+      fontFamily: {
+        type: 'select',
+        options: [
+          { label: 'Arial', value: 'Arial, sans-serif' },
+          { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
+          { label: 'Georgia', value: 'Georgia, serif' },
+          { label: 'Times New Roman', value: 'Times New Roman, serif' },
+        ],
+      },
     },
-    render: ({ backgroundColor, padding, children }) => (
+    defaultProps: {
+      emailBackgroundColor: '#f8fafc',
+      contentWidth: '600px',
+      fontFamily: 'Arial, sans-serif',
+    },
+    render: ({ children, emailBackgroundColor, contentWidth, fontFamily }) => (
       <div style={{ 
-        backgroundColor: backgroundColor || '#f5f5f5', 
-        padding: padding || '20px', 
-        minHeight: '100vh',
-        fontFamily: 'Arial, sans-serif',
-        overflowY: 'auto'
+        backgroundColor: emailBackgroundColor,
+        fontFamily,
+        padding: '20px 0',
+        minHeight: '100vh'
       }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <div style={{ 
+          maxWidth: contentWidth, 
+          margin: '0 auto',
+          backgroundColor: '#ffffff',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
           {children}
         </div>
       </div>
@@ -583,22 +977,28 @@ const config: Config = {
   },
 };
 
+// Template and interface definitions
 interface PuckEmailEditorProps {
   onBack: () => void;
-  onSave: (data: any) => void;
-  initialData?: any;
+  onSave: (data: Data) => void;
+  initialData?: Data;
   emailTemplate?: {
+    id: number;
     name: string;
     subject: string;
   };
 }
 
+// Enhanced Email Editor Component with full-screen layout and Mailchimp-style interface
 export default function PuckEmailEditor({ 
   onBack, 
   onSave, 
   initialData,
   emailTemplate 
 }: PuckEmailEditorProps) {
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [showGlobalStyles, setShowGlobalStyles] = useState(false);
+
   // Create template-specific content based on the selected template
   const getTemplateContent = () => {
     const templateName = emailTemplate?.name;
@@ -630,28 +1030,14 @@ export default function PuckEmailEditor({
           },
         },
         {
-          type: "Spacer",
-          props: {
-            id: "spacer-1",
-            height: 20,
-          },
-        },
-        {
           type: "Text",
           props: {
             id: "text-1",
-            text: "Hi there! We're thrilled to have you join our community. You've just taken the first step towards amazing content, exclusive offers, and valuable insights.",
+            text: "Hi there! We're thrilled to have you join our community.",
             color: '#475569',
             fontSize: 16,
             textAlign: 'left',
             fontWeight: 'normal',
-          },
-        },
-        {
-          type: "Spacer",
-          props: {
-            id: "spacer-2",
-            height: 30,
           },
         },
         {
@@ -666,303 +1052,300 @@ export default function PuckEmailEditor({
             padding: '16px 32px',
           },
         },
-        {
-          type: "Spacer",
-          props: {
-            id: "spacer-3",
-            height: 40,
-          },
-        },
-        {
-          type: "Divider",
-          props: {
-            id: "divider-1",
-            color: '#e2e8f0',
-            thickness: 1,
-            style: 'solid',
-          },
-        },
-        {
-          type: "Text",
-          props: {
-            id: "text-2",
-            text: "What to expect next:\n• Weekly valuable content\n• Exclusive member offers\n• Early access to new features",
-            color: '#64748b',
-            fontSize: 14,
-            textAlign: 'left',
-            fontWeight: 'normal',
-          },
-        },
       ];
-    } else if (templateName?.includes('Product Launch')) {
-      return [
-        {
-          type: "Container",
-          props: {
-            id: "container-1",
-            backgroundColor: '#ffffff',
-            padding: '40px 30px',
-            maxWidth: '600px',
-          }
-        },
-        {
-          type: "Heading",
-          props: {
-            id: "heading-1",
-            text: "🚀 Something Big is Coming!",
-            level: 1,
-            color: '#dc2626',
-            textAlign: 'center',
-          },
-        },
-        {
-          type: "Text",
-          props: {
-            id: "text-1",
-            text: "We've been working hard behind the scenes, and we can't wait to share our latest innovation with you. Get ready for something that will change everything.",
-            color: '#475569',
-            fontSize: 16,
-            textAlign: 'left',
-            fontWeight: 'normal',
-          },
-        },
-        {
-          type: "Image",
-          props: {
-            id: "image-1",
-            src: 'https://via.placeholder.com/500x250/dc2626/ffffff?text=Product+Preview',
-            alt: 'Product Preview',
-            width: '100%',
-            height: '250px',
-            borderRadius: 8,
-          },
-        },
-        {
-          type: "Button",
-          props: {
-            id: "button-1",
-            text: "Be The First to Know",
-            href: "https://example.com/early-access",
-            backgroundColor: '#dc2626',
-            textColor: '#ffffff',
-            borderRadius: 8,
-            padding: '16px 32px',
-          },
-        },
-      ];
-    } else if (templateName?.includes('Newsletter')) {
-      return [
-        {
-          type: "Container",
-          props: {
-            id: "container-1",
-            backgroundColor: '#ffffff',
-            padding: '40px 30px',
-            maxWidth: '600px',
-          }
-        },
-        {
-          type: "Heading",
-          props: {
-            id: "heading-1",
-            text: "📰 This Week's Newsletter",
-            level: 1,
-            color: '#059669',
-            textAlign: 'center',
-          },
-        },
-        {
-          type: "Text",
-          props: {
-            id: "text-1",
-            text: "Here are the top stories and insights we've curated just for you this week.",
-            color: '#475569',
-            fontSize: 16,
-            textAlign: 'left',
-            fontWeight: 'normal',
-          },
-        },
-        {
-          type: "Heading",
-          props: {
-            id: "heading-2",
-            text: "Featured Article",
-            level: 3,
-            color: '#059669',
-            textAlign: 'left',
-          },
-        },
-        {
-          type: "Text",
-          props: {
-            id: "text-2",
-            text: "Learn the latest strategies that top companies are using to scale their businesses. This comprehensive guide covers everything you need to know.",
-            color: '#475569',
-            fontSize: 14,
-            textAlign: 'left',
-            fontWeight: 'normal',
-          },
-        },
-        {
-          type: "Button",
-          props: {
-            id: "button-1",
-            text: "Read Full Article",
-            href: "https://example.com/article",
-            backgroundColor: '#059669',
-            textColor: '#ffffff',
-            borderRadius: 6,
-            padding: '12px 24px',
-          },
-        },
-      ];
-    } else {
-      // Default template
-      return [
-        {
-          type: "Container",
-          props: {
-            id: "container-1",
-            backgroundColor: '#ffffff',
-            padding: '40px 30px',
-            maxWidth: '600px',
-          }
-        },
-        {
-          type: "Heading",
-          props: {
-            id: "heading-1",
-            text: emailTemplate?.name || "Email Template",
-            level: 1,
-            color: '#1f2937',
-            textAlign: 'center',
-          },
-        },
-        {
-          type: "Text",
-          props: {
-            id: "text-1",
-            text: "Start editing this template by dragging components from the left sidebar or clicking on elements to modify them.",
-            color: '#6b7280',
-            fontSize: 16,
-            textAlign: 'left',
-            fontWeight: 'normal',
-          },
-        },
-        {
-          type: "Button",
-          props: {
-            id: "button-1",
-            text: "Call to Action",
-            href: "#",
-            backgroundColor: '#3b82f6',
-            textColor: '#ffffff',
-            borderRadius: 6,
-            padding: '12px 24px',
-          },
-        },
-      ];
-    }
-  };
-
-  const [data, setData] = React.useState<Data>(() => {
-    // If we have valid initial data, use it directly
-    if (initialData && initialData.content && initialData.content.length > 0) {
-      return initialData;
     }
     
-    // Otherwise, create template-specific content
-    return {
-      content: getTemplateContent(),
-      root: {
+    // Default empty content
+    return [
+      {
+        type: "Container",
         props: {
-          backgroundColor: '#f8fafc',
-          padding: '20px',
+          id: "container-default",
+          backgroundColor: '#ffffff',
+          padding: '40px 30px',
+          maxWidth: '600px',
         }
       },
-    };
-  });
-
-  const [previewMode, setPreviewMode] = React.useState(false);
-
-  const handleSave = () => {
-    onSave({
-      ...data,
-      subject: emailTemplate?.subject || 'Untitled Email',
-      name: emailTemplate?.name || 'Untitled Template',
-    });
+      {
+        type: "Heading",
+        props: {
+          id: "heading-default",
+          text: "Your Email Title",
+          level: 2,
+          color: '#333333',
+          textAlign: 'center',
+        },
+      },
+      {
+        type: "Text",
+        props: {
+          id: "text-default",
+          text: "Start building your email by dragging components from the sidebar.",
+          color: '#666666',
+          fontSize: 16,
+          textAlign: 'center',
+          fontWeight: 'normal',
+        },
+      },
+    ];
   };
 
-  const generateEmailHTML = () => {
-    // This would convert the Puck data to HTML for email sending
-    // For now, return a basic HTML structure
-    return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <title>${emailTemplate?.subject || 'Email'}</title>
-        </head>
-        <body style="margin: 0; padding: 0; background-color: ${data.root?.backgroundColor || '#f5f5f5'};">
-          <!-- Email content would be rendered here -->
-        </body>
-      </html>
-    `;
+  const initialPuckData: Data = {
+    content: getTemplateContent(),
+    root: {
+      emailBackgroundColor: '#f8fafc',
+      contentWidth: '600px',
+      fontFamily: 'Arial, sans-serif',
+    }
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" onClick={onBack}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+    <div className="h-screen flex flex-col bg-gray-50">
+      {/* Enhanced Header Bar - Mailchimp Style */}
+      <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <div>
-            <h1 className="text-lg font-semibold">
+          
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm font-medium text-gray-700">
               {emailTemplate?.name || 'Email Editor'}
-            </h1>
-            <p className="text-sm text-gray-500">
-              Subject: {emailTemplate?.subject || 'Untitled Email'}
-            </p>
+            </span>
           </div>
         </div>
-        
-        <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setPreviewMode(!previewMode)}
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            {previewMode ? 'Edit' : 'Preview'}
+
+        {/* Top Toolbar */}
+        <div className="flex items-center gap-3">
+          {/* Preview Mode Toggle */}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <Button
+              variant={previewMode === 'desktop' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setPreviewMode('desktop')}
+              className="h-8 px-3"
+            >
+              <Monitor className="w-4 h-4" />
+            </Button>
+            <Button
+              variant={previewMode === 'mobile' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setPreviewMode('mobile')}
+              className="h-8 px-3"
+            >
+              <Smartphone className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* Action Buttons */}
+          <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Eye className="w-4 h-4" />
+            Preview
           </Button>
-          <Button variant="outline" size="sm" onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
+          
+          <Button 
+            variant="default" 
+            size="sm" 
+            onClick={() => onSave(initialPuckData)}
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          >
+            <Save className="w-4 h-4" />
             Save
           </Button>
-          <Button size="sm" onClick={handleSave}>
-            <Send className="h-4 w-4 mr-2" />
-            Save & Continue
+          
+          <Button variant="default" size="sm" className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
+            <Send className="w-4 h-4" />
+            Send Test
           </Button>
         </div>
       </div>
 
-      {/* Editor */}
-      <div className="flex-1 min-h-0">
+      {/* Enhanced Puck Editor with Full Screen and Custom Layout */}
+      <div className="flex-1 relative">
         <Puck
           config={config}
-          data={data}
-          onPublish={(newData) => setData(newData)}
+          data={initialPuckData}
+          onPublish={(data: Data) => {
+            onSave(data);
+          }}
           ui={{
             leftSideBarVisible: true,
             rightSideBarVisible: true,
             headerVisible: false,
+            // Custom component layout - 2x2 grid like Mailchimp
+            componentList: {
+              category: 'inline',
+              components: {
+                // Layout section - appears as 2x2 grid
+                'Layout': [
+                  { Component: 'Container', Icon: () => <Layers className="w-5 h-5" /> },
+                  { Component: 'LayoutBlock', Icon: () => <Grid className="w-5 h-5" /> },
+                ],
+                // Content section  
+                'Content': [
+                  { Component: 'Heading', Icon: () => <Type className="w-5 h-5" /> },
+                  { Component: 'Text', Icon: () => <AlignLeft className="w-5 h-5" /> },
+                  { Component: 'Image', Icon: () => <ImageIcon className="w-5 h-5" /> },
+                  { Component: 'Video', Icon: () => <Monitor className="w-5 h-5" /> },
+                ],
+                // Interactive section
+                'Interactive': [
+                  { Component: 'Button', Icon: () => <div className="w-5 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs">BTN</div> },
+                  { Component: 'LinkBar', Icon: () => <Link className="w-5 h-5" /> },
+                ],
+                // Design section
+                'Design': [
+                  { Component: 'Spacer', Icon: () => <div className="w-5 h-1 bg-gray-400 rounded"></div> },
+                  { Component: 'Divider', Icon: () => <div className="w-5 h-px bg-gray-400"></div> },
+                  { Component: 'SocialIcons', Icon: () => <div className="flex gap-1"><div className="w-2 h-2 bg-blue-500 rounded-full"></div><div className="w-2 h-2 bg-pink-500 rounded-full"></div></div> },
+                ],
+                // Advanced section  
+                'Advanced': [
+                  { Component: 'TextWrapImage', Icon: () => <div className="flex items-center gap-1"><ImageIcon className="w-3 h-3" /><Type className="w-3 h-3" /></div> },
+                  { Component: 'HTMLBlock', Icon: () => <div className="text-xs font-mono">&lt;/&gt;</div> },
+                ],
+              }
+            },
+          }}
+          // Enhanced styling for full-screen and Mailchimp-like appearance
+          iframe={{
+            enabled: true,
+            waitForStyles: true,
           }}
         />
       </div>
+
+      {/* Custom CSS for enhanced Mailchimp-style layout */}
+      <style jsx global>{`
+        /* Full screen Puck editor */
+        .Puck {
+          height: 100vh !important;
+        }
+        
+        /* Component sidebar styling - 2x2 grid layout like Mailchimp */
+        .Puck-sidebarSection {
+          margin-bottom: 24px;
+        }
+        
+        .Puck-sidebarSectionTitle {
+          font-weight: 600;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #6b7280;
+          margin-bottom: 8px;
+          padding: 0 12px;
+        }
+        
+        /* Component grid - 2 columns like Mailchimp */
+        .Puck-componentList {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          padding: 0 12px;
+        }
+        
+        /* Individual component blocks - square like Mailchimp */
+        .Puck-component {
+          aspect-ratio: 1;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          background: white;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: center;
+        }
+        
+        .Puck-component:hover {
+          border-color: #3b82f6;
+          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+          transform: translateY(-1px);
+        }
+        
+        .Puck-componentLabel {
+          font-size: 11px;
+          font-weight: 500;
+          color: #374151;
+          line-height: 1.2;
+        }
+        
+        /* Preview area styling - full content width like Mailchimp */
+        .Puck-preview {
+          background: #f3f4f6 !important;
+          padding: 20px !important;
+          overflow-y: auto;
+        }
+        
+        .Puck-previewFrame {
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          max-width: ${previewMode === 'mobile' ? '375px' : '100%'};
+          margin: 0 auto;
+          transition: max-width 0.3s ease;
+        }
+        
+        /* Right sidebar styling */
+        .Puck-fields {
+          padding: 16px;
+          background: #fafafa;
+        }
+        
+        .Puck-field {
+          margin-bottom: 16px;
+        }
+        
+        .Puck-fieldLabel {
+          font-weight: 500;
+          font-size: 13px;
+          color: #374151;
+          margin-bottom: 6px;
+          display: block;
+        }
+        
+        /* Enhanced input styling */
+        .Puck-input, .Puck-textarea {
+          width: 100%;
+          padding: 8px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          font-size: 13px;
+          background: white;
+        }
+        
+        .Puck-input:focus, .Puck-textarea:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Left sidebar width for better component visibility */
+        .Puck-sidebarLeft {
+          width: 280px !important;
+          background: #fafafa;
+          border-right: 1px solid #e5e7eb;
+        }
+        
+        /* Right sidebar width */
+        .Puck-sidebarRight {
+          width: 320px !important;
+          background: #fafafa;
+          border-left: 1px solid #e5e7eb;
+        }
+      `}</style>
     </div>
   );
 }
