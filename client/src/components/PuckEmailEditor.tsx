@@ -134,7 +134,10 @@ const ContainerComponent = ({ backgroundColor, padding, maxWidth, children }: Co
     padding, 
     maxWidth, 
     margin: '0 auto',
-    fontFamily: 'Arial, sans-serif'
+    fontFamily: 'Arial, sans-serif',
+    borderRadius: '8px',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    marginBottom: '20px'
   }}>
     {children}
   </div>
@@ -318,45 +321,272 @@ export default function PuckEmailEditor({
   initialData,
   emailTemplate 
 }: PuckEmailEditorProps) {
+  // Create template-specific content based on the selected template
+  const getTemplateContent = () => {
+    const templateName = emailTemplate?.name;
+    
+    if (templateName?.includes('Welcome')) {
+      return [
+        {
+          type: "Container",
+          props: {
+            id: "container-1",
+            backgroundColor: '#ffffff',
+            padding: '40px 30px',
+            maxWidth: '600px',
+          }
+        },
+        {
+          type: "Heading",
+          props: {
+            id: "heading-1",
+            text: "🎉 Welcome to Our Community!",
+            level: 1,
+            color: '#2563eb',
+            textAlign: 'center',
+          },
+        },
+        {
+          type: "Spacer",
+          props: {
+            id: "spacer-1",
+            height: 20,
+          },
+        },
+        {
+          type: "Text",
+          props: {
+            id: "text-1",
+            text: "Hi there! We're thrilled to have you join our community. You've just taken the first step towards amazing content, exclusive offers, and valuable insights.",
+            color: '#475569',
+            fontSize: 16,
+            textAlign: 'left',
+            fontWeight: 'normal',
+          },
+        },
+        {
+          type: "Spacer",
+          props: {
+            id: "spacer-2",
+            height: 30,
+          },
+        },
+        {
+          type: "Button",
+          props: {
+            id: "button-1",
+            text: "Get Started Now",
+            href: "https://example.com/get-started",
+            backgroundColor: '#2563eb',
+            textColor: '#ffffff',
+            borderRadius: 8,
+            padding: '16px 32px',
+          },
+        },
+        {
+          type: "Spacer",
+          props: {
+            id: "spacer-3",
+            height: 40,
+          },
+        },
+        {
+          type: "Divider",
+          props: {
+            id: "divider-1",
+            color: '#e2e8f0',
+            thickness: 1,
+            style: 'solid',
+          },
+        },
+        {
+          type: "Text",
+          props: {
+            id: "text-2",
+            text: "What to expect next:\n• Weekly valuable content\n• Exclusive member offers\n• Early access to new features",
+            color: '#64748b',
+            fontSize: 14,
+            textAlign: 'left',
+            fontWeight: 'normal',
+          },
+        },
+      ];
+    } else if (templateName?.includes('Product Launch')) {
+      return [
+        {
+          type: "Container",
+          props: {
+            id: "container-1",
+            backgroundColor: '#ffffff',
+            padding: '40px 30px',
+            maxWidth: '600px',
+          }
+        },
+        {
+          type: "Heading",
+          props: {
+            id: "heading-1",
+            text: "🚀 Something Big is Coming!",
+            level: 1,
+            color: '#dc2626',
+            textAlign: 'center',
+          },
+        },
+        {
+          type: "Text",
+          props: {
+            id: "text-1",
+            text: "We've been working hard behind the scenes, and we can't wait to share our latest innovation with you. Get ready for something that will change everything.",
+            color: '#475569',
+            fontSize: 16,
+            textAlign: 'left',
+            fontWeight: 'normal',
+          },
+        },
+        {
+          type: "Image",
+          props: {
+            id: "image-1",
+            src: 'https://via.placeholder.com/500x250/dc2626/ffffff?text=Product+Preview',
+            alt: 'Product Preview',
+            width: '100%',
+            height: '250px',
+            borderRadius: 8,
+          },
+        },
+        {
+          type: "Button",
+          props: {
+            id: "button-1",
+            text: "Be The First to Know",
+            href: "https://example.com/early-access",
+            backgroundColor: '#dc2626',
+            textColor: '#ffffff',
+            borderRadius: 8,
+            padding: '16px 32px',
+          },
+        },
+      ];
+    } else if (templateName?.includes('Newsletter')) {
+      return [
+        {
+          type: "Container",
+          props: {
+            id: "container-1",
+            backgroundColor: '#ffffff',
+            padding: '40px 30px',
+            maxWidth: '600px',
+          }
+        },
+        {
+          type: "Heading",
+          props: {
+            id: "heading-1",
+            text: "📰 This Week's Newsletter",
+            level: 1,
+            color: '#059669',
+            textAlign: 'center',
+          },
+        },
+        {
+          type: "Text",
+          props: {
+            id: "text-1",
+            text: "Here are the top stories and insights we've curated just for you this week.",
+            color: '#475569',
+            fontSize: 16,
+            textAlign: 'left',
+            fontWeight: 'normal',
+          },
+        },
+        {
+          type: "Heading",
+          props: {
+            id: "heading-2",
+            text: "Featured Article",
+            level: 3,
+            color: '#059669',
+            textAlign: 'left',
+          },
+        },
+        {
+          type: "Text",
+          props: {
+            id: "text-2",
+            text: "Learn the latest strategies that top companies are using to scale their businesses. This comprehensive guide covers everything you need to know.",
+            color: '#475569',
+            fontSize: 14,
+            textAlign: 'left',
+            fontWeight: 'normal',
+          },
+        },
+        {
+          type: "Button",
+          props: {
+            id: "button-1",
+            text: "Read Full Article",
+            href: "https://example.com/article",
+            backgroundColor: '#059669',
+            textColor: '#ffffff',
+            borderRadius: 6,
+            padding: '12px 24px',
+          },
+        },
+      ];
+    } else {
+      // Default template
+      return [
+        {
+          type: "Container",
+          props: {
+            id: "container-1",
+            backgroundColor: '#ffffff',
+            padding: '40px 30px',
+            maxWidth: '600px',
+          }
+        },
+        {
+          type: "Heading",
+          props: {
+            id: "heading-1",
+            text: emailTemplate?.name || "Email Template",
+            level: 1,
+            color: '#1f2937',
+            textAlign: 'center',
+          },
+        },
+        {
+          type: "Text",
+          props: {
+            id: "text-1",
+            text: "Start editing this template by dragging components from the left sidebar or clicking on elements to modify them.",
+            color: '#6b7280',
+            fontSize: 16,
+            textAlign: 'left',
+            fontWeight: 'normal',
+          },
+        },
+        {
+          type: "Button",
+          props: {
+            id: "button-1",
+            text: "Call to Action",
+            href: "#",
+            backgroundColor: '#3b82f6',
+            textColor: '#ffffff',
+            borderRadius: 6,
+            padding: '12px 24px',
+          },
+        },
+      ];
+    }
+  };
+
   const [data, setData] = React.useState<Data>(initialData || {
-    content: [
-      {
-        type: "Heading",
-        props: {
-          id: "heading-1",
-          text: "Welcome to our Newsletter!",
-          level: 1,
-          color: '#333333',
-          textAlign: 'center',
-        },
-      },
-      {
-        type: "Text",
-        props: {
-          id: "text-1",
-          text: "Thank you for subscribing. We're excited to share valuable content with you.",
-          color: '#666666',
-          fontSize: 16,
-          textAlign: 'left',
-          fontWeight: 'normal',
-        },
-      },
-      {
-        type: "Button",
-        props: {
-          id: "button-1",
-          text: "Get Started",
-          href: "#",
-          backgroundColor: '#007bff',
-          textColor: '#ffffff',
-          borderRadius: 4,
-          padding: '12px 24px',
-        },
-      },
-    ],
+    content: getTemplateContent(),
     root: {
       props: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f8fafc',
         padding: '20px',
       }
     },
