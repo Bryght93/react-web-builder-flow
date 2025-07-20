@@ -23,33 +23,33 @@ import {
 const features = [
   {
     icon: Brain,
-    title: "AI Lead Magnet Builder",
-    description: "Generate high-converting lead magnets (eBooks, quizzes, checklists) in minutes, not hours. Our AI understands your industry and creates content that converts."
+    title: "AI + Manual Lead Magnets",
+    description: "Choose your approach: Use AI to generate lead magnets instantly, customize from 50+ templates, or build from scratch with full creative control."
   },
   {
     icon: Target,
-    title: "Smart Funnel Builder",
-    description: "Drag-and-drop funnel creation with AI optimization. Build complete sales funnels that guide prospects from awareness to conversion automatically."
+    title: "Complete Funnel System",
+    description: "Start with 5-10 step proven funnel templates, let AI adapt them to your brand, or build custom funnels with drag-and-drop editor and AI assistance."
+  },
+  {
+    icon: Megaphone,
+    title: "Direct Ad Launch Platform",
+    description: "Create and launch ads directly to Facebook, Instagram, Google, TikTok, and LinkedIn. AI generates copy and creatives, or upload your own assets."
   },
   {
     icon: Mail,
-    title: "Intelligent Email Sequences",
-    description: "AI-crafted email sequences that nurture leads with personalized content, smart timing, and conversion-focused CTAs that book meetings."
+    title: "Advanced Email Marketing",
+    description: "Access 5-10 step email sequences, let AI customize for your brand, use templates, or create from scratch. Full manual control with AI enhancement."
+  },
+  {
+    icon: TrendingUp,
+    title: "Launch Planning Suite",
+    description: "Complete launch planner with AI asset creation, evergreen webinars, course selling, and affiliate management - all with expert-level control."
   },
   {
     icon: MessageSquare,
-    title: "Multi-Channel Automation",
-    description: "Connect WhatsApp, Instagram, Facebook, and Email in one platform. Never miss a lead across any channel with unified inbox management."
-  },
-  {
-    icon: BarChart3,
-    title: "Advanced Analytics & CRM",
-    description: "Track every lead interaction, analyze conversion paths, and get actionable insights to optimize your marketing performance in real-time."
-  },
-  {
-    icon: Sparkles,
-    title: "AI Sales Assistant",
-    description: "24/7 AI agent that follows up on leads, handles objections, answers FAQs, and books qualified meetings while you focus on closing deals."
+    title: "Multi-Channel Control Center",
+    description: "Manage WhatsApp, Instagram, Facebook, Email, and SMS from one dashboard. AI automation with full manual override capabilities."
   }
 ];
 
@@ -87,18 +87,18 @@ const testimonials = [
 const steps = [
   {
     number: "01",
-    title: "Connect Your Business",
-    description: "Tell our AI about your business, target audience, and goals. Takes less than 2 minutes to set up your profile."
+    title: "Choose Your Approach",
+    description: "Pick AI automation, use proven templates, or build manually. Switch between modes anytime with full data portability."
   },
   {
     number: "02", 
-    title: "AI Creates Your Funnel",
-    description: "Our intelligent system builds complete lead magnets, landing pages, and email sequences tailored to your industry."
+    title: "Build & Customize Everything",
+    description: "Create funnels, emails, ads, and landing pages. Use our 5-10 step templates, AI generation, or start from scratch with full control."
   },
   {
     number: "03",
-    title: "Launch & Convert",
-    description: "Go live instantly and watch as qualified leads flow in 24/7 while AI nurtures them into paying customers."
+    title: "Launch & Scale",
+    description: "Deploy across all channels, run ads directly from the platform, and scale with AI assistance or manual optimization."
   }
 ];
 
@@ -143,12 +143,12 @@ export default function Home() {
               <span className="bg-gradient-primary bg-clip-text text-transparent">
                 Into Paying Customers
               </span>{" "}
-              with AI
+              with AI + Expert Control
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              The intelligent marketing platform that creates high-converting funnels, 
-              nurtures leads automatically, and turns prospects into customers while you sleep.
+            <p className="text-xl md:text-2xl text-foreground max-w-3xl mx-auto mb-8">
+              The complete marketing platform that combines AI automation with full manual control. 
+              Create funnels, run ads, build emails, and launch campaigns - your way, enhanced by AI.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -165,7 +165,7 @@ export default function Home() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 text-sm text-foreground">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-success" />
                 <span>No credit card required</span>
@@ -176,7 +176,36 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-success" />
-                <span>Cancel anytime</span>
+                <span>Full control + AI power</span>
+              </div>
+            </div>
+
+            {/* Visual Feature Preview */}
+            <div className="mt-16 relative">
+              <div className="bg-white rounded-lg shadow-2xl p-8 max-w-4xl mx-auto border">
+                <div className="grid md:grid-cols-3 gap-6 text-center">
+                  <div className="space-y-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto">
+                      <Megaphone className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">Launch Ads Directly</h3>
+                    <p className="text-sm text-muted-foreground">Create and launch ads to all major platforms from one dashboard</p>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto">
+                      <Target className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">5-10 Step Templates</h3>
+                    <p className="text-sm text-muted-foreground">Proven funnel and email sequences ready to customize</p>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mx-auto">
+                      <Users className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">Expert Control</h3>
+                    <p className="text-sm text-muted-foreground">Full manual control with AI enhancement when you need it</p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -203,13 +232,14 @@ export default function Home() {
               Core Features
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Everything You Need to{" "}
+              AI-Powered Tools with{" "}
               <span className="text-primary">
-                Scale Your Business
+                Expert-Level Control
               </span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Replace 8+ marketing tools with one AI-powered platform that handles your entire lead generation and conversion process.
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
+              Choose your workflow: Full AI automation, manual precision control, or the perfect blend. 
+              Built for experts who want both speed and complete customization.
             </p>
           </div>
 
@@ -238,14 +268,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-warning/10 text-warning border-warning/20">
-              Simple Process
+              Your Choice, Your Control
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Get Started in{" "}
-              <span className="text-primary">3 Simple Steps</span>
+              Three Ways to{" "}
+              <span className="text-primary">Build & Launch</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Our AI does the heavy lifting so you can focus on what matters most - growing your business.
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
+              Whether you prefer AI speed, proven templates, or building from scratch - 
+              Convertly adapts to your expertise and workflow.
             </p>
           </div>
 
@@ -276,10 +307,11 @@ export default function Home() {
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
               Trusted by{" "}
-              <span className="text-primary">Thousands of Businesses</span>
+              <span className="text-primary">Expert Marketers Worldwide</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              See how businesses like yours are achieving extraordinary results with Convertly.
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
+              See how marketing professionals achieve extraordinary results by combining 
+              AI power with expert-level control in Convertly.
             </p>
           </div>
 
@@ -313,12 +345,26 @@ export default function Home() {
       <section className="py-20 bg-gradient-primary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-            Ready to Transform Your Business?
+            Ready to Launch, Scale & Convert Like a Pro?
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of successful businesses using Convertly to generate more leads, 
-            increase conversions, and grow revenue on autopilot.
+            Get full marketing control with AI acceleration. Create funnels, launch ads, 
+            run campaigns, and scale revenue - all from one powerful platform.
           </p>
+          <div className="grid md:grid-cols-3 gap-4 mb-8 text-white/90">
+            <div className="text-center">
+              <Megaphone className="w-8 h-8 mx-auto mb-2" />
+              <div className="text-sm">Direct ad launching to all platforms</div>
+            </div>
+            <div className="text-center">
+              <Target className="w-8 h-8 mx-auto mb-2" />
+              <div className="text-sm">5-10 step proven templates ready</div>
+            </div>
+            <div className="text-center">
+              <TrendingUp className="w-8 h-8 mx-auto mb-2" />
+              <div className="text-sm">Launch planner with AI asset creation</div>
+            </div>
+          </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" className="text-lg px-8 py-4" asChild>
               <Link to="/dashboard">
@@ -327,7 +373,7 @@ export default function Home() {
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary" asChild>
               <Link to="/contact">
-                Contact Sales <MessageSquare className="ml-2 w-5 h-5" />
+                See All Features <MessageSquare className="ml-2 w-5 h-5" />
               </Link>
             </Button>
           </div>

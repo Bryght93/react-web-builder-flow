@@ -18,11 +18,8 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-xl text-foreground">LeadGenius</span>
-              <span className="text-sm bg-gradient-primary bg-clip-text text-transparent font-medium">AI</span>
+              <img src="/attached_assets/ChatGPT Image Jul 20, 2025, 12_30_40 AM_1752968143287.png" alt="Convertly" className="w-8 h-8" />
+              <span className="font-bold text-xl text-foreground">CONVERTLY</span>
             </Link>
           </div>
 
