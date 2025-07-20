@@ -239,7 +239,7 @@ export default function Features() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-hero/5">
+      <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
             🚀 Complete Feature Overview
