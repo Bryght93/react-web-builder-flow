@@ -104,24 +104,24 @@ const steps = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <img src="/convertly-logo.png" alt="Convertly" className="w-10 h-10 rounded-lg" />
-              <span className="text-2xl font-bold text-white">CONVERTLY</span>
+              <span className="text-2xl font-bold text-secondary">CONVERTLY</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/features" className="text-gray-300 hover:text-white font-medium transition-colors">Features</Link>
-              <Link to="/pricing" className="text-gray-300 hover:text-white font-medium transition-colors">Pricing</Link>
-              <Link to="/about" className="text-gray-300 hover:text-white font-medium transition-colors">About</Link>
-              <Link to="/contact" className="text-gray-300 hover:text-white font-medium transition-colors">Contact</Link>
-              <Button variant="outline" className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700" asChild>
+              <Link to="/features" className="text-foreground hover:text-primary font-medium transition-colors">Features</Link>
+              <Link to="/pricing" className="text-foreground hover:text-primary font-medium transition-colors">Pricing</Link>
+              <Link to="/about" className="text-foreground hover:text-primary font-medium transition-colors">About</Link>
+              <Link to="/contact" className="text-foreground hover:text-primary font-medium transition-colors">Contact</Link>
+              <Button variant="outline" asChild>
                 <Link to="/dashboard">Login</Link>
               </Button>
-              <Button className="bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600" asChild>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
                 <Link to="/dashboard">Get Started Free</Link>
               </Button>
             </div>
@@ -130,34 +130,34 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(120,119,198,0.3),transparent_50%)]"></div>
+      <section className="relative pt-24 pb-16 overflow-hidden bg-gradient-to-br from-secondary via-secondary/90 to-secondary">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,127,80,0.3),transparent_50%)]"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <Badge className="mb-6 bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0 hover:from-pink-600 hover:to-violet-600 shadow-lg">
+            <Badge className="mb-6 bg-primary text-primary-foreground border-0 hover:bg-primary/90 shadow-lg">
               🚀 Your Smart & Intelligent Marketing OS
             </Badge>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6">
               Convert More Visitors{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
+              <span className="text-primary">
                 Into Paying Customers
               </span>{" "}
               with AI + Expert Control
             </h1>
             
-            <p className="text-xl md:text-2xl text-foreground max-w-3xl mx-auto mb-8">
+            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8">
               The complete marketing platform that combines AI automation with full manual control. 
               Create funnels, run ads, build emails, and launch campaigns - your way, enhanced by AI.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Button size="lg" className="text-lg px-8 py-4 bg-primary hover:bg-primary/90" asChild>
+              <Button size="lg" className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
                 <Link to="/dashboard">
                   Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-4" asChild>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-secondary" asChild>
                 <Link to="/features">
                   See How It Works <Zap className="ml-2 w-5 h-5" />
                 </Link>
@@ -165,17 +165,17 @@ export default function Home() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 text-sm text-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 text-sm text-white/90">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span>No credit card required</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span>14-day free trial</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span>Full control + AI power</span>
               </div>
             </div>
@@ -216,7 +216,7 @@ export default function Home() {
                   <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
                     {stat.number}
                   </div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  <div className="text-sm text-white/80">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -225,13 +225,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-slate-800">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
+            <Badge className="mb-4 bg-primary text-primary-foreground border-0 shadow-lg">
               Core Features
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-secondary mb-4">
               AI-Powered Tools with{" "}
               <span className="text-primary">
                 Expert-Level Control
@@ -254,15 +254,15 @@ export default function Home() {
                 'from-teal-500 to-blue-500'
               ];
               return (
-                <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white">
+                <Card key={index} className="border shadow-lg hover:shadow-xl transition-all duration-300 group bg-card">
                   <CardContent className="p-6">
                     <div className={`w-12 h-12 bg-gradient-to-br ${gradients[index]} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
                       <feature.icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-xl font-semibold text-card-foreground mb-3">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -273,14 +273,116 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-slate-900">
+      {/* Standalone Features Section */}
+      <section className="py-20 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg">
+            <Badge className="mb-4 bg-primary text-primary-foreground border-0 shadow-lg">
+              Complete Business Solutions
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+              Launch, Sell & Scale{" "}
+              <span className="text-primary">
+                Like a Pro
+              </span>
+            </h2>
+            <p className="text-xl text-white/90 max-w-2xl mx-auto">
+              Complete business solutions built for experts. Each system gives you both AI automation and full manual control.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Evergreen Webinar */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">🎥 Evergreen Webinar</h3>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  Automated webinar funnels that convert 24/7. Pre-built registration pages, email sequences, and sales funnels.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Automated registration & reminder sequences</li>
+                  <li>• Live chat simulation & Q&A automation</li>
+                  <li>• Analytics & split-testing capabilities</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Course Selling */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">📚 Course Selling</h3>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  Complete course creation and selling platform. Curriculum builder, payment processing, and student management.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Drag & drop curriculum builder</li>
+                  <li>• Student progress tracking</li>
+                  <li>• Payment plans & affiliate system</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Affiliates */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">🤝 Affiliate System</h3>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  Complete affiliate management system. Recruit, track, and pay affiliates with automated commission processing.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Real-time commission tracking</li>
+                  <li>• Affiliate recruitment tools</li>
+                  <li>• Automated payment processing</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Launch Planner */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">🚀 Launch Planner</h3>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  Complete product launch system. Timeline management, asset creation, and campaign coordination in one platform.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Campaign timeline automation</li>
+                  <li>• Asset creation & management</li>
+                  <li>• Multi-channel launch coordination</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary text-primary-foreground border-0 shadow-lg">
               Your Choice, Your Control
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-secondary mb-4">
               Three Ways to{" "}
               <span className="text-primary">Build & Launch</span>
             </h2>
@@ -298,15 +400,15 @@ export default function Home() {
                 'from-green-500 to-teal-600'
               ];
               return (
-                <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white p-6">
+                <Card key={index} className="border shadow-lg hover:shadow-xl transition-all duration-300 group bg-card p-6">
                   <CardContent className="text-center p-0">
                     <div className={`w-16 h-16 bg-gradient-to-br ${stepGradients[index]} rounded-full flex items-center justify-center text-white font-bold text-xl mb-6 mx-auto group-hover:scale-110 transition-transform shadow-lg`}>
                       {step.number}
                     </div>
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                    <h3 className="text-2xl font-semibold text-card-foreground mb-4">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed">
                       {step.description}
                     </p>
                   </CardContent>
@@ -318,17 +420,17 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-slate-800">
+      <section className="py-20 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 shadow-lg">
+            <Badge className="mb-4 bg-primary text-primary-foreground border-0 shadow-lg">
               Customer Success
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
               Trusted by{" "}
               <span className="text-primary">Expert Marketers Worldwide</span>
             </h2>
-            <p className="text-xl text-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 max-w-2xl mx-auto">
               See how marketing professionals achieve extraordinary results by combining 
               AI power with expert-level control in Convertly.
             </p>
@@ -343,7 +445,7 @@ export default function Home() {
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <Quote className="w-8 h-8 text-blue-500 mb-4 opacity-70" />
+                  <Quote className="w-8 h-8 text-primary mb-4 opacity-70" />
                   <p className="text-gray-600 leading-relaxed mb-6">
                     "{testimonial.quote}"
                   </p>
@@ -361,7 +463,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600">
+      <section className="py-20 bg-gradient-to-br from-primary via-primary to-secondary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
             Ready to Launch, Scale & Convert Like a Pro?

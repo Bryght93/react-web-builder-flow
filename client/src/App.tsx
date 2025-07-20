@@ -80,11 +80,7 @@ const App = () => (
           <Route path="/ai-coach" element={<Layout><AISalesCoach /></Layout>} />
           <Route path="/integrations" element={<Layout><IntegrationsHub /></Layout>} />
           
-          {/* Standalone Features */}
-          <Route path="/evergreen-webinar" element={<Layout><EvergreenWebinar /></Layout>} />
-          <Route path="/course-selling" element={<Layout><CourseSelling /></Layout>} />
-          <Route path="/affiliates" element={<Layout><Affiliates /></Layout>} />
-          <Route path="/launch-planner" element={<Layout><LaunchPlanner /></Layout>} />
+          {/* Standalone Features - Removed since they're now on home page only */}
           
           <Route path="/profile" element={<Layout><Profile /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />

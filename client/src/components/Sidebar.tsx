@@ -65,10 +65,10 @@ const navigation = [
   {
     name: "Standalone Features",
     items: [
-      { name: "🎥 Evergreen Webinar", href: "/evergreen-webinar", icon: Video },
-      { name: "📚 Course Selling", href: "/course-selling", icon: BookOpen },
-      { name: "🤝 Affiliates", href: "/affiliates", icon: UserCheck },
-      { name: "🚀 Launch Planner", href: "/launch-planner", icon: Rocket },
+      { name: "🎥 Evergreen Webinar", href: "/#evergreen", icon: Video },
+      { name: "📚 Course Selling", href: "/#course", icon: BookOpen },
+      { name: "🤝 Affiliates", href: "/#affiliates", icon: UserCheck },
+      { name: "🚀 Launch Planner", href: "/#launch", icon: Rocket },
     ]
   },
   {
