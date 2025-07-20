@@ -129,11 +129,11 @@ export default function Contact() {
               Help You Succeed
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Have questions about Convertly? Want to see a personalized demo? Our team of 
-            marketing experts is ready to help you transform your business.
-          </p>
-          
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+              Have questions about Convertly? Ready to see how our AI-powered platform can 
+              transform your marketing results? We're here to help you succeed.
+            </p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-success" />
@@ -229,7 +229,7 @@ export default function Contact() {
                     <Input placeholder="Enter your last name" />
                   </div>
                 </div>
-                
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
@@ -395,7 +395,7 @@ export default function Contact() {
             We're Available{" "}
             <span className="text-primary">When You Need Us</span>
           </h2>
-          
+
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             <div className="text-center">
               <Clock className="w-12 h-12 text-primary mx-auto mb-4" />

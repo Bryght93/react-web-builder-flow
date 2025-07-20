@@ -219,7 +219,7 @@ export default function Features() {
                       <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {feature.title}
                       </h3>
-                      <p className="text-muted-foreground mb-6 leading-relaxed">
+                      <p className="text-gray-600 leading-relaxed">
                         {feature.description}
                       </p>
                       <div className="space-y-3">

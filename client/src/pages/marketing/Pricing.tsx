@@ -162,7 +162,7 @@ export default function Pricing() {
             Start free, scale as you grow. All plans include our core AI features 
             with no hidden fees or surprise charges.
           </p>
-          
+
           <div className="flex items-center justify-center space-x-4 mb-8">
             <span className="text-muted-foreground">Monthly</span>
             <div className="flex items-center space-x-2">
@@ -189,14 +189,14 @@ export default function Pricing() {
                     </Badge>
                   </div>
                 )}
-                
+
                 <CardContent className="p-8">
                   <div className="text-center mb-8">
                     <div className="w-16 h-16 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4">
                       <plan.icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
-                    <p className="text-muted-foreground mb-4">{plan.description}</p>
+                    <p className="text-gray-600 mb-6">{plan.description}</p>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-4xl font-bold text-foreground">${plan.price}</span>
                       <span className="text-muted-foreground ml-2">/month</span>

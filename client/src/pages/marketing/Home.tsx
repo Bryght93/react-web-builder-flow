@@ -157,7 +157,7 @@ export default function Home() {
                   Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-secondary" asChild>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-gray-900 bg-transparent" asChild>
                 <Link to="/features">
                   See How It Works <Zap className="ml-2 w-5 h-5" />
                 </Link>
@@ -492,7 +492,7 @@ export default function Home() {
                 Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-purple-600" asChild>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-purple-600 bg-transparent" asChild>
               <Link to="/contact">
                 See All Features <MessageSquare className="ml-2 w-5 h-5" />
               </Link>

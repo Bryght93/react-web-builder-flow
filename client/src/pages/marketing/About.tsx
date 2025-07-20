@@ -162,18 +162,18 @@ export default function About() {
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
               Our Story
             </h2>
-            <div className="prose prose-lg mx-auto text-muted-foreground">
-              <p className="text-xl leading-relaxed">
+            <div className="prose prose-lg mx-auto">
+              <p className="text-xl leading-relaxed text-gray-700">
                 It started with a simple frustration: why did growing a business require juggling 
                 8+ different marketing tools? Our founders, experienced in both marketing and AI, 
                 knew there had to be a better way.
               </p>
-              <p className="text-xl leading-relaxed">
+              <p className="text-xl leading-relaxed text-gray-700">
                 After years of watching businesses struggle with disconnected tools, missed leads, 
                 and manual processes that don't scale, we set out to build the intelligent marketing 
                 platform we wished existed.
               </p>
-              <p className="text-xl leading-relaxed">
+              <p className="text-xl leading-relaxed text-gray-700">
                 Today, Convertly combines cutting-edge AI with proven marketing strategies to help 
                 businesses of all sizes convert more visitors into paying customers - automatically, 
                 intelligently, and at scale.
@@ -209,7 +209,7 @@ export default function About() {
                       <Badge className="bg-primary/10 text-primary">{item.year}</Badge>
                       <h3 className="text-2xl font-semibold text-foreground">{item.title}</h3>
                     </div>
-                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                    <p className="text-gray-600 leading-relaxed">{item.description}</p>
                   </div>
                 </div>
               ))}
@@ -229,7 +229,7 @@ export default function About() {
               What Drives Us{" "}
               <span className="text-primary">Every Day</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               These core values guide every decision we make and every feature we build.
             </p>
           </div>
@@ -265,7 +265,7 @@ export default function About() {
               Meet the Team Behind{" "}
               <span className="text-primary">Convertly</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Experienced leaders from top companies who understand both marketing and technology.
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function About() {
                     {member.name}
                   </h3>
                   <p className="text-primary font-medium mb-3">{member.role}</p>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
                     {member.bio}
                   </p>
                   <Badge className="bg-success/10 text-success text-xs">
@@ -304,7 +304,7 @@ export default function About() {
             Making AI-Powered Marketing{" "}
             <span className="text-primary">Accessible to Everyone</span>
           </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed mb-8">
+          <p className="text-xl text-gray-700 leading-relaxed mb-8">
             We believe every business, regardless of size or technical expertise, should have access 
             to the same powerful marketing automation that only enterprise companies could afford before. 
             Our AI-powered platform levels the playing field, giving every entrepreneur and small business 
