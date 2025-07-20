@@ -178,7 +178,7 @@ export default function Features() {
               Convert More Leads
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-foreground max-w-3xl mx-auto mb-8">
             Convertly combines the power of AI with proven marketing strategies to give you 
             everything you need to attract, nurture, and convert high-quality leads.
           </p>
@@ -201,7 +201,7 @@ export default function Features() {
               Six Powerful Tools,{" "}
               <span className="text-primary">One Platform</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
               Each feature is designed to work seamlessly together, creating a complete 
               marketing ecosystem that drives real results.
             </p>
@@ -209,17 +209,24 @@ export default function Features() {
 
           <div className="grid lg:grid-cols-2 gap-12">
             {coreFeatures.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50 hover:from-primary/5 hover:to-secondary/5">
                 <CardContent className="p-8">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${[
+                      'from-blue-500 to-blue-600',
+                      'from-green-500 to-green-600', 
+                      'from-purple-500 to-purple-600',
+                      'from-red-500 to-red-600',
+                      'from-orange-500 to-orange-600',
+                      'from-teal-500 to-teal-600'
+                    ][index]} rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg`}>
                       <feature.icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {feature.title}
                       </h3>
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-foreground leading-relaxed mb-4">
                         {feature.description}
                       </p>
                       <div className="space-y-3">
@@ -286,7 +293,7 @@ export default function Features() {
               Connect With{" "}
               <span className="text-primary">Your Favorite Tools</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
               Convertly integrates with all the tools you already use, so you can keep your 
               existing workflow while supercharging your results.
             </p>
@@ -312,7 +319,7 @@ export default function Features() {
                     <div className={`w-8 h-8 bg-gradient-to-br ${colorClass} rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform`}>
                       <Globe className="w-4 h-4 text-white" />
                     </div>
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-foreground">
                       {integration}
                     </div>
                   </CardContent>
@@ -322,7 +329,7 @@ export default function Features() {
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-gray-600 mb-6">
+            <p className="text-foreground mb-6">
               Don't see your tool? We're constantly adding new integrations.
             </p>
             <Button variant="outline" asChild>
@@ -342,7 +349,7 @@ export default function Features() {
               Why Choose{" "}
               <span className="text-primary">Convertly</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
               See how Convertly stacks up against traditional marketing tools and competitors.
             </p>
           </div>

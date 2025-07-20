@@ -137,15 +137,15 @@ export default function Contact() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-success" />
-              <span>Average response time: 2 minutes</span>
+              <span style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: '2px 4px', borderRadius: '4px' }}>Average response time: 2 minutes</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-success" />
-              <span>Free personalized demo available</span>
+              <span style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: '2px 4px', borderRadius: '4px' }}>Free personalized demo available</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-success" />
-              <span>No pressure, genuine help</span>
+              <span style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: '2px 4px', borderRadius: '4px' }}>No pressure, genuine help</span>
             </div>
           </div>
         </div>
@@ -432,11 +432,11 @@ export default function Contact() {
                 Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary" asChild>
-              <Link to="/pricing">
-                View Pricing <MessageSquare className="ml-2 w-5 h-5" />
-              </Link>
-            </Button>
+            <Button variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary bg-white/10 backdrop-blur-sm" asChild>
+                <Link to="/pricing">
+                  View Pricing <MessageSquare className="ml-2 w-5 h-5" />
+                </Link>
+              </Button>
           </div>
         </div>
       </section>

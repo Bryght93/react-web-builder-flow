@@ -327,7 +327,7 @@ export default function Pricing() {
               Still have questions? Our team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="outline" asChild>
+              <Button variant="outline" className="bg-primary/10 border-primary/20 text-primary hover:bg-primary/20" asChild>
                 <Link to="/contact">
                   <MessageSquare className="w-5 h-5 mr-2" />
                   Chat with Sales
@@ -360,7 +360,7 @@ export default function Pricing() {
                 Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary" asChild>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary bg-white/10 backdrop-blur-sm" asChild>
               <Link to="/contact">
                 Talk to Sales <MessageSquare className="ml-2 w-5 h-5" />
               </Link>
