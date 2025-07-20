@@ -15,8 +15,7 @@ import {
   MessageSquare,
   Phone,
   Users,
-  Menu,
-  X
+  Menu
 } from "lucide-react";
 
 const plans = [
