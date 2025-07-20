@@ -22,10 +22,10 @@ import {
 
 const team = [
   {
-    name: "Sarah Chen",
+    name: "Bright W Godwin",
     role: "CEO & Founder", 
-    bio: "Former VP of Growth at leading SaaS companies. 10+ years building marketing automation platforms.",
-    expertise: "Growth Strategy, Product Vision"
+    bio: "Expert copywriter and marketer, pastor, and Christian author with deep expertise in conversion-driven marketing strategies.",
+    expertise: "Copywriting, Marketing Strategy"
   },
   {
     name: "Marcus Rodriguez",
