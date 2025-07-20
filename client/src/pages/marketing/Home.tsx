@@ -104,24 +104,24 @@ const steps = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-900">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <img src={convertlyLogo} alt="Convertly" className="w-10 h-10" />
-              <span className="text-2xl font-bold text-secondary">CONVERTLY</span>
+              <span className="text-2xl font-bold text-white">CONVERTLY</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/features" className="text-foreground hover:text-primary font-medium transition-colors">Features</Link>
-              <Link to="/pricing" className="text-foreground hover:text-primary font-medium transition-colors">Pricing</Link>
-              <Link to="/about" className="text-foreground hover:text-primary font-medium transition-colors">About</Link>
-              <Link to="/contact" className="text-foreground hover:text-primary font-medium transition-colors">Contact</Link>
-              <Button variant="outline" asChild>
+              <Link to="/features" className="text-gray-300 hover:text-white font-medium transition-colors">Features</Link>
+              <Link to="/pricing" className="text-gray-300 hover:text-white font-medium transition-colors">Pricing</Link>
+              <Link to="/about" className="text-gray-300 hover:text-white font-medium transition-colors">About</Link>
+              <Link to="/contact" className="text-gray-300 hover:text-white font-medium transition-colors">Contact</Link>
+              <Button variant="outline" className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700" asChild>
                 <Link to="/dashboard">Login</Link>
               </Button>
-              <Button asChild>
+              <Button className="bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600" asChild>
                 <Link to="/dashboard">Get Started Free</Link>
               </Button>
             </div>
@@ -130,11 +130,11 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-5"></div>
+      <section className="relative pt-24 pb-16 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(120,119,198,0.3),transparent_50%)]"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
+            <Badge className="mb-6 bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0 hover:from-pink-600 hover:to-violet-600 shadow-lg">
               🚀 Your Smart & Intelligent Marketing OS
             </Badge>
             
@@ -182,28 +182,28 @@ export default function Home() {
 
             {/* Visual Feature Preview */}
             <div className="mt-16 relative">
-              <div className="bg-white rounded-lg shadow-2xl p-8 max-w-4xl mx-auto border">
+              <div className="bg-white rounded-xl shadow-2xl p-8 max-w-4xl mx-auto border border-gray-200">
                 <div className="grid md:grid-cols-3 gap-6 text-center">
                   <div className="space-y-3">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto shadow-lg">
                       <Megaphone className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-foreground">Launch Ads Directly</h3>
-                    <p className="text-sm text-muted-foreground">Create and launch ads to all major platforms from one dashboard</p>
+                    <h3 className="font-semibold text-gray-900">Launch Ads Directly</h3>
+                    <p className="text-sm text-gray-600">Create and launch ads to all major platforms from one dashboard</p>
                   </div>
                   <div className="space-y-3">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto shadow-lg">
                       <Target className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-foreground">5-10 Step Templates</h3>
-                    <p className="text-sm text-muted-foreground">Proven funnel and email sequences ready to customize</p>
+                    <h3 className="font-semibold text-gray-900">5-10 Step Templates</h3>
+                    <p className="text-sm text-gray-600">Proven funnel and email sequences ready to customize</p>
                   </div>
                   <div className="space-y-3">
-                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mx-auto">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mx-auto shadow-lg">
                       <Users className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-foreground">Expert Control</h3>
-                    <p className="text-sm text-muted-foreground">Full manual control with AI enhancement when you need it</p>
+                    <h3 className="font-semibold text-gray-900">Expert Control</h3>
+                    <p className="text-sm text-gray-600">Full manual control with AI enhancement when you need it</p>
                   </div>
                 </div>
               </div>
@@ -225,10 +225,10 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-success/10 text-success border-success/20">
+            <Badge className="mb-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
               Core Features
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
@@ -244,30 +244,40 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-3">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {features.map((feature, index) => {
+              const gradients = [
+                'from-purple-500 to-pink-500',
+                'from-blue-500 to-cyan-500', 
+                'from-green-500 to-emerald-500',
+                'from-orange-500 to-red-500',
+                'from-indigo-500 to-purple-500',
+                'from-teal-500 to-blue-500'
+              ];
+              return (
+                <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white">
+                  <CardContent className="p-6">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${gradients[index]} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
+                      <feature.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20">
+      <section className="py-20 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-warning/10 text-warning border-warning/20">
+            <Badge className="mb-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg">
               Your Choice, Your Control
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
@@ -281,28 +291,37 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-12">
-            {steps.map((step, index) => (
-              <div key={index} className="text-center group">
-                <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold text-xl mb-6 mx-auto group-hover:scale-110 transition-transform">
-                  {step.number}
-                </div>
-                <h3 className="text-2xl font-semibold text-foreground mb-4">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            ))}
+            {steps.map((step, index) => {
+              const stepGradients = [
+                'from-blue-500 to-indigo-600',
+                'from-purple-500 to-pink-600',
+                'from-green-500 to-teal-600'
+              ];
+              return (
+                <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group bg-white p-6">
+                  <CardContent className="text-center p-0">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${stepGradients[index]} rounded-full flex items-center justify-center text-white font-bold text-xl mb-6 mx-auto group-hover:scale-110 transition-transform shadow-lg`}>
+                      {step.number}
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {step.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-accent/10 text-primary border-primary/20">
+            <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 shadow-lg">
               Customer Success
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
@@ -317,20 +336,20 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg">
+              <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <Quote className="w-8 h-8 text-primary mb-4 opacity-50" />
-                  <p className="text-muted-foreground leading-relaxed mb-6">
+                  <Quote className="w-8 h-8 text-blue-500 mb-4 opacity-70" />
+                  <p className="text-gray-600 leading-relaxed mb-6">
                     "{testimonial.quote}"
                   </p>
                   <div>
-                    <div className="font-semibold text-foreground">{testimonial.name}</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="text-sm text-gray-500">
                       {testimonial.role}, {testimonial.company}
                     </div>
                   </div>
@@ -342,7 +361,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-primary">
+      <section className="py-20 bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
             Ready to Launch, Scale & Convert Like a Pro?
@@ -351,27 +370,27 @@ export default function Home() {
             Get full marketing control with AI acceleration. Create funnels, launch ads, 
             run campaigns, and scale revenue - all from one powerful platform.
           </p>
-          <div className="grid md:grid-cols-3 gap-4 mb-8 text-white/90">
-            <div className="text-center">
-              <Megaphone className="w-8 h-8 mx-auto mb-2" />
-              <div className="text-sm">Direct ad launching to all platforms</div>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <Megaphone className="w-8 h-8 mx-auto mb-2 text-white" />
+              <div className="text-sm text-white/90">Direct ad launching to all platforms</div>
             </div>
-            <div className="text-center">
-              <Target className="w-8 h-8 mx-auto mb-2" />
-              <div className="text-sm">5-10 step proven templates ready</div>
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <Target className="w-8 h-8 mx-auto mb-2 text-white" />
+              <div className="text-sm text-white/90">5-10 step proven templates ready</div>
             </div>
-            <div className="text-center">
-              <TrendingUp className="w-8 h-8 mx-auto mb-2" />
-              <div className="text-sm">Launch planner with AI asset creation</div>
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-white" />
+              <div className="text-sm text-white/90">Launch planner with AI asset creation</div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-4" asChild>
+            <Button size="lg" className="text-lg px-8 py-4 bg-white text-purple-600 hover:bg-gray-100" asChild>
               <Link to="/dashboard">
                 Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary" asChild>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-purple-600" asChild>
               <Link to="/contact">
                 See All Features <MessageSquare className="ml-2 w-5 h-5" />
               </Link>

@@ -87,15 +87,15 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Brand Colors - Convertly Theme (Coral + Navy) */
-    --background: 0 0% 100%;
-    --foreground: 210 30% 15%;
+    /* Brand Colors - Convertly Theme (Dark Mode + Colorful Cards) */
+    --background: 220 27% 8%;
+    --foreground: 0 0% 95%;
 
     --card: 0 0% 100%;
     --card-foreground: 210 30% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 30% 15%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 0 0% 95%;
 
     /* Primary - Convertly Coral */
     --primary: 15 85% 65%;
@@ -114,8 +114,8 @@ All colors MUST be HSL.
     --warning-foreground: 0 0% 100%;
 
     /* Muted Backgrounds */
-    --muted: 25 15% 97%;
-    --muted-foreground: 210 15% 55%;
+    --muted: 220 25% 12%;
+    --muted-foreground: 215 20% 70%;
 
     /* Accent - Light Coral */
     --accent: 15 85% 75%;
@@ -135,8 +135,8 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
