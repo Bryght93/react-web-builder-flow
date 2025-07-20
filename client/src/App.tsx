@@ -36,6 +36,10 @@ import AILaunchAssistantPage from "./pages/AILaunchAssistant";
 import AIEmailSMSEnginePage from "./pages/AIEmailSMSEngine";
 import AIAdLauncherPage from "./pages/AIAdLauncher";
 import EmailBuilder from "./components/EmailBuilder";
+import EvergreenWebinar from "./pages/EvergreenWebinar";
+import CourseSelling from "./pages/CourseSelling";
+import Affiliates from "./pages/Affiliates";
+import LaunchPlanner from "./pages/LaunchPlanner";
 
 
 const App = () => (
@@ -75,6 +79,13 @@ const App = () => (
           <Route path="/ads" element={<Layout><AdLaunchTracker /></Layout>} />
           <Route path="/ai-coach" element={<Layout><AISalesCoach /></Layout>} />
           <Route path="/integrations" element={<Layout><IntegrationsHub /></Layout>} />
+          
+          {/* Standalone Features */}
+          <Route path="/evergreen-webinar" element={<Layout><EvergreenWebinar /></Layout>} />
+          <Route path="/course-selling" element={<Layout><CourseSelling /></Layout>} />
+          <Route path="/affiliates" element={<Layout><Affiliates /></Layout>} />
+          <Route path="/launch-planner" element={<Layout><LaunchPlanner /></Layout>} />
+          
           <Route path="/profile" element={<Layout><Profile /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />
           

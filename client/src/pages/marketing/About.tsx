@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import convertlyLogo from "@assets/ChatGPT Image Jul 20, 2025, 12_30_40 AM_1752968143287.png";
+// Removed unused import
 import { 
   ArrowRight, 
   Target, 
@@ -104,7 +104,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-3">
-              <img src={convertlyLogo} alt="Convertly" className="w-10 h-10" />
+              <img src="/convertly-logo.png" alt="Convertly" className="w-10 h-10 rounded-lg" />
               <span className="text-2xl font-bold text-secondary">CONVERTLY</span>
             </Link>
             <div className="hidden md:flex items-center space-x-8">
@@ -358,7 +358,7 @@ export default function About() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <img src={convertlyLogo} alt="Convertly" className="w-8 h-8" />
+                <img src="/convertly-logo.png" alt="Convertly" className="w-8 h-8 rounded-lg" />
                 <span className="text-xl font-bold">CONVERTLY</span>
               </div>
               <p className="text-white/80">

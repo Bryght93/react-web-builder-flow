@@ -20,7 +20,11 @@ import {
   Layers,
   Globe,
   Bot,
-  User
+  User,
+  Video,
+  BookOpen,
+  UserCheck,
+  Rocket
 } from "lucide-react";
 
 const navigation = [
@@ -59,6 +63,15 @@ const navigation = [
     ]
   },
   {
+    name: "Standalone Features",
+    items: [
+      { name: "🎥 Evergreen Webinar", href: "/evergreen-webinar", icon: Video },
+      { name: "📚 Course Selling", href: "/course-selling", icon: BookOpen },
+      { name: "🤝 Affiliates", href: "/affiliates", icon: UserCheck },
+      { name: "🚀 Launch Planner", href: "/launch-planner", icon: Rocket },
+    ]
+  },
+  {
     name: "Advanced",
     items: [
       { name: "CRM", href: "/crm", icon: Users },
@@ -88,12 +101,12 @@ export function Sidebar({ className }: SidebarProps) {
     )}>
       {/* Logo */}
       <div className="flex items-center justify-between p-4 border-b border-border">
-        {!isCollapsed && (
-          <Link to="/" className="flex items-center space-x-2">
-            <img src="/attached_assets/ChatGPT Image Jul 20, 2025, 12_30_40 AM_1752968143287.png" alt="Convertly" className="w-8 h-8" />
+        <div className="flex items-center space-x-2">
+          <img src="/convertly-logo.png" alt="Convertly" className="w-8 h-8 rounded-lg" />
+          {!isCollapsed && (
             <span className="font-bold text-xl text-foreground">CONVERTLY</span>
-          </Link>
-        )}
+          )}
+        </div>
 
         <Button
           variant="ghost"
