@@ -157,7 +157,7 @@ export default function Home() {
                   Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-gray-900 bg-transparent" asChild>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4 bg-white text-gray-900 border-white hover:bg-gray-100" asChild>
                 <Link to="/features">
                   See How It Works <Zap className="ml-2 w-5 h-5" />
                 </Link>
@@ -473,17 +473,17 @@ export default function Home() {
             run campaigns, and scale revenue - all from one powerful platform.
           </p>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <Megaphone className="w-8 h-8 mx-auto mb-2 text-white" />
-              <div className="text-sm text-white/90">Direct ad launching to all platforms</div>
+            <div className="text-center bg-gradient-to-br from-blue-500 to-blue-600 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+              <Megaphone className="w-10 h-10 mx-auto mb-3 text-white" />
+              <div className="text-sm font-medium text-white">Direct ad launching to all platforms</div>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <Target className="w-8 h-8 mx-auto mb-2 text-white" />
-              <div className="text-sm text-white/90">5-10 step proven templates ready</div>
+            <div className="text-center bg-gradient-to-br from-green-500 to-green-600 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+              <Target className="w-10 h-10 mx-auto mb-3 text-white" />
+              <div className="text-sm font-medium text-white">5-10 step proven templates ready</div>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-white" />
-              <div className="text-sm text-white/90">Launch planner with AI asset creation</div>
+            <div className="text-center bg-gradient-to-br from-purple-500 to-purple-600 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+              <TrendingUp className="w-10 h-10 mx-auto mb-3 text-white" />
+              <div className="text-sm font-medium text-white">Launch planner with AI asset creation</div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

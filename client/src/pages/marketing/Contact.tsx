@@ -129,7 +129,7 @@ export default function Contact() {
               Help You Succeed
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
               Have questions about Convertly? Ready to see how our AI-powered platform can 
               transform your marketing results? We're here to help you succeed.
             </p>

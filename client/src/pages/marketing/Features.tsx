@@ -178,7 +178,7 @@ export default function Features() {
               Convert More Leads
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Convertly combines the power of AI with proven marketing strategies to give you 
             everything you need to attract, nurture, and convert high-quality leads.
           </p>
@@ -286,26 +286,43 @@ export default function Features() {
               Connect With{" "}
               <span className="text-primary">Your Favorite Tools</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Convertly integrates with all the tools you already use, so you can keep your 
               existing workflow while supercharging your results.
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {integrations.map((integration, index) => (
-              <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-all duration-200">
-                <CardContent className="p-4 text-center">
-                  <div className="text-sm font-medium text-foreground">
-                    {integration}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {integrations.map((integration, index) => {
+              const colors = [
+                'from-blue-500 to-blue-600',
+                'from-green-500 to-green-600', 
+                'from-purple-500 to-purple-600',
+                'from-red-500 to-red-600',
+                'from-yellow-500 to-yellow-600',
+                'from-indigo-500 to-indigo-600',
+                'from-pink-500 to-pink-600',
+                'from-teal-500 to-teal-600',
+                'from-orange-500 to-orange-600'
+              ];
+              const colorClass = colors[index % colors.length];
+              return (
+                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <CardContent className="p-4 text-center">
+                    <div className={`w-8 h-8 bg-gradient-to-br ${colorClass} rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform`}>
+                      <Globe className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {integration}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-muted-foreground mb-6">
+            <p className="text-gray-600 mb-6">
               Don't see your tool? We're constantly adding new integrations.
             </p>
             <Button variant="outline" asChild>

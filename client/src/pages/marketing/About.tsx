@@ -136,7 +136,7 @@ export default function About() {
                 Democratize Marketing Success
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
               Born from the frustration of juggling multiple marketing tools, Convertly brings 
               the power of AI-driven marketing automation to businesses of all sizes.
             </p>
