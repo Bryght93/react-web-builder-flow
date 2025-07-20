@@ -13,7 +13,11 @@ import {
   TrendingUp,
   Globe,
   Menu,
-  X
+  X,
+  Heart,
+  Lightbulb,
+  Shield,
+  Rocket
 } from "lucide-react";
 
 const team = [
