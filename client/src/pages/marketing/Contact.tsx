@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,9 @@ import {
   ArrowRight,
   Users,
   Calendar,
-  Headphones
+  Headphones,
+  Menu,
+  X
 } from "lucide-react";
 
 const contactMethods = [
@@ -91,6 +94,12 @@ const faqs = [
 ];
 
 export default function Contact() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -113,8 +122,34 @@ export default function Contact() {
                 <Link to="/dashboard">Get Started Free</Link>
               </Button>
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <Button variant="ghost" onClick={toggleMobileMenu}>
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-background/95 backdrop-blur-sm py-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center space-y-4">
+              <Link to="/features" className="text-foreground hover:text-primary font-medium transition-colors">Features</Link>
+              <Link to="/pricing" className="text-foreground hover:text-primary font-medium transition-colors">Pricing</Link>
+              <Link to="/about" className="text-foreground hover:text-primary font-medium transition-colors">About</Link>
+              <Link to="/contact" className="text-primary font-medium">Contact</Link>
+              <Button variant="outline" asChild>
+                <Link to="/dashboard">Login</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/dashboard">Get Started Free</Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}

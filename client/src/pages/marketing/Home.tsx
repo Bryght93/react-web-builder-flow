@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-// Removed unused import
 import { 
   Zap, 
   Brain, 
@@ -17,7 +17,9 @@ import {
   Megaphone,
   Mail,
   Star,
-  Quote
+  Quote,
+  Menu,
+  X
 } from "lucide-react";
 
 const features = [
@@ -103,6 +105,8 @@ const steps = [
 ];
 
 export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -110,9 +114,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <img src="/convertly-logo.png" alt="Convertly" className="w-10 h-10 rounded-lg" />
-              <span className="text-2xl font-bold text-secondary">CONVERTLY</span>
+              <img src="/convertly-logo.png" alt="Convertly" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg" />
+              <span className="text-xl sm:text-2xl font-bold text-secondary">CONVERTLY</span>
             </div>
+            
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               <Link to="/features" className="text-foreground hover:text-primary font-medium transition-colors">Features</Link>
               <Link to="/pricing" className="text-foreground hover:text-primary font-medium transition-colors">Pricing</Link>
@@ -122,10 +128,66 @@ export default function Home() {
                 <Link to="/dashboard">Login</Link>
               </Button>
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
-                <Link to="/dashboard">Get Started Free</Link>
+                <Link to="/dashboard">Start Free Trial</Link>
+              </Button>
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="md:hidden flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden">
+              <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t">
+                <Link
+                  to="/features"
+                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Features
+                </Link>
+                <Link
+                  to="/pricing"
+                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Pricing
+                </Link>
+                <Link
+                  to="/about"
+                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  About
+                </Link>
+                <Link
+                  to="/contact"
+                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+                <div className="px-3 py-2 space-y-2">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+                  </Button>
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                    <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Start Free Trial</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 

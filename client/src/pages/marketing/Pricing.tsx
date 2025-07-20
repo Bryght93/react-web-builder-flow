@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,9 @@ import {
   Star,
   MessageSquare,
   Phone,
-  Users
+  Users,
+  Menu,
+  X
 } from "lucide-react";
 
 const plans = [
@@ -120,6 +123,12 @@ const faqs = [
 ];
 
 export default function Pricing() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -130,6 +139,15 @@ export default function Pricing() {
               <img src="/convertly-logo.png" alt="Convertly" className="w-10 h-10 rounded-lg" />
               <span className="text-2xl font-bold text-secondary">CONVERTLY</span>
             </Link>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <Button variant="ghost" onClick={toggleMobileMenu}>
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </Button>
+            </div>
+
+            {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
               <Link to="/features" className="text-foreground hover:text-primary font-medium transition-colors">Features</Link>
               <Link to="/pricing" className="text-primary font-medium">Pricing</Link>
@@ -144,6 +162,24 @@ export default function Pricing() {
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu (Conditional Rendering) */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-background/95 backdrop-blur-sm py-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col space-y-4">
+              <Link to="/features" className="text-foreground hover:text-primary font-medium transition-colors block">Features</Link>
+              <Link to="/pricing" className="text-primary font-medium block">Pricing</Link>
+              <Link to="/about" className="text-foreground hover:text-primary font-medium transition-colors block">About</Link>
+              <Link to="/contact" className="text-foreground hover:text-primary font-medium transition-colors block">Contact</Link>
+              <Button variant="outline" className="w-full" asChild>
+                <Link to="/dashboard">Login</Link>
+              </Button>
+              <Button className="w-full" asChild>
+                <Link to="/dashboard">Get Started Free</Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
@@ -178,6 +214,50 @@ export default function Pricing() {
       <section className="pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8">
+              {/* Free Plan */}
+              <Card className="relative border-0 shadow-lg hover:shadow-xl transition-all duration-300 ">
+                
+
+                <CardContent className="p-8">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Zap className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">Free Trial</h3>
+                    <p className="text-gray-600 mb-6">14-day trial to experience all features.</p>
+                    <div className="flex items-baseline justify-center mb-2">
+                      <span className="text-4xl font-bold text-foreground">$0</span>
+                      <span className="text-muted-foreground ml-2">/month</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Billed monthly</p>
+                  </div>
+
+                  <div className="space-y-4 mb-8">
+                    
+                      <div className="flex items-center space-x-3">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
+                        <span className="text-foreground">All features included</span>
+                      </div>
+                    
+                      <div className="flex items-center space-x-3">
+                        <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-muted-foreground">Limited support</span>
+                      </div>
+                    
+                  </div>
+
+                  <Button 
+                    size="lg" 
+                    className={`w-full`}
+                    variant={"outline"}
+                    asChild
+                  >
+                    <Link to="/dashboard">
+                      Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             {plans.map((plan, index) => (
               <Card key={index} className={`relative border-0 shadow-lg hover:shadow-xl transition-all duration-300 ${
                 plan.badge === "Most Popular" ? "ring-2 ring-primary transform scale-105" : ""
@@ -360,7 +440,7 @@ export default function Pricing() {
                 Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-primary bg-white/10 backdrop-blur-sm" asChild>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-4 text-gray-900 border-gray-300 hover:bg-gray-100 bg-white" asChild>
               <Link to="/contact">
                 Talk to Sales <MessageSquare className="ml-2 w-5 h-5" />
               </Link>

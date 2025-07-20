@@ -1,16 +1,19 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 // Removed unused import
 import { 
+  Zap, 
   Brain,
   Target, 
   MessageSquare, 
   BarChart3,
   Mail,
   Sparkles,
-  Zap,
+  Bot,
+  Smartphone,
   Users,
   TrendingUp,
   Globe,
@@ -20,9 +23,10 @@ import {
   ArrowRight,
   Palette,
   Megaphone,
-  Bot,
   PieChart,
-  Filter
+  Filter,
+  Menu,
+  X
 } from "lucide-react";
 
 const coreFeatures = [
@@ -140,29 +144,97 @@ const integrations = [
 ];
 
 export default function Features() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-3">
-              <img src="/convertly-logo.png" alt="Convertly" className="w-10 h-10 rounded-lg" />
-              <span className="text-2xl font-bold text-secondary">CONVERTLY</span>
-            </Link>
+            <div className="flex items-center space-x-3">
+              <img src="/convertly-logo.png" alt="Convertly" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg" />
+              <span className="text-xl sm:text-2xl font-bold text-foreground">CONVERTLY</span>
+            </div>
+
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/features" className="text-primary font-medium">Features</Link>
-              <Link to="/pricing" className="text-foreground hover:text-primary font-medium transition-colors">Pricing</Link>
-              <Link to="/about" className="text-foreground hover:text-primary font-medium transition-colors">About</Link>
-              <Link to="/contact" className="text-foreground hover:text-primary font-medium transition-colors">Contact</Link>
+              <Link to="/" className="text-muted-foreground hover:text-foreground font-medium transition-colors">Home</Link>
+              <Link to="/features" className="text-foreground font-medium">Features</Link>
+              <Link to="/pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors">Pricing</Link>
+              <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors">About</Link>
+              <Link to="/contact" className="text-muted-foreground hover:text-foreground font-medium transition-colors">Contact</Link>
               <Button variant="outline" asChild>
                 <Link to="/dashboard">Login</Link>
               </Button>
-              <Button asChild>
-                <Link to="/dashboard">Get Started Free</Link>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                <Link to="/dashboard">Start Free Trial</Link>
+              </Button>
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="md:hidden flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden">
+              <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t">
+                <Link
+                  to="/"
+                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/features"
+                  className="block px-3 py-2 text-base font-medium text-foreground bg-muted rounded-md"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Features
+                </Link>
+                <Link
+                  to="/pricing"
+                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Pricing
+                </Link>
+                <Link
+                  to="/about"
+                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  About
+                </Link>
+                <Link
+                  to="/contact"
+                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+                <div className="px-3 py-2 space-y-2">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+                  </Button>
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                    <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Start Free Trial</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
