@@ -174,7 +174,7 @@ export default function Features() {
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
             Every Tool You Need to{" "}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
+            <span className="text-primary">
               Convert More Leads
             </span>
           </h1>

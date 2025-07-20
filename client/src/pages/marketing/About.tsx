@@ -132,7 +132,7 @@ export default function About() {
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
               We're on a Mission to{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
+              <span className="text-primary">
                 Democratize Marketing Success
               </span>
             </h1>

@@ -154,7 +154,7 @@ export default function Pricing() {
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
             Choose the Perfect Plan{" "}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
+            <span className="text-primary">
               for Your Business
             </span>
           </h1>
